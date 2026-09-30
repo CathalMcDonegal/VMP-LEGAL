@@ -1,0 +1,18 @@
+{
+  "name": "VMP LEGAL",
+  "short_name": "VMP LEGAL",
+  "description": "Normativa i cercador de denúncies de Vehicles de Mobilitat Personal (patinets elèctrics)",
+  "start_url": "./index.html",
+  "display": "standalone",
+  "background_color": "#0a1628",
+  "theme_color": "#1a3a6e",
+  "orientation": "portrait",
+  "icons": [
+    {
+      "src": "logo.jpg",
+      "sizes": "512x512",
+      "type": "image/jpeg",
+      "purpose": "any maskable"
+    }
+  ]
+}

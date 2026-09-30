@@ -1,0 +1,852 @@
+<!DOCTYPE html>
+<html lang="ca">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <meta name="theme-color" content="#1a3a6e">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="VMP LEGAL">
+  <link rel="manifest" href="manifest.json">
+  <link rel="icon" href="logo.jpg">
+  <link rel="apple-touch-icon" href="logo.jpg">
+  <title>VMP LEGAL</title>
+  <style>
+    :root {
+      --bg: #0a1628;
+      --card: #12253f;
+      --accent: #f0c14b;
+      --accent2: #3b82f6;
+      --text: #e8eef7;
+      --muted: #94a3b8;
+      --danger: #ef4444;
+      --ok: #22c55e;
+      --border: #1e3a5f;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      min-height: 100dvh;
+      display: flex;
+      flex-direction: column;
+      overflow-x: hidden;
+      position: relative;
+    }
+
+    /* ===== MARCA D'AIGUA ===== */
+    .watermark {
+      position: fixed;
+      top: 0; left: 0; right: 0; bottom: 0;
+      pointer-events: none;
+      z-index: 9999;
+      overflow: hidden;
+    }
+    .watermark::before {
+      content: "TIP 18675 CME  ·  TIP 1235 PL";
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%) rotate(-32deg);
+      font-size: clamp(18px, 5vw, 28px);
+      font-weight: 700;
+      letter-spacing: 3px;
+      color: rgba(240, 193, 75, 0.07);
+      white-space: nowrap;
+      user-select: none;
+    }
+    .watermark::after {
+      content: "TIP 18675 CME  ·  TIP 1235 PL";
+      position: absolute;
+      top: 20%;
+      left: 50%;
+      transform: translate(-50%, -50%) rotate(-32deg);
+      font-size: clamp(16px, 4.5vw, 24px);
+      font-weight: 700;
+      letter-spacing: 3px;
+      color: rgba(240, 193, 75, 0.05);
+      white-space: nowrap;
+      user-select: none;
+    }
+    .wm-bottom {
+      position: absolute;
+      bottom: 18%;
+      left: 50%;
+      transform: translate(-50%, 50%) rotate(-32deg);
+      font-size: clamp(16px, 4.5vw, 24px);
+      font-weight: 700;
+      letter-spacing: 3px;
+      color: rgba(240, 193, 75, 0.05);
+      white-space: nowrap;
+      user-select: none;
+      pointer-events: none;
+    }
+
+    header {
+      background: linear-gradient(135deg, #1a3a6e 0%, #0f2744 100%);
+      padding: 12px 16px 10px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      border-bottom: 2px solid var(--accent);
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+    header img {
+      width: 48px;
+      height: 48px;
+      border-radius: 12px;
+      object-fit: cover;
+      border: 2px solid var(--accent);
+    }
+    header .title { flex: 1; }
+    header h1 {
+      font-size: 1.25rem;
+      font-weight: 700;
+      letter-spacing: 0.5px;
+      color: var(--accent);
+    }
+    header p {
+      font-size: 0.7rem;
+      color: var(--muted);
+      margin-top: 2px;
+    }
+    .tabs {
+      display: flex;
+      background: var(--card);
+      border-bottom: 1px solid var(--border);
+      position: sticky;
+      top: 72px;
+      z-index: 90;
+    }
+    .tab {
+      flex: 1;
+      text-align: center;
+      padding: 12px 4px;
+      font-size: 0.8rem;
+      font-weight: 600;
+      color: var(--muted);
+      cursor: pointer;
+      border-bottom: 3px solid transparent;
+      transition: all 0.2s;
+    }
+    .tab.active {
+      color: var(--accent);
+      border-bottom-color: var(--accent);
+      background: rgba(240,193,75,0.08);
+    }
+    .content {
+      flex: 1;
+      overflow-y: auto;
+      padding: 16px;
+      padding-bottom: 48px;
+      position: relative;
+      z-index: 1;
+    }
+    .panel { display: none; }
+    .panel.active { display: block; animation: fadeIn 0.25s ease; }
+    @keyframes fadeIn { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: none; } }
+
+    .search-box {
+      background: var(--card);
+      border-radius: 16px;
+      padding: 16px;
+      border: 1px solid var(--border);
+      margin-bottom: 16px;
+    }
+    .search-box h2 {
+      font-size: 1rem;
+      margin-bottom: 12px;
+      color: var(--accent);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .chips {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-bottom: 4px;
+    }
+    .chip {
+      background: #1e3a5f;
+      border: 1px solid var(--border);
+      color: var(--text);
+      padding: 8px 12px;
+      border-radius: 999px;
+      font-size: 0.78rem;
+      cursor: pointer;
+      transition: all 0.15s;
+      user-select: none;
+    }
+    .chip:hover, .chip.selected {
+      background: var(--accent);
+      color: #0a1628;
+      border-color: var(--accent);
+      font-weight: 600;
+    }
+    .result-card {
+      background: var(--card);
+      border-radius: 16px;
+      padding: 16px;
+      border: 1px solid var(--border);
+      margin-top: 12px;
+      display: none;
+    }
+    .result-card.show { display: block; animation: fadeIn 0.3s; }
+    .result-card .badge {
+      display: inline-block;
+      background: var(--danger);
+      color: white;
+      font-size: 0.75rem;
+      font-weight: 700;
+      padding: 4px 10px;
+      border-radius: 999px;
+      margin-bottom: 10px;
+    }
+    .result-card .badge.leve { background: #f59e0b; }
+    .result-card .badge.grave { background: var(--danger); }
+    .result-card .badge.muy_grave { background: #7f1d1d; }
+    .result-card h3 {
+      font-size: 1.05rem;
+      margin-bottom: 8px;
+      line-height: 1.3;
+    }
+    .result-card .amount {
+      font-size: 1.8rem;
+      font-weight: 800;
+      color: var(--accent);
+      margin: 8px 0;
+    }
+    .result-card .article {
+      font-size: 0.85rem;
+      color: var(--muted);
+      margin-bottom: 8px;
+    }
+    .result-card .desc {
+      font-size: 0.9rem;
+      line-height: 1.45;
+      color: #cbd5e1;
+    }
+    .result-card .note {
+      margin-top: 12px;
+      padding: 10px;
+      background: rgba(59,130,246,0.12);
+      border-left: 3px solid var(--accent2);
+      border-radius: 0 8px 8px 0;
+      font-size: 0.8rem;
+      color: #93c5fd;
+    }
+    .empty-hint {
+      text-align: center;
+      color: var(--muted);
+      padding: 24px 12px;
+      font-size: 0.9rem;
+    }
+
+    .search-input {
+      width: 100%;
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 12px 16px;
+      color: var(--text);
+      font-size: 1rem;
+      margin-bottom: 16px;
+      outline: none;
+    }
+    .search-input:focus { border-color: var(--accent); }
+    .norm-item {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 14px;
+      margin-bottom: 10px;
+    }
+    .norm-item h4 {
+      font-size: 0.95rem;
+      color: var(--accent);
+      margin-bottom: 6px;
+    }
+    .norm-item p {
+      font-size: 0.85rem;
+      color: #cbd5e1;
+      line-height: 1.4;
+    }
+    .norm-item .tag {
+      display: inline-block;
+      font-size: 0.7rem;
+      background: #1e3a5f;
+      color: var(--muted);
+      padding: 2px 8px;
+      border-radius: 6px;
+      margin-top: 8px;
+    }
+
+    .guide-section {
+      background: var(--card);
+      border-radius: 16px;
+      padding: 16px;
+      border: 1px solid var(--border);
+      margin-bottom: 14px;
+    }
+    .guide-section h3 {
+      font-size: 1rem;
+      color: var(--accent);
+      margin-bottom: 10px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .guide-section ul {
+      padding-left: 18px;
+      font-size: 0.9rem;
+      line-height: 1.55;
+      color: #cbd5e1;
+    }
+    .guide-section li { margin-bottom: 6px; }
+    .guide-section strong { color: var(--text); }
+
+    .footer-note {
+      text-align: center;
+      font-size: 0.7rem;
+      color: var(--muted);
+      padding: 20px 12px;
+      line-height: 1.4;
+    }
+    .clear-btn {
+      display: inline-block;
+      margin-top: 10px;
+      background: transparent;
+      border: 1px solid var(--muted);
+      color: var(--muted);
+      padding: 6px 14px;
+      border-radius: 999px;
+      font-size: 0.75rem;
+      cursor: pointer;
+    }
+    .clear-btn:active { background: #1e3a5f; }
+  </style>
+</head>
+<body>
+  <!-- Marca d'aigua permanent -->
+  <div class="watermark" aria-hidden="true">
+    <span class="wm-bottom">TIP 18675 CME  ·  TIP 1235 PL</span>
+  </div>
+
+  <header>
+    <img src="logo.jpg" alt="Logo Policia Local La Palma de Cervelló">
+    <div class="title">
+      <h1>VMP LEGAL</h1>
+      <p>Normativa · Denúncies · Guia · En vigor 1/10/2026</p>
+    </div>
+  </header>
+
+  <nav class="tabs">
+    <div class="tab active" data-tab="consulta">Consulta</div>
+    <div class="tab" data-tab="nomenclator">Nomenclàtor</div>
+    <div class="tab" data-tab="guia">Guia</div>
+  </nav>
+
+  <main class="content">
+    <!-- ===== PESTANYA 1: CONSULTA ===== -->
+    <section id="consulta" class="panel active">
+      <div class="search-box">
+        <h2>🔍 Cercador de denúncies</h2>
+        <p style="font-size:0.85rem;color:var(--muted);margin-bottom:12px;">
+          Selecciona una o més infraccions. L’app et mostra l’article i l’import de la sanció.
+        </p>
+        <div class="chips" id="chips"></div>
+        <button class="clear-btn" id="clearSel" style="display:none;">Esborrar selecció</button>
+      </div>
+      <div id="results"></div>
+      <div class="empty-hint" id="emptyHint">
+        Toca una o més opcions de dalt per veure la sanció aplicable.
+      </div>
+    </section>
+
+    <!-- ===== PESTANYA 2: NOMENCLÀTOR ===== -->
+    <section id="nomenclator" class="panel">
+      <input type="search" class="search-input" id="normSearch" placeholder="Cerca normativa (casc, edat, vorera, llums, registre...)">
+      <div id="normList"></div>
+    </section>
+
+    <!-- ===== PESTANYA 3: GUIA ===== -->
+    <section id="guia" class="panel">
+      <div class="guide-section">
+        <h3>📌 Què és un VMP?</h3>
+        <ul>
+          <li>Vehicle d’una o més rodes, <strong>una sola plaça</strong>, propulsat exclusivament per motors elèctrics.</li>
+          <li>Velocitat màxima de disseny entre <strong>6 i 25 km/h</strong>.</li>
+          <li>Inclou els patinets elèctrics més comuns.</li>
+        </ul>
+      </div>
+
+      <div class="guide-section">
+        <h3>📅 Novetats que entren en vigor l’1 d’octubre de 2026</h3>
+        <ul>
+          <li><strong>Edat mínima:</strong> 15 anys (estatal).</li>
+          <li><strong>Casc obligatori</strong> homologat o certificat, ben cordat, per a tots els usuaris.</li>
+          <li><strong>Element lluminós o reflectant</strong> de nit o amb poca visibilitat (visible a 150 m).</li>
+          <li><strong>Armilla reflectant</strong> obligatòria en tot moment per als professionals (riders).</li>
+          <li>Senyalització de maniobres amb el braç.</li>
+          <li>Alumbrat permanent (també de dia) → <strong>exigible a partir de l’1/10/2027</strong>.</li>
+        </ul>
+      </div>
+
+      <div class="guide-section">
+        <h3>🚫 Prohibicions principals</h3>
+        <ul>
+          <li>Circular per <strong>voreres i zones peatonals</strong>.</li>
+          <li>Circular per <strong>autopistes, autovies, travesseres i túnels urbans</strong>.</li>
+          <li>Portar <strong>passatger</strong> (és vehicle d’una sola plaça).</li>
+          <li>Utilitzar <strong>auriculars</strong> o mòbil en marxa.</li>
+          <li>Circular sense registre a la DGT ni assegurança de responsabilitat civil (obligatoris des de gener 2026).</li>
+          <li>Circular amb vehicle no homologat o modificat que superi els 25 km/h.</li>
+        </ul>
+      </div>
+
+      <div class="guide-section">
+        <h3>💡 Consells pràctics</h3>
+        <ul>
+          <li>Porta sempre el casc ben cordat.</li>
+          <li>Comprova que el patinet tingui el certificat VMP i estigui inscrit al Registre de Vehicles Personals Lleugers de la DGT.</li>
+          <li>De nit o amb pluja/boira: llums + element reflectant.</li>
+          <li>Respecta els semàfors i la prioritat dels vianants.</li>
+          <li>La majoria de les infraccions greus són de <strong>200 €</strong> (100 € amb pagament anticipat en 20 dies).</li>
+        </ul>
+      </div>
+
+      <div class="guide-section">
+        <h3>⚖️ Font normativa</h3>
+        <ul>
+          <li>Real Decreto 518/2026, de 24 de juny (modificació del Reglament General de Circulació).</li>
+          <li>Text refós de la Llei sobre Trànsit, Circulació de Vehicles a Motor i Seguretat Vial (RDLeg 6/2015).</li>
+          <li>Registre de Vehicles Personals Lleugers (RD 52/2026).</li>
+          <li>Ordenances municipals (poden afegir restriccions de circulació).</li>
+        </ul>
+      </div>
+
+      <p class="footer-note">
+        Aplicació informativa basada en la normativa estatal vigent a partir de l’1 d’octubre de 2026.<br>
+        Les sancions poden variar lleugerament segons l’ordenança municipal o el criteri de l’agent.<br>
+        Logo: Policia Local de La Palma de Cervelló · VMP LEGAL<br>
+        TIP 18675 CME · TIP 1235 PL
+      </p>
+    </section>
+  </main>
+
+  <script>
+    // ========== TOTES LES INFRACCIONS RELACIONADES AMB VMP ==========
+    const infraccions = [
+      {
+        id: "casc",
+        label: "Sense casc",
+        tipus: "grave",
+        import: 200,
+        article: "Art. 118 RGC (modificat pel RD 518/2026)",
+        titol: "Circular sense casc de protecció",
+        desc: "Des de l’1 d’octubre de 2026 el casc homologat o certificat és obligatori per a tots els usuaris de VMP, independentment de l’edat o del municipi. Ha d’anar correctament cordat.",
+        nota: "Infracció greu. Amb pagament anticipat (20 dies) es redueix a 100 €."
+      },
+      {
+        id: "edat",
+        label: "Menor de 15 anys",
+        tipus: "grave",
+        import: 200,
+        article: "Art. 155 RGC (RD 518/2026)",
+        titol: "Conduir un VMP sent menor de 15 anys",
+        desc: "L’edat mínima estatal per conduir un vehicle de mobilitat personal és de 15 anys. Els menors no poden circular per vies obertes al trànsit.",
+        nota: "Si el conductor és menor, la sanció la paguen els pares o tutors legals."
+      },
+      {
+        id: "vorera",
+        label: "Circular per vorera",
+        tipus: "grave",
+        import: 200,
+        article: "Art. 121.5 RGC / Llei de Trànsit",
+        titol: "Circular per voreres o zones peatonals",
+        desc: "Està totalment prohibit circular amb VMP per voreres, zones peatonals o espais reservats als vianants. Cal fer-ho per calçada o carril bici segons l’ordenança local.",
+        nota: "És una de les denúncies més freqüents. Infracció greu: 200 €."
+      },
+      {
+        id: "passatger",
+        label: "Portar passatger",
+        tipus: "leve",
+        import: 100,
+        article: "Definició VMP + Instrucció DGT",
+        titol: "Transportar un passatger al patinet",
+        desc: "Els VMP estan concebuts per a una sola plaça. Portar una altra persona (encara que sigui un nen) constitueix infracció.",
+        nota: "Sanció de 100 € (lleu)."
+      },
+      {
+        id: "llums",
+        label: "Sense llums (nit)",
+        tipus: "grave",
+        import: 200,
+        article: "RGC + RD 518/2026",
+        titol: "Circular de nit o amb poca visibilitat sense alumbrat o sense element reflectant",
+        desc: "De nit o quan les condicions redueixin la visibilitat, cal portar els llums del VMP encesos i almenys un element lluminós o reflectant visible a 150 metres.",
+        nota: "L’obligació d’alumbrat permanent també de dia serà exigible a partir de l’1/10/2027."
+      },
+      {
+        id: "armilla",
+        label: "Sense armilla (nit/pro)",
+        tipus: "grave",
+        import: 200,
+        article: "RD 518/2026",
+        titol: "No portar element reflectant de nit o armilla com a professional",
+        desc: "De nit o amb poca visibilitat cal element reflectant. Els professionals (riders) que circulin amb VMP han de portar armilla reflectant en tot moment.",
+        nota: "Infracció greu: 200 €."
+      },
+      {
+        id: "auriculars",
+        label: "Auriculares",
+        tipus: "grave",
+        import: 200,
+        article: "Art. 18 i 13 RGC / Llei de Trànsit",
+        titol: "Utilitzar auriculars mentre es condueix",
+        desc: "Està prohibit portar auriculars connectats a dispositius de so mentre es condueix un VMP.",
+        nota: "Infracció greu: 200 €."
+      },
+      {
+        id: "mobil",
+        label: "Mòbil en mà",
+        tipus: "grave",
+        import: 200,
+        article: "Art. 13 RGC / Llei de Trànsit",
+        titol: "Manipular el telèfon mòbil mentre es condueix",
+        desc: "Està prohibit utilitzar o manipular el telèfon mòbil (o qualsevol dispositiu de comunicació) mentre es condueix un VMP.",
+        nota: "Infracció greu: 200 €. Pot comportar pèrdua de punts si es té carnet de conduir."
+      },
+      {
+        id: "velocitat",
+        label: "Excés de velocitat (>25 km/h)",
+        tipus: "grave",
+        import: 200,
+        article: "Definició tècnica VMP + RGC",
+        titol: "Circular a més de 25 km/h o amb vehicle no conforme",
+        desc: "La velocitat màxima de disseny d’un VMP és de 25 km/h. Si el vehicle pot superar aquesta velocitat o s’ha modificat, deixa de ser un VMP legal i pot ser denunciat i immobilitzat.",
+        nota: "A més de la multa, pot comportar la immobilització del vehicle."
+      },
+      {
+        id: "registre",
+        label: "Sense registre DGT",
+        tipus: "grave",
+        import: 400,
+        article: "RD 52/2026 · Registre de Vehicles Personals Lleugers",
+        titol: "Circular sense estar inscrit al Registre de la DGT",
+        desc: "Des de gener de 2026 tots els VMP han d’estar inscrits al Registre de Vehicles Personals Lleugers de la DGT i portar l’etiqueta identificativa.",
+        nota: "Sanció habitual entre 202 i 610 €. Es pot acumular amb la d’assegurança."
+      },
+      {
+        id: "asseguranca",
+        label: "Sense assegurança",
+        tipus: "grave",
+        import: 400,
+        article: "RD 52/2026 · Assegurança obligatòria RC",
+        titol: "Circular sense assegurança de responsabilitat civil",
+        desc: "És obligatori disposar d’una assegurança de responsabilitat civil en vigor per a tots els VMP.",
+        nota: "Sanció entre 202 i 610 € (fins a 800 € si la pòlissa existeix però no està en vigor). Es pot acumular amb la de registre."
+      },
+      {
+        id: "alcohol",
+        label: "Alcohol / drogues",
+        tipus: "muy_grave",
+        import: 500,
+        article: "Llei de Trànsit · Taxes d’alcohol i drogues",
+        titol: "Conduir sota els efectes de l’alcohol o drogues",
+        desc: "Les taxes d’alcohol i la prohibició de drogues s’apliquen també als conductors de VMP. La taxa per a menors és 0,0.",
+        nota: "De 500 a 1.000 € (reincidència). Pot comportar immobilització del vehicle."
+      },
+      {
+        id: "autopista",
+        label: "Autopista / autovia / túnel",
+        tipus: "grave",
+        import: 200,
+        article: "RGC · Vies prohibides per a VMP",
+        titol: "Circular per vies on els VMP estan prohibits",
+        desc: "Està prohibit circular amb VMP per autopistes, autovies, travesseres i túnels urbans. Només es pot circular per vies interurbanes si hi ha via ciclista segregada.",
+        nota: "Infracció greu: 200 €."
+      },
+      {
+        id: "semafor",
+        label: "No respectar semàfor",
+        tipus: "grave",
+        import: 200,
+        article: "Art. 146 i ss. RGC / Llei de Trànsit",
+        titol: "No respectar el semàfor en vermell",
+        desc: "Els conductors de VMP estan obligats a respectar els semàfors igual que la resta de vehicles. Passar en vermell és infracció greu.",
+        nota: "Infracció greu: 200 €. Pot comportar pèrdua de punts si es té carnet."
+      },
+      {
+        id: "pas_vianants",
+        label: "Pas de vianants sense baixar",
+        tipus: "grave",
+        import: 200,
+        article: "RGC · Prioritat de vianants",
+        titol: "Creuar un pas de vianants sense baixar del VMP",
+        desc: "Als passos de vianants cal baixar del patinet i creuar a peu, respectant la prioritat dels vianants. Circular-hi muntat està prohibit.",
+        nota: "Infracció greu: 200 €."
+      },
+      {
+        id: "sentit_contrari",
+        label: "Sentit contrari",
+        tipus: "grave",
+        import: 200,
+        article: "Art. 29 RGC",
+        titol: "Circular en sentit contrari al permès",
+        desc: "Circular en sentit contrari a l’establert a la via o al carril bici constitueix infracció greu.",
+        nota: "Infracció greu: 200 €."
+      },
+      {
+        id: "carril_bus",
+        label: "Carril bus / taxi",
+        tipus: "grave",
+        import: 200,
+        article: "RGC + ordenances municipals",
+        titol: "Circular per carril reservat a autobusos o taxis",
+        desc: "Salvo senyalització específica que ho autoritzi, els VMP no poden circular pels carrils reservats a transport públic.",
+        nota: "Infracció greu: 200 € (pot variar segons ordenança)."
+      },
+      {
+        id: "no_senyalitzar",
+        label: "No senyalitzar maniobra",
+        tipus: "leve",
+        import: 100,
+        article: "RD 518/2026 · Senyalització amb el braç",
+        titol: "No advertir les maniobres amb el braç",
+        desc: "Des de l’1 d’octubre de 2026 les maniobres de canvi de direcció s’han d’advertir mitjançant el braç.",
+        nota: "Sanció habitual de 100 € (lleu)."
+      },
+      {
+        id: "no_homologat",
+        label: "Vehicle no homologat",
+        tipus: "grave",
+        import: 200,
+        article: "RD 52/2026 · Certificat de circulació",
+        titol: "Circular amb VMP no homologat o sense certificat",
+        desc: "Els VMP han de disposar del certificat de circulació corresponent. Els models antics tenen règim transitori limitat. Circular amb un vehicle no conforme pot comportar denúncia i immobilització.",
+        nota: "Sovint s’acumula amb falta de registre. Possible immobilització."
+      },
+      {
+        id: "modificat",
+        label: "Vehicle modificat",
+        tipus: "grave",
+        import: 200,
+        article: "Reglament General de Vehicles + RGC",
+        titol: "Circular amb VMP modificat (velocitat, potència...)",
+        desc: "Qualsevol modificació que alteri les característiques tècniques (velocitat màxima, potència, etc.) fa que el vehicle deixi de ser un VMP legal.",
+        nota: "Infracció greu + possible immobilització i retirada del vehicle."
+      },
+      {
+        id: "estacionament",
+        label: "Estacionament indegut",
+        tipus: "leve",
+        import: 100,
+        article: "Ordenances municipals + RGC",
+        titol: "Estacionar el VMP de forma indeguda",
+        desc: "Estacionar a voreres, passos de vianants, enllaços de transport, davant de portes d’emergència o bloquejant el pas de vianants o persones amb mobilitat reduïda està prohibit.",
+        nota: "Sanció habitual entre 60 i 100 € segons ordenança municipal. Possible retirada."
+      },
+      {
+        id: "prioritat",
+        label: "No cedir prioritat",
+        tipus: "grave",
+        import: 200,
+        article: "Art. 21 i ss. RGC",
+        titol: "No respectar la prioritat d’altres usuaris",
+        desc: "No cedir el pas a vianants, ciclistes o altres vehicles quan es té l’obligació de fer-ho constitueix infracció greu.",
+        nota: "Infracció greu: 200 €."
+      },
+      {
+        id: "imprudencia",
+        label: "Conducció temerària / imprudent",
+        tipus: "muy_grave",
+        import: 500,
+        article: "Llei de Trànsit · Art. 76 i 77",
+        titol: "Conducció temerària o greument imprudent",
+        desc: "Circular de forma temerària (zigzag entre vehicles, velocitat excessiva en zones peatonals, etc.) pot ser calificada com a infracció molt greu.",
+        nota: "De 500 € en amunt. Possible immobilització i altres mesures."
+      },
+      {
+        id: "documentacio",
+        label: "No acreditar titularitat",
+        tipus: "leve",
+        import: 100,
+        article: "RD 52/2026 + ordenances",
+        titol: "No poder acreditar la titularitat del VMP",
+        desc: "En un control es pot exigir acreditar la titularitat del vehicle (registre DGT). No poder fer-ho pot comportar sanció i/o immobilització.",
+        nota: "Sanció variable; sovint associada a falta de registre."
+      },
+      {
+        id: "carga",
+        label: "Càrrega indeguda / animals",
+        tipus: "leve",
+        import: 100,
+        article: "RGC + ordenances municipals",
+        titol: "Transportar càrrega o animals de forma indeguda",
+        desc: "Els VMP no estan dissenyats per transportar càrrega pesada ni animals. Fer-ho pot afectar l’estabilitat i la seguretat.",
+        nota: "Sanció habitual de 100 € (lleu), segons ordenança."
+      },
+      {
+        id: "auriculars_casco",
+        label: "Casc amb auriculars integrats no homologats",
+        tipus: "grave",
+        import: 200,
+        article: "Art. 18 RGC",
+        titol: "Utilitzar dispositius d’àudio integrats no autoritzats",
+        desc: "Només es permeten sistemes de comunicació homologats i en condicions de seguretat. Els auriculars convencionals (encara que vinguin amb el casc) estan prohibits si impedeixen la percepció acústica.",
+        nota: "Infracció greu: 200 €."
+      }
+    ];
+
+    // ========== NOMENCLÀTOR COMPLET ==========
+    const nomenclator = [
+      { titol: "Edat mínima", text: "15 anys. Cap menor de 15 anys pot conduir un VMP per vies obertes al trànsit. Norma estatal des de l’1/10/2026.", tag: "RD 518/2026 · Art. 155 RGC" },
+      { titol: "Casc obligatori", text: "Casc de protecció homologat o certificat, correctament cordat, per a tots els usuaris de VMP en tot moment.", tag: "RD 518/2026 · Art. 118 RGC" },
+      { titol: "Element reflectant / armilla", text: "De nit o amb escassa visibilitat: element lluminós o reflectant visible a 150 m. Professionals (riders): armilla reflectant sempre.", tag: "RD 518/2026" },
+      { titol: "Alumbrat", text: "Llums del vehicle encesos de nit i amb poca visibilitat. L’obligació d’alumbrat permanent també de dia entra en vigor l’1/10/2027.", tag: "RD 518/2026 · Disposició transitòria" },
+      { titol: "Definició de VMP", text: "Vehicle d’una o més rodes, una sola plaça, propulsat exclusivament per motors elèctrics, velocitat màxima de disseny entre 6 i 25 km/h.", tag: "Reglament General de Vehicles" },
+      { titol: "Prohibició de voreres", text: "Prohibit circular per voreres, zones peatonals i espais reservats als vianants.", tag: "Art. 121.5 RGC" },
+      { titol: "Vies prohibides", text: "Prohibit circular per autopistes, autovies, travesseres i túnels urbans. En vies interurbanes només si hi ha via ciclista segregada.", tag: "RGC" },
+      { titol: "Una sola plaça", text: "No es pot transportar passatgers. El VMP està dissenyat per a una única persona.", tag: "Definició VMP + Instruccions DGT" },
+      { titol: "Auriculares i mòbil", text: "Prohibit utilitzar auriculars connectats a dispositius de so i manipular el telèfon mòbil mentre es condueix.", tag: "Art. 13 i 18 RGC" },
+      { titol: "Registre a la DGT", text: "Obligatori des de gener 2026. Cal inscriure el VMP al Registre de Vehicles Personals Lleugers i portar l’etiqueta identificativa.", tag: "RD 52/2026" },
+      { titol: "Assegurança de RC", text: "Obligatòria des de gener 2026. Assegurança de responsabilitat civil en vigor per a tots els VMP.", tag: "RD 52/2026" },
+      { titol: "Senyalització de maniobres", text: "Les maniobres de canvi de direcció s’han d’advertir amb el braç.", tag: "RD 518/2026" },
+      { titol: "Velocitat màxima", text: "25 km/h de velocitat màxima de disseny. Superar-la o modificar el vehicle pot convertir-lo en il·legal.", tag: "Definició tècnica VMP" },
+      { titol: "Alcohol i drogues", text: "S’apliquen les mateixes taxes que a la resta de conductors. Menors: taxa 0,0.", tag: "Llei de Trànsit" },
+      { titol: "Certificat del vehicle", text: "Els models nous han de disposar de certificat de circulació. Els antics tenen règim transitori fins a gener 2027 en alguns casos.", tag: "RD 52/2026 · Annexos" },
+      { titol: "Semàfors i prioritat", text: "Els VMP han de respectar semàfors, senyals i prioritats igual que la resta de vehicles.", tag: "RGC" },
+      { titol: "Passos de vianants", text: "Cal baixar del VMP per creuar un pas de vianants. Circular-hi muntat està prohibit.", tag: "RGC + ordenances" },
+      { titol: "Carrils reservats", text: "Prohibit circular per carrils bus/taxi tret que l’ordenança o la senyalització ho autoritzi expressament.", tag: "RGC + ordenances municipals" },
+      { titol: "Estacionament", text: "No es pot estacionar bloquejant el pas de vianants, persones amb mobilitat reduïda, ni a zones prohibides per ordenança.", tag: "Ordenances municipals" },
+      { titol: "Ordenances municipals", text: "Els ajuntaments poden regular per quines vies concretes es pot circular (carrils bici, calçades, etc.) i altres aspectes complementaris.", tag: "Autonomia local" }
+    ];
+
+    // ========== UI LOGIC ==========
+    const chipsEl = document.getElementById('chips');
+    const resultsEl = document.getElementById('results');
+    const emptyHint = document.getElementById('emptyHint');
+    const clearBtn = document.getElementById('clearSel');
+    const selected = new Set();
+
+    infraccions.forEach(inf => {
+      const chip = document.createElement('div');
+      chip.className = 'chip';
+      chip.textContent = inf.label;
+      chip.dataset.id = inf.id;
+      chip.addEventListener('click', () => {
+        if (selected.has(inf.id)) {
+          selected.delete(inf.id);
+          chip.classList.remove('selected');
+        } else {
+          selected.add(inf.id);
+          chip.classList.add('selected');
+        }
+        renderResults();
+      });
+      chipsEl.appendChild(chip);
+    });
+
+    clearBtn.addEventListener('click', () => {
+      selected.clear();
+      document.querySelectorAll('.chip').forEach(c => c.classList.remove('selected'));
+      renderResults();
+    });
+
+    function renderResults() {
+      resultsEl.innerHTML = '';
+      if (selected.size === 0) {
+        emptyHint.style.display = 'block';
+        clearBtn.style.display = 'none';
+        return;
+      }
+      emptyHint.style.display = 'none';
+      clearBtn.style.display = 'inline-block';
+
+      let total = 0;
+      selected.forEach(id => {
+        const inf = infraccions.find(i => i.id === id);
+        if (!inf) return;
+        total += inf.import;
+
+        const card = document.createElement('div');
+        card.className = 'result-card show';
+        let badgeClass = 'grave';
+        let tipusLabel = 'Infracció greu';
+        if (inf.tipus === 'leve') { badgeClass = 'leve'; tipusLabel = 'Infracció lleu'; }
+        if (inf.tipus === 'muy_grave') { badgeClass = 'muy_grave'; tipusLabel = 'Infracció molt greu'; }
+
+        card.innerHTML = `
+          <span class="badge ${badgeClass}">${tipusLabel}</span>
+          <h3>${inf.titol}</h3>
+          <div class="amount">${inf.import} €</div>
+          <div class="article">${inf.article}</div>
+          <div class="desc">${inf.desc}</div>
+          <div class="note">${inf.nota}</div>
+        `;
+        resultsEl.appendChild(card);
+      });
+
+      if (selected.size > 1) {
+        const totalCard = document.createElement('div');
+        totalCard.className = 'result-card show';
+        totalCard.style.borderColor = 'var(--accent)';
+        totalCard.innerHTML = `
+          <h3>Total aproximat de les infraccions seleccionades</h3>
+          <div class="amount">${total} €</div>
+          <div class="desc">Les sancions es poden acumular en un mateix control. El pagament anticipat (20 dies) redueix generalment el 50 % de les greus (de 200 € a 100 €).</div>
+        `;
+        resultsEl.appendChild(totalCard);
+      }
+    }
+
+    // ========== NOMENCLÀTOR ==========
+    const normList = document.getElementById('normList');
+    const normSearch = document.getElementById('normSearch');
+
+    function renderNorm(filter = '') {
+      normList.innerHTML = '';
+      const q = filter.toLowerCase().trim();
+      const filtered = nomenclator.filter(n =>
+        !q || n.titol.toLowerCase().includes(q) || n.text.toLowerCase().includes(q) || n.tag.toLowerCase().includes(q)
+      );
+      if (filtered.length === 0) {
+        normList.innerHTML = '<p class="empty-hint">No s’ha trobat cap resultat.</p>';
+        return;
+      }
+      filtered.forEach(n => {
+        const item = document.createElement('div');
+        item.className = 'norm-item';
+        item.innerHTML = `
+          <h4>${n.titol}</h4>
+          <p>${n.text}</p>
+          <span class="tag">${n.tag}</span>
+        `;
+        normList.appendChild(item);
+      });
+    }
+    renderNorm();
+    normSearch.addEventListener('input', e => renderNorm(e.target.value));
+
+    // ========== TABS ==========
+    document.querySelectorAll('.tab').forEach(tab => {
+      tab.addEventListener('click', () => {
+        document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+        document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
+        tab.classList.add('active');
+        document.getElementById(tab.dataset.tab).classList.add('active');
+      });
+    });
+
+    // Service Worker
+    if ('serviceWorker' in navigator) {
+      navigator.serviceWorker.register('sw.js').catch(() => {});
+    }
+  </script>
+</body>
+</html>
