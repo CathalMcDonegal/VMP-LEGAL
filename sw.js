@@ -1,9 +1,11 @@
-const CACHE = 'vmp-legal-v1';
+const CACHE = 'vmp-legal-v3';
 const ASSETS = [
   './',
   './index.html',
   './manifest.json',
-  './logo.jpg'
+  './logo.jpg',
+  './icon-192.png',
+  './icon-512.png'
 ];
 
 self.addEventListener('install', e => {
