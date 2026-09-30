@@ -539,7 +539,7 @@
       <p class="footer-note">
         Aplicació informativa basada en la normativa estatal vigent a partir de l’1 d’octubre de 2026.<br>
         Les sancions poden variar lleugerament segons l’ordenança municipal o el criteri de l’agent.<br>
-        Logo: Policia Local de La Palma de Cervelló · VMP LEGAL<br>
+        VMP LEGAL<br>
         TIP 18675 CME · TIP 1235 PL
       </p>
     </section>
@@ -688,61 +688,83 @@
 
     function isStandalone() {
       return window.matchMedia('(display-mode: standalone)').matches
-        || window.navigator.standalone === true;
+        || window.navigator.standalone === true
+        || document.referrer.includes('android-app://');
     }
 
     function isIos() {
       return /iphone|ipad|ipod/i.test(navigator.userAgent);
     }
 
-    // Mostrar banner quan el navegador permet instal·lar
+    function isAndroid() {
+      return /android/i.test(navigator.userAgent);
+    }
+
+    function showInstallUI() {
+      if (isStandalone()) return;
+      if (localStorage.getItem('vmp-install-dismissed-v2') === '1') return;
+      if (isIos()) {
+        iosHint.classList.add('show');
+        installBanner.classList.remove('show');
+      } else {
+        installBanner.classList.add('show');
+        iosHint.classList.remove('show');
+      }
+    }
+
+    // Capturar el prompt natiu quan el navegador el ofereix
     window.addEventListener('beforeinstallprompt', (e) => {
       e.preventDefault();
       deferredPrompt = e;
-      if (!isStandalone() && !localStorage.getItem('vmp-install-dismissed')) {
-        installBanner.classList.add('show');
-      }
+      showInstallUI();
     });
 
+    // Mostrar sempre el banner si no està instal·lada (no dependre només de beforeinstallprompt)
+    if (!isStandalone()) {
+      showInstallUI();
+      // Reintent després d'uns segons (Chrome de vegades tarda)
+      setTimeout(showInstallUI, 800);
+      setTimeout(showInstallUI, 2500);
+    }
+
     installBtn.addEventListener('click', async () => {
-      if (!deferredPrompt) return;
-      deferredPrompt.prompt();
-      const { outcome } = await deferredPrompt.userChoice;
-      deferredPrompt = null;
-      installBanner.classList.remove('show');
-      if (outcome === 'accepted') {
-        localStorage.setItem('vmp-install-dismissed', '1');
+      if (deferredPrompt) {
+        deferredPrompt.prompt();
+        const { outcome } = await deferredPrompt.userChoice;
+        deferredPrompt = null;
+        installBanner.classList.remove('show');
+        if (outcome === 'accepted') {
+          localStorage.setItem('vmp-install-dismissed-v2', '1');
+        }
+      } else if (isAndroid()) {
+        // Fallback: instruccions manuals Chrome
+        alert('Per instal·lar l\'app:\n\n1. Toca el menú ⋮ (tres punts) de Chrome\n2. Tria «Instal·lar aplicació» o «Afegeix a la pantalla d\'inici»');
+      } else if (isIos()) {
+        iosHint.classList.add('show');
+        installBanner.classList.remove('show');
+      } else {
+        alert('Per instal·lar l\'app, obre el menú del navegador i tria «Instal·lar aplicació» o «Afegeix a la pantalla d\'inici».');
       }
     });
 
     installClose.addEventListener('click', () => {
       installBanner.classList.remove('show');
-      localStorage.setItem('vmp-install-dismissed', '1');
+      iosHint.classList.remove('show');
+      localStorage.setItem('vmp-install-dismissed-v2', '1');
     });
 
-    // iOS: mostrar instruccions (Safari no té beforeinstallprompt)
-    if (isIos() && !isStandalone() && !localStorage.getItem('vmp-install-dismissed')) {
-      iosHint.classList.add('show');
-      // també permet tancar-lo tocant
+    if (iosHint) {
       iosHint.addEventListener('click', () => {
-        iosHint.classList.remove('show');
-        localStorage.setItem('vmp-install-dismissed', '1');
+        // no tancar automàticament en tocar el text a iOS (l'usuari ha de seguir els passos)
       });
     }
 
-    // Si ja està instal·lada, no mostrar res
-    if (isStandalone()) {
+    window.addEventListener('appinstalled', () => {
       installBanner.classList.remove('show');
       iosHint.classList.remove('show');
-    }
-
-    // Mostrar banner també després d'uns segons si no s'ha desestimat (Android/Chrome)
-    setTimeout(() => {
-      if (!isStandalone() && !isIos() && !localStorage.getItem('vmp-install-dismissed') && deferredPrompt) {
-        installBanner.classList.add('show');
-      }
-    }, 1500);
-
+      localStorage.setItem('vmp-install-dismissed-v2', '1');
+      deferredPrompt = null;
+    });
 
     if ('serviceWorker' in navigator) {
       navigator.serviceWorker.register('sw.js').catch(() => {});
