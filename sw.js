@@ -1,4 +1,4 @@
-const CACHE = 'vmp-legal-v3';
+const CACHE = 'vmp-legal-v4';
 const ASSETS = [
   './',
   './index.html',
@@ -10,7 +10,13 @@ const ASSETS = [
 
 self.addEventListener('install', e => {
   e.waitUntil(
-    caches.open(CACHE).then(cache => cache.addAll(ASSETS)).then(() => self.skipWaiting())
+    caches.open(CACHE)
+      .then(cache => cache.addAll(ASSETS))
+      .then(() => self.skipWaiting())
+      .catch(err => {
+        console.error('Error instal·lant el Service Worker:', err);
+        throw err;
+      })
   );
 });
 

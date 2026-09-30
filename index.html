@@ -597,6 +597,16 @@
     </section>
   </main>
 
+  <!-- Barra fixa instal·lar (sempre visible si no està instal·lada) -->
+  <div class="install-fixed" id="installFixed">
+    <div class="ib-text">
+      <strong>Instal·la VMP LEGAL</strong>
+      <span>Afegeix-la a la pantalla d'inici</span>
+    </div>
+    <button class="ib-btn" id="installFixedBtn">Instal·lar</button>
+    <button class="ib-close" id="installFixedClose" aria-label="Tancar">×</button>
+  </div>
+
   <script>
     const infraccions = [
       { id:"casc", label:"Sense casc", tipus:"grave", import:200, article:"Art. 118 RGC (modificat pel RD 518/2026)", titol:"Circular sense casc de protecció", desc:"Des de l’1 d’octubre de 2026 el casc homologat o certificat és obligatori per a tots els usuaris de VMP, independentment de l’edat o del municipi. Ha d’anar correctament cordat.", nota:"Infracció greu. Amb pagament anticipat (20 dies) es redueix a 100 €." },
@@ -795,11 +805,11 @@
         return;
       }
       if (isIos()) {
-        alert('Per instal·lar a l\\'iPhone:\\n\\n1. Toca el botó Compartir (quadre amb fletxa)\\n2. Tria «Afegeix a la pantalla d\\'inici»\\n3. Confirma amb «Afegeix»');
+        alert('Per instal·lar a l\'iPhone:\n\n1. Toca el botó Compartir (quadre amb fletxa)\n2. Tria «Afegeix a la pantalla d\'inici»\n3. Confirma amb «Afegeix»');
         return;
       }
       // Android / altres sense prompt natiu
-      alert('Per instal·lar l\\'app:\\n\\n1. Toca el menú ⋮ (tres punts) de Chrome\\n2. Tria «Instal·lar aplicació» o «Afegeix a la pantalla d\\'inici»\\n\\nSi no surt l\\'opció, obre l\\'enllaç amb Chrome i espera uns segons.');
+      alert('Per instal·lar l\'app:\n\n1. Toca el menú ⋮ (tres punts) de Chrome\n2. Tria «Instal·lar aplicació» o «Afegeix a la pantalla d\'inici»\n\nSi no surt l\'opció, obre l\'enllaç amb Chrome i espera uns segons.');
     }
 
     installFixedBtn.addEventListener('click', doInstall);
@@ -824,19 +834,11 @@
     });
 
     if ('serviceWorker' in navigator) {
-      navigator.serviceWorker.register('sw.js').catch(() => {});
+      navigator.serviceWorker.register('./sw.js').catch((err) => {
+        console.warn("No s'ha pogut registrar el Service Worker:", err);
+      });
     }
   </script>
-
-  <!-- Barra fixa instal·lar (sempre visible si no està instal·lada) -->
-  <div class="install-fixed" id="installFixed">
-    <div class="ib-text">
-      <strong>Instal·la VMP LEGAL</strong>
-      <span>Afegeix-la a la pantalla d'inici</span>
-    </div>
-    <button class="ib-btn" id="installFixedBtn">Instal·lar</button>
-    <button class="ib-close" id="installFixedClose" aria-label="Tancar">×</button>
-  </div>
 
 </body>
 </html>
