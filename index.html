@@ -355,6 +355,72 @@
       padding: 20px 12px;
       line-height: 1.4;
     }
+
+    /* ===== BANNER INSTAL·LAR ===== */
+    .install-banner {
+      display: none;
+      background: linear-gradient(135deg, #1a3a6e, #0f2744);
+      border: 1px solid var(--accent);
+      border-radius: 14px;
+      padding: 14px 16px;
+      margin-bottom: 14px;
+      align-items: center;
+      gap: 12px;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.35);
+    }
+    .install-banner.show { display: flex; animation: fadeIn 0.3s ease; }
+    .install-banner .ib-icon {
+      font-size: 1.8rem;
+      flex-shrink: 0;
+    }
+    .install-banner .ib-text { flex: 1; min-width: 0; }
+    .install-banner .ib-text strong {
+      display: block;
+      color: var(--accent);
+      font-size: 0.95rem;
+      margin-bottom: 2px;
+    }
+    .install-banner .ib-text span {
+      font-size: 0.78rem;
+      color: var(--muted);
+    }
+    .install-banner .ib-btn {
+      background: var(--accent);
+      color: #0a1628;
+      border: none;
+      border-radius: 10px;
+      padding: 10px 14px;
+      font-weight: 700;
+      font-size: 0.85rem;
+      cursor: pointer;
+      white-space: nowrap;
+      flex-shrink: 0;
+    }
+    .install-banner .ib-btn:active { transform: scale(0.97); }
+    .install-banner .ib-close {
+      background: transparent;
+      border: none;
+      color: var(--muted);
+      font-size: 1.2rem;
+      cursor: pointer;
+      padding: 4px 6px;
+      line-height: 1;
+      flex-shrink: 0;
+    }
+    .ios-hint {
+      display: none;
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 12px 14px;
+      margin-bottom: 14px;
+      font-size: 0.85rem;
+      color: #cbd5e1;
+      line-height: 1.45;
+    }
+    .ios-hint.show { display: block; }
+    .ios-hint strong { color: var(--accent); }
+
   </style>
 </head>
 <body>
@@ -377,6 +443,20 @@
   </nav>
 
   <main class="content">
+    <!-- Banner instal·lar app -->
+    <div class="install-banner" id="installBanner">
+      <div class="ib-icon">📲</div>
+      <div class="ib-text">
+        <strong>Instal·la VMP LEGAL</strong>
+        <span>Afegeix-la a la pantalla d'inici per accedir-hi més ràpid</span>
+      </div>
+      <button class="ib-btn" id="installBtn">Instal·lar</button>
+      <button class="ib-close" id="installClose" aria-label="Tancar">×</button>
+    </div>
+    <div class="ios-hint" id="iosHint">
+      <strong>Per instal·lar a l'iPhone:</strong> toca el botó <strong>Compartir</strong> (quadre amb fletxa) i després <strong>«Afegeix a la pantalla d'inici»</strong>.
+    </div>
+
     <!-- ===== PESTANYA 1: CONSULTA ===== -->
     <section id="consulta" class="panel active">
       <!-- Vista 1: Llista d'opcions -->
@@ -597,6 +677,72 @@
         }
       });
     });
+
+    
+    // ===== INSTAL·LAR PWA =====
+    let deferredPrompt = null;
+    const installBanner = document.getElementById('installBanner');
+    const installBtn = document.getElementById('installBtn');
+    const installClose = document.getElementById('installClose');
+    const iosHint = document.getElementById('iosHint');
+
+    function isStandalone() {
+      return window.matchMedia('(display-mode: standalone)').matches
+        || window.navigator.standalone === true;
+    }
+
+    function isIos() {
+      return /iphone|ipad|ipod/i.test(navigator.userAgent);
+    }
+
+    // Mostrar banner quan el navegador permet instal·lar
+    window.addEventListener('beforeinstallprompt', (e) => {
+      e.preventDefault();
+      deferredPrompt = e;
+      if (!isStandalone() && !localStorage.getItem('vmp-install-dismissed')) {
+        installBanner.classList.add('show');
+      }
+    });
+
+    installBtn.addEventListener('click', async () => {
+      if (!deferredPrompt) return;
+      deferredPrompt.prompt();
+      const { outcome } = await deferredPrompt.userChoice;
+      deferredPrompt = null;
+      installBanner.classList.remove('show');
+      if (outcome === 'accepted') {
+        localStorage.setItem('vmp-install-dismissed', '1');
+      }
+    });
+
+    installClose.addEventListener('click', () => {
+      installBanner.classList.remove('show');
+      localStorage.setItem('vmp-install-dismissed', '1');
+    });
+
+    // iOS: mostrar instruccions (Safari no té beforeinstallprompt)
+    if (isIos() && !isStandalone() && !localStorage.getItem('vmp-install-dismissed')) {
+      iosHint.classList.add('show');
+      // també permet tancar-lo tocant
+      iosHint.addEventListener('click', () => {
+        iosHint.classList.remove('show');
+        localStorage.setItem('vmp-install-dismissed', '1');
+      });
+    }
+
+    // Si ja està instal·lada, no mostrar res
+    if (isStandalone()) {
+      installBanner.classList.remove('show');
+      iosHint.classList.remove('show');
+    }
+
+    // Mostrar banner també després d'uns segons si no s'ha desestimat (Android/Chrome)
+    setTimeout(() => {
+      if (!isStandalone() && !isIos() && !localStorage.getItem('vmp-install-dismissed') && deferredPrompt) {
+        installBanner.classList.add('show');
+      }
+    }, 1500);
+
 
     if ('serviceWorker' in navigator) {
       navigator.serviceWorker.register('sw.js').catch(() => {});
