@@ -504,7 +504,10 @@
     .home-btn{border:0;background:rgba(255,255,255,.14);color:#fff;border-radius:10px;padding:9px 11px;font-size:14px;font-weight:700;cursor:pointer;}
     .home-btn:hover{background:rgba(255,255,255,.22);}
     .branch-title{font-size:11px;opacity:.8;display:block;margin-top:2px;}
-    .source-note{font-size:12px;color:#697680;margin-top:16px;line-height:1.45;}
+    .source-note{font-size:12px;color:#b8c9dc;margin-top:16px;line-height:1.45;}
+    .vtc-official-link{display:block;margin:12px 0 10px;color:#8fd3ff!important;text-decoration:underline;text-decoration-thickness:2px;text-underline-offset:3px;font-weight:800;font-size:14px;line-height:1.4;}
+    .vtc-official-link:visited{color:#8fd3ff!important;}
+    .vtc-official-link:active,.vtc-official-link:focus{color:#ffe27a!important;}
     .warning-note{background:#fff7e8;border:1px solid #f0d7a2;border-radius:14px;padding:12px 14px;color:#715b2a;font-size:13px;line-height:1.45;margin-bottom:14px;}
     @media (max-width:640px){
       .home-screen{padding:0 0 12px;}
@@ -801,8 +804,8 @@
         <label for="vtcPlate">Matrícula</label>
         <div class="vtc-live-row"><input id="vtcPlate" type="text" inputmode="text" autocomplete="off" placeholder="1234 ABC" maxlength="10"><button type="button" id="vtcOfficialLookup">🔎 Consulta oficial</button></div>
         <div id="vtcLookupStatus" class="vtc-lookup-status">No s’ha fet cap consulta en aquesta sessió.</div>
-        <a class="vtc-official-link" href="https://apps.fomento.gob.es/crgt/servlet/ServletController?accion=inicio&estilo=default&lang=es&modulo=datosconsulta" target="_blank" rel="noopener">Obrir directament el Registre d’Empreses i Activitats de Transport ↗</a>
-        <div class="source-note">Font oficial: Registre d’Empreses i Activitats de Transport (REAT) del Ministeri. El portal permet consultar per matrícula els vehicles inscrits. Si la consulta oficial canvia, l’app no inventa ni conserva una dada antiga com si fos actual.</div>
+        <a class="vtc-official-link" href="https://apps.fomento.gob.es/crgt/servlet/ServletController?accion=inicio&estilo=default&lang=es&modulo=datosconsulta" target="_self">🔗 Obrir la consulta oficial del REAT (mateixa pantalla) ↗</a>
+        <div class="source-note">Font oficial: Registre d’Empreses i Activitats de Transport (REAT) del Ministeri. En obrir-lo, selecciona <strong>Vehicle → Matrícula</strong> i introdueix la matrícula. Si la consulta oficial canvia, l’app no inventa ni conserva una dada antiga com si fos actual.</div>
       </div>
 
       <form id="vtcCheckerForm">
@@ -1123,7 +1126,7 @@
       if(plate.length<4){vtcLookupStatus.textContent='Introdueix una matrícula vàlida abans d’obrir la consulta oficial.';vtcPlate.focus();return;}
       localStorage.setItem('vtc-last-lookup',JSON.stringify({plate,stamp}));
       vtcLookupStatus.innerHTML=`Consulta preparada per a <strong>${plate}</strong> · ${stamp}. El resultat de validesa s’ha de confirmar al registre oficial que s’obre ara.`;
-      window.open(VTC_LIVE_URL,'_blank','noopener');
+      window.location.href=VTC_LIVE_URL;
     });
     try{const last=JSON.parse(localStorage.getItem('vtc-last-lookup')||'null');if(last)vtcLookupStatus.innerHTML=`Última consulta preparada: <strong>${last.plate}</strong> · ${last.stamp}.`;}catch(e){}
     vtcForm.addEventListener('submit',e=>{
