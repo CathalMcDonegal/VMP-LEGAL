@@ -712,6 +712,67 @@
     .vtc-bottom-actions{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:8px;margin-top:4px}
     .vtc-generate{min-height:48px;font-size:.95rem!important}
     @media(max-width:560px){.vtc-plate-row{grid-template-columns:1fr}.vtc-main-btn{min-height:46px}.vtc-source-row{flex-wrap:wrap}.vtc-source-row .quick-secondary{flex:1}.vtc-issue-grid{grid-template-columns:1fr}.vtc-vehicle-grid,.vtc-extra-grid{grid-template-columns:1fr}.vtc-extra-grid .full{grid-column:auto}}
+
+    /* ===== PANTALLES A PLE MÒBIL / RESULTATS ===== */
+    html, body { min-height: 100%; }
+    body { min-height: 100dvh; min-height: 100svh; }
+    header { padding-top: max(12px, env(safe-area-inset-top)); }
+    .content {
+      min-height: calc(100dvh - 126px);
+      min-height: calc(100svh - 126px);
+      padding-bottom: max(32px, env(safe-area-inset-bottom));
+    }
+    .panel.active { min-height: 100%; }
+    .app-result-screen {
+      position: fixed;
+      inset: 0;
+      z-index: 7000;
+      display: none;
+      flex-direction: column;
+      overflow-y: auto;
+      -webkit-overflow-scrolling: touch;
+      background: var(--bg);
+      padding: max(12px, env(safe-area-inset-top)) 14px max(20px, env(safe-area-inset-bottom));
+      animation: slideIn .22s ease;
+    }
+    .app-result-screen.show { display: flex; }
+    .app-result-head {
+      position: sticky;
+      top: 0;
+      z-index: 2;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 4px 0 12px;
+      margin-bottom: 4px;
+      background: linear-gradient(var(--bg) 78%, transparent);
+    }
+    .app-result-head h2 {
+      flex: 1;
+      min-width: 0;
+      font-size: 1rem;
+      color: var(--text);
+    }
+    .app-result-back {
+      flex: 0 0 auto;
+      border: 1px solid var(--border);
+      border-radius: 11px;
+      background: #1e3a5f;
+      color: var(--accent);
+      padding: 10px 13px;
+      font: inherit;
+      font-size: .82rem;
+      font-weight: 800;
+      cursor: pointer;
+    }
+    .app-result-body { width: 100%; max-width: 760px; margin: 0 auto; }
+    .app-result-body > .checker-result,
+    .app-result-body > .amb-result-card { margin-top: 0; }
+    @media(max-width:640px){
+      .content { padding-left: 12px; padding-right: 12px; }
+      .app-result-screen { padding-left: 12px; padding-right: 12px; }
+    }
+
 </style>
 <script src="https://cdn.sheetjs.com/xlsx-0.20.3/package/dist/xlsx.full.min.js"></script>
 </head>
@@ -1210,7 +1271,7 @@
       html+=`<div class="result-actions"><button type="button" id="printChecker">🖨️ Imprimir / PDF</button><button type="button" id="copyChecker">📋 Copiar resum</button></div>`;
       if(observations) html+=`<div class="result-section-title">📝 Observacions</div><div class="result-item info"><span>${observations.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/\n/g,'<br>')}</span></div>`;
       html+=`<div class="checker-disclaimer">Fitxa de control orientativa. El sistema parteix del criteri indicat: tot allò que no es marca es considera correcte. La conformitat definitiva depèn de la documentació, les comprovacions físiques i la normativa municipal aplicable.</div>`;
-      checkerResult.className='checker-result show'; checkerResult.innerHTML=html; checkerResult.scrollIntoView({behavior:'smooth',block:'start'});
+      checkerResult.className='checker-result show'; checkerResult.innerHTML=html; openResultScreen(checkerResult,'Resultat del control VMP',()=>{checkerResult.className='checker-result';checkerResult.innerHTML='';});
       const incidentLabels=[...findings,...circulationFindings].map(r=>r.label);
       saveControl({branch:currentBranch, date:dateLabel, brand, model, agent, place, areaLabel, result:vehicleStatus==='bad'?'🔴 VEHICLE NO CONFORME':vehicleStatus==='unknown'?'🟠 REVISAR VEHICLE':'🟢 VEHICLE CONFORME', incidentCount:incidentLabels.length, incidents:incidentLabels, observations, evidence:currentEvidence.slice()});
       document.getElementById('printChecker').onclick=()=>window.print();
@@ -1347,13 +1408,13 @@
     }
     function ambRenderRecord(record,target){
       if(!target)return;
-      if(!record){target.innerHTML='<div class="amb-result-card bad"><div class="amb-result-title">🔴 No consta a l’actualització AMB</div><div class="result-sub">La matrícula no apareix en la base local importada. Això no substitueix una verificació oficial si l’actualització és antiga.</div></div>';target.style.display='block';return;}
+      if(!record){target.innerHTML='<div class="amb-result-card bad"><div class="amb-result-title">🔴 No consta a l’actualització AMB</div><div class="result-sub">La matrícula no apareix en la base local importada. Això no substitueix una verificació oficial si l’actualització és antiga.</div></div>';target.style.display='block';openResultScreen(target,'Resultat de la consulta AMB',()=>{target.style.display='none';});return;}
       const fields=[['Matrícula',record.plate],['Titular',record.holder],['DNI/NIF',record.dni],['Fi vigència',record.expiry],['Registre',record.registration],['Bastidor',record.vin],['Marca',record.brand],['Model',record.model],['Mode',record.mode]].filter(x=>x[1]);
-      target.innerHTML='<div class="amb-result-card ok"><div class="amb-result-title">🟢 Autorització AMB trobada</div><div class="amb-data-grid">'+fields.map(x=>'<div><small>'+x[0]+'</small><strong>'+String(x[1]).replace(/[<>]/g,'')+'</strong></div>').join('')+'</div></div>';target.style.display='block';
+      target.innerHTML='<div class="amb-result-card ok"><div class="amb-result-title">🟢 Autorització AMB trobada</div><div class="amb-data-grid">'+fields.map(x=>'<div><small>'+x[0]+'</small><strong>'+String(x[1]).replace(/[<>]/g,'')+'</strong></div>').join('')+'</div></div>';target.style.display='block';openResultScreen(target,'Resultat de la consulta AMB',()=>{target.style.display='none';});
     }
     async function ambSearchPlate(plate,target=ambLocalResult){
-      const p=normalizePlate(plate);if(p.length<4){target.innerHTML='<div class="amb-db-status warn">Introdueix una matrícula vàlida.</div>';target.style.display='block';return null;}
-      try{const current=await ambGetMeta('current');if(!current){target.innerHTML='<div class="amb-db-status warn">Encara no hi ha cap Excel AMB importat en aquest dispositiu.</div>';target.style.display='block';return null;}const record=await ambGetRecord(p);ambRenderRecord(record,target);return record;}catch(e){target.innerHTML='<div class="amb-db-status warn">No s’ha pogut consultar la base local.</div>';target.style.display='block';return null;}
+      const p=normalizePlate(plate);if(p.length<4){target.innerHTML='<div class="amb-db-status warn">Introdueix una matrícula vàlida.</div>';target.style.display='block';openResultScreen(target,'Consulta AMB',()=>{target.style.display='none';});return null;}
+      try{const current=await ambGetMeta('current');if(!current){target.innerHTML='<div class="amb-db-status warn">Encara no hi ha cap Excel AMB importat en aquest dispositiu.</div>';target.style.display='block';openResultScreen(target,'Consulta AMB',()=>{target.style.display='none';});return null;}const record=await ambGetRecord(p);ambRenderRecord(record,target);return record;}catch(e){target.innerHTML='<div class="amb-db-status warn">No s’ha pogut consultar la base local.</div>';target.style.display='block';openResultScreen(target,'Consulta AMB',()=>{target.style.display='none';});return null;}
     }
     async function ambRenderStatus(){
       try{
@@ -1382,7 +1443,7 @@
       const stamp=new Date().toLocaleString('ca-ES',{dateStyle:'short',timeStyle:'short'});
       if(plate.length<4){vtcLookupStatus.textContent='Introdueix una matrícula vàlida abans d’obrir la consulta oficial.';vtcPlate.focus();return;}
       localStorage.setItem('vtc-last-lookup',JSON.stringify({plate,stamp}));
-      vtcLookupStatus.innerHTML=`Consulta preparada per a <strong>${plate}</strong> · ${stamp}. El resultat de validesa s’ha de confirmar al registre oficial que s’obre ara.`;
+      vtcLookupStatus.innerHTML=`<div class="amb-result-card ok"><div class="amb-result-title">🔎 Consulta preparada</div><div class="result-sub">Matrícula <strong>${plate}</strong> · ${stamp}. El resultat de validesa s’ha de confirmar al registre oficial que s’obre ara.</div></div>`;
       window.open(VTC_LIVE_URL,'_blank','noopener,noreferrer');
     });
     try{const last=JSON.parse(localStorage.getItem('vtc-last-lookup')||'null');if(last)vtcLookupStatus.innerHTML=`Última consulta preparada: <strong>${last.plate}</strong> · ${last.stamp}.`;}catch(e){}
@@ -1402,11 +1463,39 @@
       if(obs)html+=`<div class="result-section-title">📝 Observacions</div><div class="result-item info"><span>${obs.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/\n/g,'<br>')}</span></div>`;
       html+=`<div class="checker-disclaimer">La referència legal i la franja sancionadora es mostren com a guia de qualificació. Abans de formalitzar la denúncia cal comprovar l’àmbit competencial, el fet concret i la norma vigent aplicable. La consulta de matrícula és independent i s’ha de confirmar a la font oficial.</div>`;
       html+=`<div class="result-actions"><button type="button" id="printVtc">🖨️ Imprimir / PDF</button><button type="button" id="copyVtc">📋 Copiar resum</button></div>`;
-      vtcResult.className='checker-result show';vtcResult.innerHTML=html;vtcResult.scrollIntoView({behavior:'smooth',block:'start'});
+      vtcResult.className='checker-result show';vtcResult.innerHTML=html;openResultScreen(vtcResult,'Resultat del control VTC',()=>{vtcResult.className='checker-result';vtcResult.innerHTML='';});
       document.getElementById('printVtc').onclick=()=>window.print();document.getElementById('copyVtc').onclick=async()=>{try{await navigator.clipboard.writeText(vtcResult.innerText);document.getElementById('copyVtc').textContent='✓ Copiat';}catch(e){document.getElementById('copyVtc').textContent='No disponible';}};
       saveControl({branch:'vtc',date:stamp,brand,model,agent,place,areaLabel,result:checked.length?'🔴 INCIDÈNCIES VTC':'🟢 VTC SENSE INCIDÈNCIES',incidentCount:checked.length,incidents:checked.map(id=>VTC_INFRACCIONS.find(x=>x.id===id)?.label||id),observations:obs,evidence:[]});
     });
     vtcReset.addEventListener('click',()=>{vtcForm.reset();vtcResult.className='checker-result';vtcResult.innerHTML='';});
+
+
+    // Resultats com a pantalla independent: evita haver de fer scroll per trobar-los.
+    function openResultScreen(resultEl, title, onBack){
+      if(!resultEl) return;
+      let screen=resultEl._resultScreen;
+      if(!screen){
+        screen=document.createElement('section');
+        screen.className='app-result-screen';
+        screen.setAttribute('aria-modal','true');
+        screen.innerHTML='<div class="app-result-head"><button type="button" class="app-result-back">← Tornar</button><h2></h2></div><div class="app-result-body"></div>';
+        document.body.appendChild(screen);
+        resultEl._resultScreen=screen;
+      }
+      screen.querySelector('h2').textContent=title;
+      const body=screen.querySelector('.app-result-body');
+      body.innerHTML='';
+      body.appendChild(resultEl);
+      resultEl.style.display='';
+      screen.querySelector('.app-result-back').onclick=()=>{
+        screen.classList.remove('show');
+        document.body.style.overflow='';
+        if(onBack) onBack();
+      };
+      screen.classList.add('show');
+      document.body.style.overflow='hidden';
+      screen.scrollTop=0;
+    }
 
     let currentBranch = 'vmp';
     const homeBtn=document.getElementById('homeBtn'), openVmp=document.getElementById('openVmp'), openVtc=document.getElementById('openVtc'), homeSplashBtn=document.getElementById('homeSplashBtn');
