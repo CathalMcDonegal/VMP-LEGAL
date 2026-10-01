@@ -504,15 +504,11 @@
     .home-wrap{width:min(760px,100%);text-align:center;position:relative;}
     .home-art{position:relative;width:100%;aspect-ratio:auto;border-radius:28px;overflow:hidden;box-shadow:0 22px 60px rgba(0,0,0,.38);border:1px solid rgba(240,193,75,.28);background:#0b2742;}
     .home-art img{display:block;width:100%;height:auto;object-fit:contain;}
-    .home-brand{display:flex;align-items:center;justify-content:center;gap:12px;margin:0 auto 28px;max-width:420px;}
-    .home-brand img{width:64px;height:64px;border-radius:16px;box-shadow:0 8px 28px rgba(0,0,0,.35);}
-    .home-brand div{text-align:left}.home-brand strong{display:block;font-size:1.2rem;color:#fff;letter-spacing:.02em}.home-brand span{display:block;margin-top:4px;color:rgba(232,238,247,.68);font-size:.78rem;}
-    .home-actions{display:grid;gap:14px;width:min(100%,520px);margin:0 auto;}
-    .home-choice{display:grid;grid-template-columns:58px minmax(0,1fr) 24px;align-items:center;gap:12px;text-align:left;border:1px solid rgba(255,255,255,.16);border-radius:20px;padding:16px;background:rgba(18,35,58,.9);color:#fff;cursor:pointer;box-shadow:0 10px 28px rgba(0,0,0,.2);transition:transform .15s ease,border-color .15s ease,background .15s ease;}
-    .home-choice:active{transform:scale(.985)} .home-choice:focus-visible{outline:3px solid #fff;outline-offset:3px;}
-    .home-choice:hover{background:rgba(28,52,82,.98);border-color:var(--accent);}
-    .home-choice-icon{display:grid;place-items:center;width:58px;height:58px;border-radius:16px;background:rgba(255,255,255,.1);font-size:30px;}
-    .home-choice strong{display:block;font-size:1.08rem}.home-choice small{display:block;margin-top:5px;color:rgba(232,238,247,.68);font-size:.75rem;line-height:1.35}.home-choice b{font-size:1.5rem;color:var(--accent);text-align:center;}
+    .home-hit{position:absolute;border:0;background:transparent;cursor:pointer;z-index:3;border-radius:28px;}
+    .home-hit:focus-visible{outline:3px solid #fff;outline-offset:3px;}
+    .home-hit.vmp{left:6%;top:40.5%;width:41%;height:10.5%;}
+    .home-hit.vtc{right:6%;top:40.5%;width:41%;height:10.5%;}
+    .home-hit.home{display:none;}
     .home-hint{position:absolute;left:12px;right:12px;bottom:4px;color:rgba(255,255,255,.65);font-size:10px;pointer-events:none;z-index:2;}
     .home-note{margin-top:10px;font-size:11px;color:rgba(232,238,247,.62);}
     .home-screen .install-fixed{display:none;}
@@ -796,23 +792,12 @@
 
   <section class="home-screen" id="homeScreen">
     <div class="home-wrap">
-      <div class="home-brand">
-        <img src="icon-192.png" alt="VMP · VTC LEGAL">
-        <div><strong>VMP · VTC LEGAL</strong><span>Control i consulta normativa</span></div>
+      <div class="home-art">
+        <img src="home-splash.jpg" fetchpriority="high" decoding="async" alt="VMP • VTC LEGAL PRO — Policia Local La Palma de Cervelló">
+        <button class="home-hit vmp" id="openVmp" type="button" aria-label="Obrir VMP LEGAL"></button>
+        <button class="home-hit vtc" id="openVtc" type="button" aria-label="Obrir VTC LEGAL"></button>
       </div>
-      <div class="home-actions" aria-label="Selecciona l'àmbit de treball">
-        <button class="home-choice vmp" id="openVmp" type="button">
-          <span class="home-choice-icon" aria-hidden="true">🛴</span>
-          <span><strong>VMP LEGAL</strong><small>Patinets i vehicles de mobilitat personal</small></span>
-          <b aria-hidden="true">→</b>
-        </button>
-        <button class="home-choice vtc" id="openVtc" type="button">
-          <span class="home-choice-icon" aria-hidden="true">🚕</span>
-          <span><strong>VTC LEGAL</strong><small>Vehicles amb conductor · REAT · AMB</small></span>
-          <b aria-hidden="true">→</b>
-        </button>
-      </div>
-      <p class="home-note">Tria una opció per començar. Tots els botons de la pantalla d’inici obren una funció concreta.</p>
+      <p class="home-note">Selecciona VMP LEGAL o VTC LEGAL. Toca el botó corresponent.</p>
     </div>
   </section>
 
