@@ -1043,7 +1043,7 @@
     </section>
 
     <section id="nomenclator" class="panel">
-      <input type="search" class="search-input" id="normSearch" placeholder="Cerca normativa...">
+      <div class="search-box"><h2>🔎 Cercador de normativa</h2><p>Escriu el concepte i obre els resultats en una pantalla independent.</p><div style="display:grid;grid-template-columns:minmax(0,1fr) auto;gap:8px"><input type="search" class="search-input" id="normSearch" placeholder="Ex.: casc, registre, assegurança..." style="margin:0"><button type="button" class="checker-btn primary" id="normSearchBtn">Cercar</button></div></div>
       <div id="normList"></div>
     </section>
 
@@ -1505,7 +1505,7 @@
     const vtcVerifierTab=document.getElementById('vtcVerifierTab');
 
     const installBannerTitle=document.getElementById('installBannerTitle'), installFixedTitle=document.getElementById('installFixedTitle');
-    const normSearch=document.getElementById('normSearch'), normList=document.getElementById('normList');
+    const normSearch=document.getElementById('normSearch'), normList=document.getElementById('normList'), normSearchBtn=document.getElementById('normSearchBtn');
     const chipsEl=document.getElementById('chips'), listView=document.getElementById('consultaList'), detailView=document.getElementById('consultaDetail'), detailCard=document.getElementById('detailCard'), backBtn=document.getElementById('backBtn');
 
     function branchData(){ return currentBranch==='vmp' ? {infra:VMP_INFRACCIONS,nom:VMP_NOMENCLATOR} : {infra:VTC_INFRACCIONS,nom:VTC_NOMENCLATOR}; }
@@ -1610,6 +1610,13 @@
       filtered.forEach(n=>{const item=document.createElement('div');item.className='norm-item';item.innerHTML=`<h4>${n.titol}</h4><p>${n.text}</p><span class="tag">${n.tag}</span>`;normList.appendChild(item);});
     }
     normSearch.addEventListener('input',e=>renderNorm(e.target.value));
+    function searchNormFullScreen(){
+      const q=normSearch.value.trim();
+      renderNorm(q);
+      openResultScreen(normList,q?'Resultats: '+q:'Normativa',()=>{normSearch.value='';renderNorm('');});
+    }
+    normSearchBtn.addEventListener('click',searchNormFullScreen);
+    normSearch.addEventListener('keydown',e=>{if(e.key==='Enter'){e.preventDefault();searchNormFullScreen();}});
     document.querySelector('.tabs').addEventListener('click',e=>{
       const tab=e.target.closest('.tab');
       if(tab) activateTab(tab.dataset.tab,true);
