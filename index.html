@@ -1,19 +1,17 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="ca">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <meta name="theme-color" content="#1a3a6e">
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+  <meta name="theme-color" content="#0b2742">
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-  <meta name="apple-mobile-web-app-title" content="VMP LEGAL">
-  <link rel="manifest" href="manifest.json">
-  <link rel="icon" href="logo.jpg">
-  <link rel="apple-touch-icon" href="icon-192.png">
-  <link rel="icon" type="image/png" sizes="192x192" href="icon-192.png">
-  <link rel="icon" type="image/png" sizes="512x512" href="icon-512.png">
-  <title>VMP LEGAL</title>
+  <meta name="apple-mobile-web-app-title" content="VMP · VTC LEGAL">
+  <link rel="manifest" href="./manifest.json">
+  <link rel="icon" href="./icon-192.png">
+  <title>VMP · VTC LEGAL</title>
   <style>
+
     :root {
       --bg: #0a1628;
       --card: #12253f;
@@ -473,142 +471,307 @@
       padding-bottom: 90px;
     }
 
+  
+    /* ===== INICI / SELECTOR ===== */
+    .home-screen{min-height:calc(100vh - 24px);display:flex;align-items:center;justify-content:center;padding:24px 16px 110px;box-sizing:border-box;background:linear-gradient(180deg,#f7f9fb 0%,#eef3f7 100%);}
+    .home-wrap{width:min(920px,100%);text-align:center;}
+    .home-logo{width:min(180px,42vw);height:min(180px,42vw);object-fit:cover;border-radius:28px;box-shadow:0 12px 35px rgba(0,0,0,.16);background:#fff;}
+    .home-wrap h1{margin:18px 0 6px;font-size:clamp(30px,7vw,48px);letter-spacing:-.03em;color:#0b2742;}
+    .home-wrap .home-sub{margin:0 auto 24px;color:#5c6975;font-size:15px;max-width:620px;}
+    .choice-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px;margin-top:22px;}
+    .choice{border:0;border-radius:24px;background:#fff;box-shadow:0 10px 30px rgba(11,39,66,.10);padding:22px 18px;cursor:pointer;text-align:left;transition:transform .18s ease,box-shadow .18s ease;border:1px solid rgba(11,39,66,.08);}
+    .choice:hover{transform:translateY(-3px);box-shadow:0 16px 36px rgba(11,39,66,.15);}
+    .choice:active{transform:translateY(0);}
+    .choice-icon{height:150px;border-radius:18px;background:#f2f5f8;display:flex;align-items:center;justify-content:center;margin-bottom:16px;overflow:hidden;}
+    .choice-icon svg{width:78%;height:78%;}
+    .choice h2{margin:0 0 5px;color:#0b2742;font-size:24px;}
+    .choice p{margin:0;color:#687582;font-size:14px;line-height:1.45;}
+    .home-note{margin-top:18px;font-size:12px;color:#7b8792;}
+    .home-screen .install-fixed{display:none;}
+    body.home-mode header, body.home-mode nav.tabs, body.home-mode main.content{display:none;}
+    body.home-mode .home-screen{display:flex;}
+    body:not(.home-mode) .home-screen{display:none;}
+    .home-top{display:flex;align-items:center;gap:8px;}
+    .home-btn{border:0;background:rgba(255,255,255,.14);color:#fff;border-radius:10px;padding:9px 11px;font-size:14px;font-weight:700;cursor:pointer;}
+    .home-btn:hover{background:rgba(255,255,255,.22);}
+    .branch-title{font-size:11px;opacity:.8;display:block;margin-top:2px;}
+    .source-note{font-size:12px;color:#697680;margin-top:16px;line-height:1.45;}
+    .warning-note{background:#fff7e8;border:1px solid #f0d7a2;border-radius:14px;padding:12px 14px;color:#715b2a;font-size:13px;line-height:1.45;margin-bottom:14px;}
+    @media (max-width:640px){
+      .choice-grid{grid-template-columns:1fr;}
+      .choice-icon{height:125px;}
+      .home-screen{padding-top:20px;}
+    }
+
+    /* ===== VERIFICADOR VMP ===== */
+    .checker-intro {
+      background: linear-gradient(135deg, rgba(240,193,75,.12), rgba(59,130,246,.08));
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 16px;
+      margin-bottom: 14px;
+    }
+    .checker-intro h2 { color: var(--accent); font-size: 1.05rem; margin-bottom: 7px; }
+    .checker-intro p { color: var(--muted); font-size: .84rem; line-height: 1.45; }
+    .checker-section {
+      background: var(--card); border: 1px solid var(--border); border-radius: 16px;
+      padding: 14px; margin-bottom: 12px;
+    }
+    .checker-section h3 { font-size: .92rem; color: var(--accent); margin-bottom: 10px; }
+    .check-question {
+      padding: 12px 0; border-top: 1px solid rgba(148,163,184,.14);
+    }
+    .check-question:first-child { border-top: 0; padding-top: 0; }
+    .check-question:last-child { padding-bottom: 0; }
+    .check-question label.title { display:block; font-size:.86rem; font-weight:650; margin-bottom:8px; line-height:1.35; }
+    .check-options { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:7px; }
+    .check-option { position:relative; }
+    .check-option input { position:absolute; opacity:0; pointer-events:none; }
+    .check-option span {
+      display:block; text-align:center; padding:9px 8px; border:1px solid var(--border);
+      border-radius:10px; background:#10223a; color:var(--muted); font-size:.78rem; cursor:pointer;
+    }
+    .check-option input:checked + span { background:rgba(240,193,75,.14); border-color:var(--accent); color:var(--text); font-weight:700; }
+    .checker-actions { display:flex; gap:8px; margin-top:12px; }
+    .checker-btn { flex:1; border:0; border-radius:12px; padding:12px; font-weight:700; cursor:pointer; font-size:.85rem; }
+    .checker-btn.primary { background:var(--accent); color:#0a1628; }
+    .checker-btn.secondary { background:#1e3a5f; color:var(--text); }
+    .checker-result { display:none; margin-top:14px; }
+    .checker-result.show { display:block; animation:fadeIn .25s ease; }
+    .result-head { border-radius:16px; padding:16px; border:1px solid var(--border); margin-bottom:10px; }
+    .result-head.ok { background:rgba(34,197,94,.10); border-color:rgba(34,197,94,.45); }
+    .result-head.bad { background:rgba(239,68,68,.10); border-color:rgba(239,68,68,.45); }
+    .result-head.unknown { background:rgba(240,193,75,.10); border-color:rgba(240,193,75,.45); }
+    .result-status { font-size:1.15rem; font-weight:800; margin-bottom:5px; }
+    .result-sub { color:var(--muted); font-size:.8rem; line-height:1.4; }
+    .result-item { background:var(--card); border:1px solid var(--border); border-left:4px solid var(--danger); border-radius:12px; padding:12px; margin-bottom:8px; }
+    .result-item.ok { border-left-color:var(--ok); }
+    .result-item strong { display:block; font-size:.84rem; margin-bottom:4px; }
+    .result-item span { color:var(--muted); font-size:.76rem; line-height:1.4; }
+    .result-total { background:#10223a; border:1px solid var(--border); border-radius:12px; padding:12px; margin-top:10px; font-size:.84rem; }
+    .result-total b { color:var(--accent); }
+    .checker-disclaimer { color:var(--muted); font-size:.72rem; line-height:1.4; margin-top:12px; }
+    @media (max-width:420px){ .check-options{grid-template-columns:1fr;} }
+
   </style>
 </head>
-<body>
-  <div class="watermark" aria-hidden="true">
-    <span class="wm-bottom">TIP 18675 CME  ·  TIP 1235 PL</span>
-  </div>
+<body class="home-mode">
+  <div class="watermark" aria-hidden="true"><span class="wm-bottom">TIP 18675 CME · TIP 1235 PL</span></div>
+
+  <section class="home-screen" id="homeScreen">
+    <div class="home-wrap">
+      <img class="home-logo" src="logo.jpg" alt="Policia Local La Palma de Cervelló">
+      <h1>LEGAL</h1>
+      <p class="home-sub">Selecciona l’àmbit que vols consultar.</p>
+      <div class="choice-grid">
+        <button class="choice" id="openVmp" type="button" aria-label="Obrir VMP LEGAL">
+          <div class="choice-icon">
+            <svg viewBox="0 0 240 150" aria-hidden="true">
+              <circle cx="66" cy="112" r="18" fill="#1b2530"/><circle cx="174" cy="112" r="18" fill="#1b2530"/>
+              <rect x="63" y="88" width="114" height="9" rx="4" fill="#313d48" transform="rotate(-4 63 88)"/>
+              <rect x="144" y="30" width="9" height="75" rx="4" fill="#313d48" transform="rotate(-8 144 30)"/>
+              <rect x="139" y="26" width="44" height="8" rx="4" fill="#313d48" transform="rotate(5 139 26)"/>
+              <circle cx="70" cy="112" r="7" fill="#7d8790"/><circle cx="174" cy="112" r="7" fill="#7d8790"/>
+              <text x="120" y="145" text-anchor="middle" font-size="18" font-weight="700" fill="#0b2742">PATINET VMP</text>
+            </svg>
+          </div>
+          <h2>VMP LEGAL</h2>
+          <p>Patinets i vehicles de mobilitat personal · denúncies · nomenclàtor · guia</p>
+        </button>
+        <button class="choice" id="openVtc" type="button" aria-label="Obrir VTC LEGAL">
+          <div class="choice-icon">
+            <svg viewBox="0 0 240 150" aria-hidden="true">
+              <path d="M30 95 L45 62 Q50 51 65 48 L169 48 Q183 50 190 62 L208 95 Z" fill="#263746"/>
+              <rect x="42" y="87" width="166" height="22" rx="8" fill="#17232e"/>
+              <path d="M69 54 L111 54 L111 78 L58 78 Z" fill="#9db5c8"/>
+              <path d="M119 54 L165 54 L183 78 L119 78 Z" fill="#9db5c8"/>
+              <circle cx="70" cy="108" r="17" fill="#17232e"/><circle cx="181" cy="108" r="17" fill="#17232e"/>
+              <circle cx="70" cy="108" r="7" fill="#8b969f"/><circle cx="181" cy="108" r="7" fill="#8b969f"/>
+              <rect x="96" y="89" width="52" height="8" rx="4" fill="#f0b323"/>
+              <text x="120" y="145" text-anchor="middle" font-size="18" font-weight="700" fill="#0b2742">VEHICLE VTC</text>
+            </svg>
+          </div>
+          <h2>VTC LEGAL</h2>
+          <p>Vehicles de transport amb conductor · denúncies · nomenclàtor · guia</p>
+        </button>
+      </div>
+      <p class="home-note">Mateix sistema de consulta i instal·lació PWA per a les dues branques.</p>
+    </div>
+  </section>
 
   <header>
-    <img src="logo.jpg" alt="Logo Policia Local La Palma de Cervelló">
+    <div class="home-top">
+      <button class="home-btn" id="homeBtn" type="button">⌂ Inici</button>
+      <img src="logo.jpg" alt="Logo Policia Local La Palma de Cervelló">
+    </div>
     <div class="title">
-      <h1>VMP LEGAL</h1>
-      <p>Normativa · Denúncies · Guia · En vigor 1/10/2026</p>
+      <h1 id="appTitle">VMP LEGAL</h1>
+      <p id="appSubtitle">Normativa · Denúncies · Guia · En vigor 1/10/2026</p>
     </div>
   </header>
 
   <nav class="tabs">
     <div class="tab active" data-tab="consulta">Consulta</div>
+    <div class="tab vmp-only-tab" id="verificadorTab" data-tab="verificador">Verificador</div>
     <div class="tab" data-tab="nomenclator">Nomenclàtor</div>
     <div class="tab" data-tab="guia">Guia</div>
   </nav>
 
   <main class="content">
-    <!-- Banner instal·lar app -->
     <div class="install-banner" id="installBanner">
-      <div class="ib-icon">📲</div>
-      <div class="ib-text">
-        <strong>Instal·la VMP LEGAL</strong>
-        <span>Afegeix-la a la pantalla d'inici per accedir-hi més ràpid</span>
-      </div>
-      <button class="ib-btn" id="installBtn">Instal·lar</button>
-      <button class="ib-close" id="installClose" aria-label="Tancar">×</button>
+      <div class="ib-icon">📲</div><div class="ib-text"><strong id="installBannerTitle">Instal·la VMP LEGAL</strong><span>Afegeix-la a la pantalla d'inici per accedir-hi més ràpid</span></div>
+      <button class="ib-btn" id="installBtn">Instal·lar</button><button class="ib-close" id="installClose" aria-label="Tancar">×</button>
     </div>
-    <div class="ios-hint" id="iosHint">
-      <strong>Per instal·lar a l'iPhone:</strong> toca el botó <strong>Compartir</strong> (quadre amb fletxa) i després <strong>«Afegeix a la pantalla d'inici»</strong>.
-    </div>
+    <div class="ios-hint" id="iosHint"><strong>Per instal·lar a l'iPhone:</strong> toca el botó <strong>Compartir</strong> i després <strong>«Afegeix a la pantalla d'inici»</strong>.</div>
 
-    <!-- ===== PESTANYA 1: CONSULTA ===== -->
     <section id="consulta" class="panel active">
-      <!-- Vista 1: Llista d'opcions -->
       <div id="consultaList" class="active">
-        <div class="search-box">
-          <h2>🔍 Cercador de denúncies</h2>
-          <p>Toca una infracció per veure l’article i l’import de la sanció.</p>
-          <div class="chips" id="chips"></div>
-        </div>
+        <div class="search-box"><h2>🔍 Cercador de denúncies</h2><p id="consultaHelp">Toca una infracció per veure l’article i l’import de la sanció.</p><div class="chips" id="chips"></div></div>
       </div>
-
-      <!-- Vista 2: Detall de la sanció -->
-      <div id="consultaDetail">
-        <div class="detail-header">
-          <button class="back-btn" id="backBtn">← Tornar</button>
-        </div>
-        <div class="detail-card" id="detailCard">
-          <!-- s’omple amb JS -->
-        </div>
-      </div>
+      <div id="consultaDetail"><div class="detail-header"><button class="back-btn" id="backBtn">← Tornar</button></div><div class="detail-card" id="detailCard"></div></div>
     </section>
 
-    <!-- ===== PESTANYA 2: NOMENCLÀTOR ===== -->
+    <section id="verificador" class="panel">
+      <div class="checker-intro">
+        <h2>🛴 Verificador VMP</h2>
+        <p>Comprova en pocs passos si el patinet compleix les condicions bàsiques de VMP i detecta les possibles infraccions associades. El resultat és orientatiu i depèn de la normativa i de les circumstàncies del cas.</p>
+      </div>
+      <form id="vmpCheckerForm" novalidate>
+        <div class="checker-section">
+          <h3>1. Característiques del vehicle</h3>
+          <div class="check-question">
+            <label class="title">El vehicle és propulsat exclusivament per un motor elèctric?</label>
+            <div class="check-options">
+              <label class="check-option"><input type="radio" name="motor" value="yes"><span>✓ Sí</span></label>
+              <label class="check-option"><input type="radio" name="motor" value="no"><span>✕ No</span></label>
+            </div>
+          </div>
+          <div class="check-question">
+            <label class="title">És d'una sola plaça?</label>
+            <div class="check-options">
+              <label class="check-option"><input type="radio" name="seat" value="yes"><span>✓ Sí</span></label>
+              <label class="check-option"><input type="radio" name="seat" value="no"><span>✕ No</span></label>
+            </div>
+          </div>
+          <div class="check-question">
+            <label class="title">La velocitat màxima de disseny és d'entre 6 i 25 km/h?</label>
+            <div class="check-options">
+              <label class="check-option"><input type="radio" name="speed" value="yes"><span>✓ Sí</span></label>
+              <label class="check-option"><input type="radio" name="speed" value="no"><span>✕ No</span></label>
+            </div>
+          </div>
+          <div class="check-question">
+            <label class="title">El patinet ha estat modificat per superar els 25 km/h?</label>
+            <div class="check-options">
+              <label class="check-option"><input type="radio" name="modified" value="no"><span>✓ No</span></label>
+              <label class="check-option"><input type="radio" name="modified" value="yes"><span>✕ Sí</span></label>
+            </div>
+          </div>
+        </div>
+
+        <div class="checker-section">
+          <h3>2. Registre i documentació</h3>
+          <div class="check-question">
+            <label class="title">Està inscrit al Registre de Vehicles Personals Lleugers i porta la identificació exigible?</label>
+            <div class="check-options">
+              <label class="check-option"><input type="radio" name="registry" value="yes"><span>✓ Sí</span></label>
+              <label class="check-option"><input type="radio" name="registry" value="no"><span>✕ No</span></label>
+              <label class="check-option"><input type="radio" name="registry" value="unknown"><span>? No ho sé</span></label>
+            </div>
+          </div>
+          <div class="check-question">
+            <label class="title">Té una assegurança de responsabilitat civil en vigor?</label>
+            <div class="check-options">
+              <label class="check-option"><input type="radio" name="insurance" value="yes"><span>✓ Sí</span></label>
+              <label class="check-option"><input type="radio" name="insurance" value="no"><span>✕ No</span></label>
+              <label class="check-option"><input type="radio" name="insurance" value="unknown"><span>? No ho sé</span></label>
+            </div>
+          </div>
+        </div>
+
+        <div class="checker-section">
+          <h3>3. Conductor i circulació</h3>
+          <div class="check-question">
+            <label class="title">El conductor té 15 anys o més?</label>
+            <div class="check-options">
+              <label class="check-option"><input type="radio" name="age" value="yes"><span>✓ Sí</span></label>
+              <label class="check-option"><input type="radio" name="age" value="no"><span>✕ No</span></label>
+            </div>
+          </div>
+          <div class="check-question">
+            <label class="title">Porta el casc homologat o certificat correctament cordat?</label>
+            <div class="check-options">
+              <label class="check-option"><input type="radio" name="helmet" value="yes"><span>✓ Sí</span></label>
+              <label class="check-option"><input type="radio" name="helmet" value="no"><span>✕ No</span></label>
+            </div>
+          </div>
+          <div class="check-question">
+            <label class="title">Si circula de nit o amb poca visibilitat, disposa de l'enllumenat i element reflectant exigibles?</label>
+            <div class="check-options">
+              <label class="check-option"><input type="radio" name="lights" value="yes"><span>✓ Sí</span></label>
+              <label class="check-option"><input type="radio" name="lights" value="no"><span>✕ No</span></label>
+              <label class="check-option"><input type="radio" name="lights" value="na"><span>— No aplica</span></label>
+            </div>
+          </div>
+          <div class="check-question">
+            <label class="title">Està circulant per una vorera o zona reservada als vianants?</label>
+            <div class="check-options">
+              <label class="check-option"><input type="radio" name="sidewalk" value="no"><span>✓ No</span></label>
+              <label class="check-option"><input type="radio" name="sidewalk" value="yes"><span>✕ Sí</span></label>
+            </div>
+          </div>
+          <div class="check-question">
+            <label class="title">Està circulant per una via prohibida per als VMP?</label>
+            <div class="check-options">
+              <label class="check-option"><input type="radio" name="road" value="no"><span>✓ No</span></label>
+              <label class="check-option"><input type="radio" name="road" value="yes"><span>✕ Sí</span></label>
+            </div>
+          </div>
+          <div class="check-question">
+            <label class="title">Transporta un passatger?</label>
+            <div class="check-options">
+              <label class="check-option"><input type="radio" name="passenger" value="no"><span>✓ No</span></label>
+              <label class="check-option"><input type="radio" name="passenger" value="yes"><span>✕ Sí</span></label>
+            </div>
+          </div>
+        </div>
+
+        <div class="checker-actions">
+          <button class="checker-btn primary" type="submit">🔎 Verificar patinet</button>
+          <button class="checker-btn secondary" type="button" id="checkerReset">Netejar</button>
+        </div>
+      </form>
+      <div class="checker-result" id="checkerResult" aria-live="polite"></div>
+    </section>
+
     <section id="nomenclator" class="panel">
-      <input type="search" class="search-input" id="normSearch" placeholder="Cerca normativa (casc, edat, vorera, llums, registre...)">
+      <input type="search" class="search-input" id="normSearch" placeholder="Cerca normativa...">
       <div id="normList"></div>
     </section>
 
-    <!-- ===== PESTANYA 3: GUIA ===== -->
     <section id="guia" class="panel">
-      <div class="guide-section">
-        <h3>📌 Què és un VMP?</h3>
-        <ul>
-          <li>Vehicle d’una o més rodes, <strong>una sola plaça</strong>, propulsat exclusivament per motors elèctrics.</li>
-          <li>Velocitat màxima de disseny entre <strong>6 i 25 km/h</strong>.</li>
-          <li>Inclou els patinets elèctrics més comuns.</li>
-        </ul>
+      <div id="guideVmp">
+        <div class="guide-section"><h3>📌 Què és un VMP?</h3><ul><li>Vehicle d’una o més rodes, <strong>una sola plaça</strong>, propulsat exclusivament per motors elèctrics.</li><li>Velocitat màxima de disseny entre <strong>6 i 25 km/h</strong>.</li><li>Inclou els patinets elèctrics més comuns.</li></ul></div>
+        <div class="guide-section"><h3>📅 Novetats</h3><ul><li><strong>Edat mínima:</strong> 15 anys.</li><li><strong>Casc obligatori</strong> homologat o certificat.</li><li><strong>Element reflectant</strong> de nit o amb poca visibilitat.</li><li><strong>Armilla reflectant</strong> per als professionals.</li><li>Senyalització de maniobres amb el braç.</li></ul></div>
+        <div class="guide-section"><h3>🚫 Prohibicions principals</h3><ul><li>Circular per <strong>voreres i zones peatonals</strong>.</li><li>Circular per <strong>autopistes, autovies, travesseres i túnels urbans</strong>.</li><li>Portar <strong>passatger</strong>.</li><li>Utilitzar <strong>auriculars</strong> o mòbil en marxa.</li><li>Circular sense registre o assegurança quan siguin exigibles.</li></ul></div>
+        <div class="guide-section"><h3>⚖️ Font normativa</h3><ul><li>Reglament General de Circulació.</li><li>Text refós de la Llei sobre Trànsit, Circulació de Vehicles a Motor i Seguretat Vial.</li><li>Normativa específica sobre VMP i ordenances municipals.</li></ul></div>
       </div>
-      <div class="guide-section">
-        <h3>📅 Novetats que entren en vigor l’1 d’octubre de 2026</h3>
-        <ul>
-          <li><strong>Edat mínima:</strong> 15 anys (estatal).</li>
-          <li><strong>Casc obligatori</strong> homologat o certificat, ben cordat, per a tots els usuaris.</li>
-          <li><strong>Element lluminós o reflectant</strong> de nit o amb poca visibilitat (visible a 150 m).</li>
-          <li><strong>Armilla reflectant</strong> obligatòria en tot moment per als professionals (riders).</li>
-          <li>Senyalització de maniobres amb el braç.</li>
-          <li>Alumbrat permanent (també de dia) → <strong>exigible a partir de l’1/10/2027</strong>.</li>
-        </ul>
+      <div id="guideVtc" style="display:none">
+        <div class="warning-note"><strong>Àmbit:</strong> aquesta branca està preparada per a VTC a Catalunya, amb referències específiques a l’Àrea Metropolitana de Barcelona quan correspon. Les condicions municipals/metropolitanes poden variar segons l’àmbit territorial i la norma vigent.</div>
+        <div class="guide-section"><h3>📌 Què és una VTC?</h3><ul><li>Activitat d’<strong>arrendament de vehicles amb conductor</strong> per al transport de persones.</li><li>El vehicle autoritzat pot tenir fins a <strong>9 places inclosa la del conductor</strong>.</li><li>Cal disposar de l’<strong>autorització VTC</strong> corresponent.</li></ul></div>
+        <div class="guide-section"><h3>📋 Requisits bàsics a Catalunya</h3><ul><li>Conductor amb permís B o superior i <strong>2 anys d’antiguitat</strong>, segons la informació de la Generalitat.</li><li>Assegurança amb cobertura de fins a <strong>50 milions d’euros</strong> de responsabilitat civil pels viatgers.</li><li>Requisits específics del vehicle: places, antiguitat, longitud i altres característiques.</li><li>Els vehicles nous admesos a Catalunya han de complir els criteris ambientals indicats per la Generalitat.</li></ul></div>
+        <div class="guide-section"><h3>🚫 Prohibicions principals</h3><ul><li>No circular per la via pública <strong>buscant clients</strong>.</li><li>No recollir clients que <strong>no hagin contractat prèviament</strong> el servei.</li><li>Respectar les obligacions de <strong>precontractació i comunicació del servei</strong>.</li><li>Complir les obligacions de registre, distintiu i documentació que corresponguin.</li></ul></div>
+        <div class="guide-section"><h3>⚠️ Règim sancionador</h3><ul><li>La Generalitat informa de sancions de fins a <strong>2.000 €</strong> per determinats incompliments territorials o de precontractació.</li><li>Fins a <strong>4.000 €</strong> per recollida/captació de clients sense contractació prèvia en els supòsits indicats.</li><li>Fins a <strong>6.000 €</strong> per treballar sense autorització.</li><li>Algunes infraccions molt greus de la LOTT tenen forquilles específiques i poden comportar conseqüències addicionals.</li></ul></div>
+        <div class="guide-section"><h3>⚖️ Fonts</h3><ul><li>Departament de Territori, Habitatge i Transició Ecològica — informació VTC i règim sancionador.</li><li>Llei 16/1987, de 30 de juliol, d’Ordenació dels Transports Terrestres (LOTT).</li><li>Llei 13/2021, de 1 d’octubre, sobre infraccions relatives al lloguer de vehicles amb conductor.</li><li>Normativa i ordenances de l’AMB quan el servei es presta en l’àmbit metropolità.</li></ul></div>
       </div>
-      <div class="guide-section">
-        <h3>🚫 Prohibicions principals</h3>
-        <ul>
-          <li>Circular per <strong>voreres i zones peatonals</strong>.</li>
-          <li>Circular per <strong>autopistes, autovies, travesseres i túnels urbans</strong>.</li>
-          <li>Portar <strong>passatger</strong> (és vehicle d’una sola plaça).</li>
-          <li>Utilitzar <strong>auriculars</strong> o mòbil en marxa.</li>
-          <li>Circular sense registre a la DGT ni assegurança de responsabilitat civil (obligatoris des de gener 2026).</li>
-          <li>Circular amb vehicle no homologat o modificat que superi els 25 km/h.</li>
-        </ul>
-      </div>
-      <div class="guide-section">
-        <h3>💡 Consells pràctics</h3>
-        <ul>
-          <li>Porta sempre el casc ben cordat.</li>
-          <li>Comprova que el patinet tingui el certificat VMP i estigui inscrit al Registre de Vehicles Personals Lleugers de la DGT.</li>
-          <li>De nit o amb pluja/boira: llums + element reflectant.</li>
-          <li>Respecta els semàfors i la prioritat dels vianants.</li>
-          <li>La majoria de les infraccions greus són de <strong>200 €</strong> (100 € amb pagament anticipat en 20 dies).</li>
-        </ul>
-      </div>
-      <div class="guide-section">
-        <h3>⚖️ Font normativa</h3>
-        <ul>
-          <li>Real Decreto 518/2026, de 24 de juny (modificació del Reglament General de Circulació).</li>
-          <li>Text refós de la Llei sobre Trànsit, Circulació de Vehicles a Motor i Seguretat Vial (RDLeg 6/2015).</li>
-          <li>Registre de Vehicles Personals Lleugers (RD 52/2026).</li>
-          <li>Ordenances municipals (poden afegir restriccions de circulació).</li>
-        </ul>
-      </div>
-      <p class="footer-note">
-        Aplicació informativa basada en la normativa estatal vigent a partir de l’1 d’octubre de 2026.<br>
-        Les sancions poden variar lleugerament segons l’ordenança municipal o el criteri de l’agent.<br>
-        VMP LEGAL<br>
-        TIP 18675 CME · TIP 1235 PL
-      </p>
+      <p class="footer-note">Aplicació informativa. La qualificació i quantia de les sancions depenen de la norma aplicable, l’àmbit territorial i les circumstàncies del fet.<br><span id="footerName">VMP LEGAL</span><br>TIP 18675 CME · TIP 1235 PL</p>
     </section>
   </main>
 
-  <!-- Barra fixa instal·lar (sempre visible si no està instal·lada) -->
-  <div class="install-fixed" id="installFixed">
-    <div class="ib-text">
-      <strong>Instal·la VMP LEGAL</strong>
-      <span>Afegeix-la a la pantalla d'inici</span>
-    </div>
-    <button class="ib-btn" id="installFixedBtn">Instal·lar</button>
-    <button class="ib-close" id="installFixedClose" aria-label="Tancar">×</button>
-  </div>
+  <div class="install-fixed" id="installFixed"><div class="ib-text"><strong id="installFixedTitle">Instal·la VMP LEGAL</strong><span>Afegeix-la a la pantalla d'inici</span></div><button class="ib-btn" id="installFixedBtn">Instal·lar</button><button class="ib-close" id="installFixedClose" aria-label="Tancar">×</button></div>
 
   <script>
-    const infraccions = [
+    const VMP_INFRACCIONS = [
       { id:"casc", label:"Sense casc", tipus:"grave", import:200, article:"Art. 118 RGC (modificat pel RD 518/2026)", titol:"Circular sense casc de protecció", desc:"Des de l’1 d’octubre de 2026 el casc homologat o certificat és obligatori per a tots els usuaris de VMP, independentment de l’edat o del municipi. Ha d’anar correctament cordat.", nota:"Infracció greu. Amb pagament anticipat (20 dies) es redueix a 100 €." },
       { id:"edat", label:"Menor de 15 anys", tipus:"grave", import:200, article:"Art. 155 RGC (RD 518/2026)", titol:"Conduir un VMP sent menor de 15 anys", desc:"L’edat mínima estatal per conduir un vehicle de mobilitat personal és de 15 anys. Els menors no poden circular per vies obertes al trànsit.", nota:"Si el conductor és menor, la sanció la paguen els pares o tutors legals." },
       { id:"vorera", label:"Circular per vorera", tipus:"grave", import:200, article:"Art. 121.5 RGC / Llei de Trànsit", titol:"Circular per voreres o zones peatonals", desc:"Està totalment prohibit circular amb VMP per voreres, zones peatonals o espais reservats als vianants. Cal fer-ho per calçada o carril bici segons l’ordenança local.", nota:"És una de les denúncies més freqüents. Infracció greu: 200 €." },
@@ -636,8 +799,7 @@
       { id:"carga", label:"Càrrega indeguda / animals", tipus:"leve", import:100, article:"RGC + ordenances municipals", titol:"Transportar càrrega o animals de forma indeguda", desc:"Els VMP no estan dissenyats per transportar càrrega pesada ni animals. Fer-ho pot afectar l’estabilitat i la seguretat.", nota:"Sanció habitual de 100 € (lleu), segons ordenança." },
       { id:"auriculars_casco", label:"Casc amb auriculars no homologats", tipus:"grave", import:200, article:"Art. 18 RGC", titol:"Utilitzar dispositius d’àudio integrats no autoritzats", desc:"Només es permeten sistemes de comunicació homologats i en condicions de seguretat. Els auriculars convencionals (encara que vinguin amb el casc) estan prohibits si impedeixen la percepció acústica.", nota:"Infracció greu: 200 €." }
     ];
-
-    const nomenclator = [
+    const VMP_NOMENCLATOR = [
       { titol:"Edat mínima", text:"15 anys. Cap menor de 15 anys pot conduir un VMP per vies obertes al trànsit. Norma estatal des de l’1/10/2026.", tag:"RD 518/2026 · Art. 155 RGC" },
       { titol:"Casc obligatori", text:"Casc de protecció homologat o certificat, correctament cordat, per a tots els usuaris de VMP en tot moment.", tag:"RD 518/2026 · Art. 118 RGC" },
       { titol:"Element reflectant / armilla", text:"De nit o amb escassa visibilitat: element lluminós o reflectant visible a 150 m. Professionals (riders): armilla reflectant sempre.", tag:"RD 518/2026" },
@@ -659,186 +821,168 @@
       { titol:"Estacionament", text:"No es pot estacionar bloquejant el pas de vianants, persones amb mobilitat reduïda, ni a zones prohibides per ordenança.", tag:"Ordenances municipals" },
       { titol:"Ordenances municipals", text:"Els ajuntaments poden regular per quines vies concretes es pot circular (carrils bici, calçades, etc.) i altres aspectes complementaris.", tag:"Autonomia local" }
     ];
+    const VTC_INFRACCIONS = [
+  {id:"precontractacio",label:"Sense precontractació",tipus:"muy_grave",import:"Fins a 2.000 €",article:"Normativa VTC de Catalunya · règim sancionador",titol:"Prestar el servei sense respectar la precontractació exigible",desc:"El servei VTC s’ha de prestar d’acord amb les condicions de precontractació aplicables. A Catalunya, la Generalitat informa d’un interval mínim de 15 minuts entre la contractació i la prestació del servei.",nota:"A l’Àrea Metropolitana de Barcelona poden existir condicions metropolitanes específiques. Comprova sempre l’àmbit territorial i la norma vigent."},
+  {id:"captacio",label:"Captació de clients",tipus:"muy_grave",import:"Fins a 4.000 €",article:"Normativa VTC de Catalunya · règim sancionador",titol:"Recollir clients sense contractació prèvia o circular a la recerca de clients",desc:"Els VTC no poden circular per les vies públiques buscant clients ni propiciar la captació de viatgers que no hagin contractat prèviament el servei.",nota:"La Generalitat informa de multes de fins a 4.000 € i immobilització del vehicle en aquests supòsits."},
+  {id:"sense_autoritzacio",label:"Sense autorització VTC",tipus:"muy_grave",import:"Fins a 6.000 €",article:"Normativa VTC de Catalunya · règim sancionador",titol:"Prestar serveis sense l’autorització VTC exigible",desc:"L’activitat d’arrendament de vehicles amb conductor requereix l’autorització administrativa corresponent.",nota:"La Generalitat informa que les multes poden arribar als 6.000 € quan es treballa sense autorització."},
+  {id:"fora_catalunya",label:"Autorització fora de Catalunya",tipus:"muy_grave",import:"Fins a 2.000 €",article:"Normativa VTC de Catalunya · règim sancionador",titol:"Prestar servei amb autorització de fora de Catalunya quan no correspon",desc:"La normativa catalana estableix condicions territorials per a determinades autoritzacions VTC i la prestació del servei.",nota:"La Generalitat informa de multes de fins a 2.000 € i immobilització en els supòsits indicats."},
+  {id:"registre_servei",label:"Sense comunicar el servei",tipus:"muy_grave",import:"1.001–6.000 €",article:"LOTT · art. 140 i règim sancionador",titol:"Iniciar un servei sense la comunicació electrònica exigible",desc:"La LOTT tipifica com a infracció molt greu determinats serveis VTC iniciats sense haver comunicat electrònicament les dades exigides al registre corresponent.",nota:"La quantia concreta depèn de la infracció i de la graduació aplicable segons la LOTT."},
+  {id:"documentacio",label:"Sense documentació",tipus:"grave",import:"Segons infracció",article:"LOTT / ROTT · documentació de control",titol:"No portar o no acreditar la documentació exigible",desc:"El conductor ha de poder acreditar la legalitat del servei i disposar de la documentació exigida per la normativa de transport i per l’autorització.",nota:"La qualificació i l’import depenen del document o obligació concreta incomplerta."},
+  {id:"distintiu",label:"Sense distintiu VTC",tipus:"grave",import:"Segons infracció",article:"Gencat · identificador VTC",titol:"No portar visible el distintiu o identificador VTC exigible",desc:"A Catalunya existeix un distintiu o identificador VTC que acredita l’autorització domiciliada a Catalunya i que s’ha de col·locar de forma visible al parabrisa.",nota:"Pot existir també un distintiu específic relacionat amb els dies de descans a l’àmbit metropolità."},
+  {id:"asseguranca",label:"Assegurança insuficient",tipus:"grave",import:"Segons infracció",article:"Gencat · requisits d’autorització VTC",titol:"No disposar de l’assegurança exigida",desc:"Les VTC de Catalunya han de disposar d’una assegurança que cobreixi fins a 50 milions d’euros de responsabilitat civil pels danys que puguin patir els viatgers.",nota:"La conseqüència sancionadora concreta depèn de la infracció acreditada i de la normativa aplicable."},
+  {id:"conductor",label:"Conductor sense requisits",tipus:"grave",import:"Segons infracció",article:"Gencat · requisits de conductor VTC",titol:"Conduir sense complir els requisits exigibles",desc:"Per a les VTC de Catalunya, els conductors han de disposar com a mínim del permís B o superior i una antiguitat mínima de dos anys. Els ajuntaments poden exigir formació específica.",nota:"Cal comprovar també els requisits municipals o metropolitans que siguin aplicables."},
+  {id:"vehicle",label:"Vehicle no conforme",tipus:"grave",import:"Segons infracció",article:"Gencat · requisits del vehicle VTC",titol:"Vehicle que no compleix les condicions exigides",desc:"La normativa catalana estableix, entre altres requisits, límits de places, antiguitat i característiques del vehicle. Per als vehicles nous s’admeten distintius ambientals 0 i ECO segons la informació de la Generalitat.",nota:"Les característiques concretes poden variar segons el règim d’autorització i l’àmbit territorial."},
+  {id:"places",label:"Més de 9 places",tipus:"grave",import:"Segons infracció",article:"Gencat · requisits de l’autorització VTC",titol:"Vehicle amb capacitat superior a 9 places",desc:"L’autorització VTC es refereix a vehicles de fins a 9 places inclosa la del conductor.",nota:"La capacitat que consta a la fitxa tècnica ha de correspondre amb la del permís de circulació."},
+  {id:"captacio_amb",label:"Sense servei en finalitzar",tipus:"grave",import:"Segons infracció",article:"Reglament VTC de l’AMB",titol:"Circular sense passatgers ni servei contractat quan l’àmbit metropolità ho exigeix",desc:"La regulació metropolitana estableix condicions específiques quan el VTC circula sense passatgers, inclosa la justificació del servei o del desplaçament al lloc d’estacionament.",nota:"Aplicable segons l’àmbit territorial i la vigència efectiva de la regulació metropolitana."}
+];
+    const VTC_NOMENCLATOR = [
+  {titol:"Precontractació",text:"La Generalitat informa d’un interval mínim de 15 minuts entre la contractació i la prestació del servei VTC. A l’AMB hi ha hagut regulació metropolitana específica sobre la precontractació; cal comprovar l’àmbit i la norma vigent.",tag:"Gencat · AMB"},
+  {titol:"Captació de clients",text:"No es pot circular per les vies públiques buscant clients ni propiciar la captació de viatgers que no hagin contractat prèviament el servei.",tag:"Gencat · normativa VTC"},
+  {titol:"Autorització VTC",text:"L’activitat d’arrendament de vehicles amb conductor requereix l’autorització administrativa corresponent.",tag:"Gencat · autorització VTC"},
+  {titol:"Conductor",text:"A Catalunya, el conductor ha de tenir permís B o superior i almenys dos anys d’antiguitat. Els ajuntaments poden exigir formació específica.",tag:"Gencat · requisits VTC"},
+  {titol:"Assegurança",text:"Les VTC han de tenir una assegurança que cobreixi fins a 50 milions d’euros de responsabilitat civil pels danys que puguin patir els viatgers.",tag:"Gencat · requisits VTC"},
+  {titol:"Vehicle",text:"La informació de la Generalitat estableix requisits sobre longitud, antiguitat, potència i nombre de places. En vehicles nous, s’admeten distintius 0 i ECO.",tag:"Gencat · requisits VTC"},
+  {titol:"Places",text:"El vehicle VTC no pot tenir una capacitat superior a 9 places inclosa la del conductor.",tag:"Gencat · autorització VTC"},
+  {titol:"Distintiu VTC",text:"El distintiu o identificador VTC rombe identifica el vehicle amb autorització domiciliada a Catalunya i s’ha de col·locar visible a la part inferior dreta del parabrisa davanter.",tag:"Gencat · distintius"},
+  {titol:"Distintiu de descans",text:"A l’àmbit de l’AMB existeix informació específica sobre el distintiu de dies de descans setmanal per a determinats VTC.",tag:"Gencat · AMB"},
+  {titol:"Règim sancionador",text:"La Generalitat informa de sancions de fins a 2.000 € per determinats incompliments territorials o de precontractació, fins a 4.000 € per captació/recollida sense contractació prèvia i fins a 6.000 € per treballar sense autorització.",tag:"Gencat · règim sancionador"},
+  {titol:"Comunicació del servei",text:"La LOTT tipifica determinats serveis VTC iniciats sense comunicació electrònica de les dades exigides com a infracció molt greu.",tag:"LOTT · art. 140"},
+  {titol:"Àmbit metropolità",text:"L’AMB disposa de normativa específica sobre VTC i de competències de control en el seu àmbit. Les obligacions concretes s’han de comprovar segons la norma vigent.",tag:"AMB · normativa VTC"}
+];
 
-    // ===== CONSULTA: navegació entre llista i detall =====
-    const chipsEl = document.getElementById('chips');
-    const listView = document.getElementById('consultaList');
-    const detailView = document.getElementById('consultaDetail');
-    const detailCard = document.getElementById('detailCard');
-    const backBtn = document.getElementById('backBtn');
+    const checkerForm=document.getElementById('vmpCheckerForm');
+    const checkerResult=document.getElementById('checkerResult');
+    const checkerTab=document.getElementById('verificadorTab');
+    const checkerReset=document.getElementById('checkerReset');
 
-    infraccions.forEach(inf => {
-      const chip = document.createElement('div');
-      chip.className = 'chip';
-      chip.textContent = inf.label;
-      chip.addEventListener('click', () => showDetail(inf));
-      chipsEl.appendChild(chip);
-    });
+    const VMP_CHECK_RULES = [
+      {name:'motor', label:'El vehicle no és exclusivament elèctric.', infId:null, hard:true},
+      {name:'seat', label:'El vehicle té més d’una plaça.', infId:'passatger', hard:true},
+      {name:'speed', label:'La velocitat màxima de disseny no compleix el rang de VMP (6–25 km/h).', infId:'velocitat', hard:true},
+      {name:'modified', label:'El vehicle ha estat modificat per superar els 25 km/h.', infId:'velocitat', hard:true},
+      {name:'registry', label:'No consta el registre/identificació exigible.', infId:'registre'},
+      {name:'insurance', label:'No consta una assegurança de responsabilitat civil en vigor.', infId:'asseguranca'},
+      {name:'age', label:'El conductor és menor de 15 anys.', infId:'edat'},
+      {name:'helmet', label:'No porta el casc exigible correctament cordat.', infId:'casc'},
+      {name:'lights', label:'Falta l’enllumenat o element reflectant exigible de nit o amb poca visibilitat.', infId:'llums'},
+      {name:'sidewalk', label:'Està circulant per una vorera o zona reservada als vianants.', infId:'vorera'},
+      {name:'road', label:'Està circulant per una via prohibida per als VMP.', infId:'autopista'},
+      {name:'passenger', label:'Transporta un passatger.', infId:'passatger'}
+    ];
 
-    function showDetail(inf) {
-      let badgeClass = 'grave';
-      let tipusLabel = 'Infracció greu';
-      if (inf.tipus === 'leve') { badgeClass = 'leve'; tipusLabel = 'Infracció lleu'; }
-      if (inf.tipus === 'muy_grave') { badgeClass = 'muy_grave'; tipusLabel = 'Infracció molt greu'; }
-
-      detailCard.innerHTML = `
-        <span class="badge ${badgeClass}">${tipusLabel}</span>
-        <h2>${inf.titol}</h2>
-        <div class="amount">${inf.import} €</div>
-        <div class="amount-label">Import de la sanció</div>
-        <div class="article">${inf.article}</div>
-        <div class="desc">${inf.desc}</div>
-        <div class="note">${inf.nota}</div>
-      `;
-      listView.classList.remove('active');
-      detailView.classList.add('active');
-      // Scroll amunt perquè es vegi bé
-      document.querySelector('.content').scrollTop = 0;
-    }
-
-    backBtn.addEventListener('click', () => {
-      detailView.classList.remove('active');
-      listView.classList.add('active');
-    });
-
-    // ===== NOMENCLÀTOR =====
-    const normList = document.getElementById('normList');
-    const normSearch = document.getElementById('normSearch');
-
-    function renderNorm(filter = '') {
-      normList.innerHTML = '';
-      const q = filter.toLowerCase().trim();
-      const filtered = nomenclator.filter(n =>
-        !q || n.titol.toLowerCase().includes(q) || n.text.toLowerCase().includes(q) || n.tag.toLowerCase().includes(q)
-      );
-      if (filtered.length === 0) {
-        normList.innerHTML = '<p style="text-align:center;color:var(--muted);padding:24px;">No s’ha trobat cap resultat.</p>';
-        return;
+    function getAnswer(name){ const el=checkerForm.querySelector(`input[name="${name}"]:checked`); return el ? el.value : null; }
+    function getInfra(id){ return VMP_INFRACCIONS.find(x=>x.id===id); }
+    function showCheckerResult(){
+      const missing=[];
+      VMP_CHECK_RULES.forEach(r=>{ if(getAnswer(r.name)===null) missing.push(r.name); });
+      if(missing.length){
+        checkerResult.className='checker-result show';
+        checkerResult.innerHTML=`<div class="result-head unknown"><div class="result-status">⚠️ Falta informació</div><div class="result-sub">Respon totes les preguntes per obtenir una verificació completa. Falten ${missing.length} resposta${missing.length===1?'':'es'}.</div></div>`;
+        checkerResult.scrollIntoView({behavior:'smooth',block:'start'}); return;
       }
-      filtered.forEach(n => {
-        const item = document.createElement('div');
-        item.className = 'norm-item';
-        item.innerHTML = `<h4>${n.titol}</h4><p>${n.text}</p><span class="tag">${n.tag}</span>`;
-        normList.appendChild(item);
+      const findings=[]; const unknown=[];
+      VMP_CHECK_RULES.forEach(r=>{
+        const a=getAnswer(r.name);
+        const bad=(r.name==='motor'&&a==='no')||(r.name==='seat'&&a==='no')||(r.name==='speed'&&a==='no')||(r.name==='modified'&&a==='yes')||(r.name==='registry'&&a==='no')||(r.name==='insurance'&&a==='no')||(r.name==='age'&&a==='no')||(r.name==='helmet'&&a==='no')||(r.name==='lights'&&a==='no')||(r.name==='sidewalk'&&a==='yes')||(r.name==='road'&&a==='yes')||(r.name==='passenger'&&a==='yes');
+        if(a==='unknown') unknown.push(r);
+        if(bad) findings.push(r);
       });
-    }
-    renderNorm();
-    normSearch.addEventListener('input', e => renderNorm(e.target.value));
-
-    // ===== TABS =====
-    document.querySelectorAll('.tab').forEach(tab => {
-      tab.addEventListener('click', () => {
-        document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
-        document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
-        tab.classList.add('active');
-        document.getElementById(tab.dataset.tab).classList.add('active');
-        // Si tornem a Consulta, mostrem la llista
-        if (tab.dataset.tab === 'consulta') {
-          detailView.classList.remove('active');
-          listView.classList.add('active');
+      const hardFail=findings.some(r=>r.hard);
+      const status=findings.length ? 'bad' : (unknown.length ? 'unknown' : 'ok');
+      const title=findings.length ? '❌ No compleix les condicions indicades' : (unknown.length ? '⚠️ No es pot confirmar del tot' : '✅ Compleix les condicions indicades');
+      let html=`<div class="result-head ${status}"><div class="result-status">${title}</div><div class="result-sub">${findings.length ? 'S’han detectat incidències que poden comportar una denúncia.' : 'No s’han detectat incidències amb les respostes introduïdes.'}${unknown.length ? ' Hi ha dades que no s’han pogut confirmar.' : ''}</div></div>`;
+      if(findings.length){
+        html += findings.map(r=>{
+          const inf=r.infId?getInfra(r.infId):null;
+          const sanction=inf ? `Possible sanció associada: ${inf.import}.` : 'La conseqüència sancionadora depèn de la infracció concreta.';
+          return `<div class="result-item"><strong>⚠️ ${r.label}</strong><span>${sanction} ${inf?inf.article:''}</span></div>`;
+        }).join('');
+        const amounts=findings.map(r=>r.infId?getInfra(r.infId)?.import:null).filter(v=>typeof v==='number');
+        if(amounts.length){
+          const unique=[...new Set(amounts)];
+          html += `<div class="result-total"><b>Referència d’imports detectats:</b> ${unique.map(v=>v.toLocaleString('ca-ES')+' €').join(' · ')}.<br><span style="color:var(--muted);font-size:.74rem">No es sumen automàticament: la quantia final depèn de la qualificació i de la normativa aplicable.</span></div>`;
         }
-      });
-    });
-
-    
-    // ===== INSTAL·LAR PWA =====
-    let deferredPrompt = null;
-    const installFixed = document.getElementById('installFixed');
-    const installFixedBtn = document.getElementById('installFixedBtn');
-    const installFixedClose = document.getElementById('installFixedClose');
-    const installBanner = document.getElementById('installBanner');
-    const iosHint = document.getElementById('iosHint');
-
-    function isStandalone() {
-      return window.matchMedia('(display-mode: standalone)').matches
-        || window.navigator.standalone === true;
-    }
-
-    function isIos() {
-      return /iphone|ipad|ipod/i.test(navigator.userAgent);
-    }
-
-    function showBar() {
-      if (isStandalone()) {
-        hideBar();
-        return;
       }
-      // No amagar mai per localStorage en aquesta versió: sempre visible fins instal·lar o tancar sessió
-      if (sessionStorage.getItem('vmp-hide-install') === '1') {
-        hideBar();
-        return;
-      }
-      installFixed.classList.add('show');
-      document.body.classList.add('has-install-bar');
-      if (installBanner) installBanner.classList.remove('show');
-      if (isIos() && iosHint) {
-        iosHint.classList.add('show');
-      }
+      if(unknown.length){ html += `<div class="result-item"><strong>❓ Dades no confirmades</strong><span>${unknown.map(r=>r.label.replace('No consta el registre/identificació exigible.','Registre/identificació').replace('No consta una assegurança de responsabilitat civil en vigor.','Assegurança de responsabilitat civil')).join(' · ')}.</span></div>`; }
+      html += `<div class="checker-disclaimer">Verificador orientatiu. No substitueix la comprovació de la fitxa del vehicle, l’autorització/registre, la documentació ni la normativa municipal o estatal aplicable al lloc i moment dels fets.</div>`;
+      checkerResult.className='checker-result show'; checkerResult.innerHTML=html; checkerResult.scrollIntoView({behavior:'smooth',block:'start'});
     }
+    checkerForm.addEventListener('submit',e=>{e.preventDefault();showCheckerResult();});
+    checkerReset.addEventListener('click',()=>{checkerForm.reset();checkerResult.className='checker-result';checkerResult.innerHTML='';window.scrollTo({top:0,behavior:'smooth'});});
 
-    function hideBar() {
-      installFixed.classList.remove('show');
-      document.body.classList.remove('has-install-bar');
-      if (installBanner) installBanner.classList.remove('show');
-      if (iosHint) iosHint.classList.remove('show');
+    let currentBranch = 'vmp';
+    const homeBtn=document.getElementById('homeBtn'), openVmp=document.getElementById('openVmp'), openVtc=document.getElementById('openVtc');
+    const appTitle=document.getElementById('appTitle'), appSubtitle=document.getElementById('appSubtitle'), footerName=document.getElementById('footerName');
+    const guideVmp=document.getElementById('guideVmp'), guideVtc=document.getElementById('guideVtc');
+    const installBannerTitle=document.getElementById('installBannerTitle'), installFixedTitle=document.getElementById('installFixedTitle');
+    const normSearch=document.getElementById('normSearch'), normList=document.getElementById('normList');
+    const chipsEl=document.getElementById('chips'), listView=document.getElementById('consultaList'), detailView=document.getElementById('consultaDetail'), detailCard=document.getElementById('detailCard'), backBtn=document.getElementById('backBtn');
+
+    function branchData(){ return currentBranch==='vmp' ? {infra:VMP_INFRACCIONS,nom:VMP_NOMENCLATOR} : {infra:VTC_INFRACCIONS,nom:VTC_NOMENCLATOR}; }
+    function setBranch(branch){
+      currentBranch=branch;
+      document.body.classList.remove('home-mode');
+      const vmp=branch==='vmp';
+      appTitle.textContent=vmp?'VMP LEGAL':'VTC LEGAL';
+      appSubtitle.textContent=vmp?'Normativa · Denúncies · Guia · En vigor 1/10/2026':'Normativa · Denúncies · Guia · Catalunya / AMB';
+      footerName.textContent=vmp?'VMP LEGAL':'VTC LEGAL';
+      installBannerTitle.textContent='Instal·la '+(vmp?'VMP LEGAL':'VTC LEGAL');
+      installFixedTitle.textContent='Instal·la '+(vmp?'VMP LEGAL':'VTC LEGAL');
+      renderChips(); renderNorm('');
+      guideVmp.style.display=vmp?'block':'none'; guideVtc.style.display=vmp?'none':'block';
+      checkerTab.style.display=vmp?'block':'none';
+      document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
+      document.querySelector('.tab[data-tab="consulta"]').classList.add('active');
+      document.querySelectorAll('.panel').forEach(p=>p.classList.remove('active'));
+      document.getElementById('consulta').classList.add('active');
+      listView.classList.add('active'); detailView.classList.remove('active');
+      window.scrollTo(0,0);
     }
+    function goHome(){ document.body.classList.add('home-mode'); window.scrollTo(0,0); }
+    openVmp.addEventListener('click',()=>setBranch('vmp')); openVtc.addEventListener('click',()=>setBranch('vtc')); homeBtn.addEventListener('click',goHome);
 
-    window.addEventListener('beforeinstallprompt', (e) => {
-      e.preventDefault();
-      deferredPrompt = e;
-      showBar();
-    });
-
-    // Mostrar sempre la barra si no està instal·lada
-    showBar();
-    setTimeout(showBar, 500);
-    setTimeout(showBar, 2000);
-
-    async function doInstall() {
-      if (deferredPrompt) {
-        deferredPrompt.prompt();
-        const choice = await deferredPrompt.userChoice;
-        deferredPrompt = null;
-        if (choice.outcome === 'accepted') {
-          hideBar();
-        }
-        return;
-      }
-      if (isIos()) {
-        alert('Per instal·lar a l\'iPhone:\n\n1. Toca el botó Compartir (quadre amb fletxa)\n2. Tria «Afegeix a la pantalla d\'inici»\n3. Confirma amb «Afegeix»');
-        return;
-      }
-      // Android / altres sense prompt natiu
-      alert('Per instal·lar l\'app:\n\n1. Toca el menú ⋮ (tres punts) de Chrome\n2. Tria «Instal·lar aplicació» o «Afegeix a la pantalla d\'inici»\n\nSi no surt l\'opció, obre l\'enllaç amb Chrome i espera uns segons.');
+    function renderChips(){
+      chipsEl.innerHTML='';
+      branchData().infra.forEach(inf=>{ const chip=document.createElement('div'); chip.className='chip'; chip.textContent=inf.label; chip.addEventListener('click',()=>showDetail(inf)); chipsEl.appendChild(chip); });
     }
-
-    installFixedBtn.addEventListener('click', doInstall);
-    if (document.getElementById('installBtn')) {
-      document.getElementById('installBtn').addEventListener('click', doInstall);
+    function showDetail(inf){
+      let badgeClass='grave', tipusLabel='Infracció greu';
+      if(inf.tipus==='leve'){badgeClass='leve';tipusLabel='Infracció lleu';}
+      if(inf.tipus==='muy_grave'){badgeClass='muy_grave';tipusLabel='Infracció molt greu';}
+      detailCard.innerHTML=`<span class="badge ${badgeClass}">${tipusLabel}</span><h2>${inf.titol}</h2><div class="amount">${inf.import}</div><div class="amount-label">Import / rang de la sanció</div><div class="article">${inf.article}</div><div class="desc">${inf.desc}</div><div class="note">${inf.nota}</div>`;
+      listView.classList.remove('active'); detailView.classList.add('active'); window.scrollTo(0,0);
     }
+    backBtn.addEventListener('click',()=>{detailView.classList.remove('active');listView.classList.add('active');});
 
-    installFixedClose.addEventListener('click', () => {
-      hideBar();
-      sessionStorage.setItem('vmp-hide-install', '1');
-    });
-    if (document.getElementById('installClose')) {
-      document.getElementById('installClose').addEventListener('click', () => {
-        hideBar();
-        sessionStorage.setItem('vmp-hide-install', '1');
-      });
+    function renderNorm(filter=''){
+      normList.innerHTML=''; const q=filter.toLowerCase().trim();
+      const filtered=branchData().nom.filter(n=>!q||n.titol.toLowerCase().includes(q)||n.text.toLowerCase().includes(q)||n.tag.toLowerCase().includes(q));
+      if(!filtered.length){normList.innerHTML='<p style="text-align:center;color:var(--muted);padding:24px;">No s’ha trobat cap resultat.</p>';return;}
+      filtered.forEach(n=>{const item=document.createElement('div');item.className='norm-item';item.innerHTML=`<h4>${n.titol}</h4><p>${n.text}</p><span class="tag">${n.tag}</span>`;normList.appendChild(item);});
     }
+    normSearch.addEventListener('input',e=>renderNorm(e.target.value));
+    document.querySelectorAll('.tab').forEach(tab=>tab.addEventListener('click',()=>{document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));document.querySelectorAll('.panel').forEach(p=>p.classList.remove('active'));tab.classList.add('active');document.getElementById(tab.dataset.tab).classList.add('active');if(tab.dataset.tab==='consulta'){detailView.classList.remove('active');listView.classList.add('active');}window.scrollTo(0,0);}));
 
-    window.addEventListener('appinstalled', () => {
-      hideBar();
-      deferredPrompt = null;
-    });
+    let deferredPrompt=null; const installFixed=document.getElementById('installFixed'), installFixedBtn=document.getElementById('installFixedBtn'), installFixedClose=document.getElementById('installFixedClose'), installBanner=document.getElementById('installBanner'), iosHint=document.getElementById('iosHint');
+    function isStandalone(){return window.matchMedia('(display-mode: standalone)').matches||window.navigator.standalone===true;}
+    function isIos(){return /iphone|ipad|ipod/i.test(navigator.userAgent);}
+    function showBar(){if(document.body.classList.contains('home-mode')||isStandalone()){hideBar();return;}if(sessionStorage.getItem('legal-hide-install')==='1'){hideBar();return;}installFixed.classList.add('show');document.body.classList.add('has-install-bar');if(installBanner)installBanner.classList.remove('show');if(isIos()&&iosHint)iosHint.classList.add('show');}
+    function hideBar(){installFixed.classList.remove('show');document.body.classList.remove('has-install-bar');if(installBanner)installBanner.classList.remove('show');if(iosHint)iosHint.classList.remove('show');}
+    window.addEventListener('beforeinstallprompt',e=>{e.preventDefault();deferredPrompt=e;showBar();});
+    async function doInstall(){if(deferredPrompt){deferredPrompt.prompt();const choice=await deferredPrompt.userChoice;deferredPrompt=null;if(choice.outcome==='accepted')hideBar();return;}if(isIos()){alert(`Per instal·lar a l'iPhone:
 
-    if ('serviceWorker' in navigator) {
-      navigator.serviceWorker.register('./sw.js').catch((err) => {
-        console.warn("No s'ha pogut registrar el Service Worker:", err);
-      });
-    }
+1. Toca el botó Compartir
+2. Tria «Afegeix a la pantalla d'inici»
+3. Confirma amb «Afegeix»`);return;}alert(`Per instal·lar l'app:
+
+1. Obre el menú de Chrome
+2. Tria «Instal·lar aplicació» o «Afegeix a la pantalla d'inici»`);} 
+
+    installFixedBtn.addEventListener('click',doInstall); document.getElementById('installBtn').addEventListener('click',doInstall);
+    installFixedClose.addEventListener('click',()=>{hideBar();sessionStorage.setItem('legal-hide-install','1');}); document.getElementById('installClose').addEventListener('click',()=>{hideBar();sessionStorage.setItem('legal-hide-install','1');});
+    window.addEventListener('appinstalled',()=>{hideBar();deferredPrompt=null;});
+    renderChips(); renderNorm();
+    if('serviceWorker' in navigator) navigator.serviceWorker.register('./sw.js').catch(err=>console.warn("No s'ha pogut registrar el Service Worker:",err));
   </script>
-
 </body>
 </html>
