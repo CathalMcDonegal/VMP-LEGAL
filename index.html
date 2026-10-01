@@ -500,10 +500,11 @@
     .install-card .install-later{width:100%;border:1px solid var(--border);border-radius:12px;padding:10px;background:#10223a;color:var(--text);font-weight:700;cursor:pointer;}
     .install-card .install-help{display:none;text-align:left;background:rgba(59,130,246,.08);border:1px solid rgba(59,130,246,.25);border-radius:12px;padding:10px 12px;margin:12px 0 0;color:#c5d9f0;font-size:.76rem;line-height:1.45;}
     .install-card .install-help.show{display:block;}
-    .home-screen{min-height:100dvh;height:100dvh;display:flex;align-items:stretch;justify-content:center;padding:0;box-sizing:border-box;overflow:hidden;background:#0b2742;}
-    .home-wrap{width:100%;height:100%;text-align:center;position:relative;}
+    .home-screen{min-height:100dvh;height:100dvh;display:flex;align-items:flex-start;justify-content:center;padding:0;box-sizing:border-box;overflow:hidden;background:#0b2742;}
+    .home-wrap{width:100%;height:100%;text-align:center;position:relative;overflow:hidden;}
     .home-art{position:relative;width:100%;height:100%;border-radius:0;overflow:hidden;box-shadow:none;border:0;background:#0b2742;}
-    .home-art img{display:block;width:100%;height:100%;object-fit:cover;object-position:center top;}
+    .home-art img{display:block;width:100%;height:auto;max-width:none;object-fit:contain;object-position:center top;}
+    .home-art::after{content:"";position:absolute;left:0;right:0;bottom:0;height:24%;background:#0b2742;z-index:2;pointer-events:none;}
     .home-hit{position:absolute;border:0;background:transparent;cursor:pointer;z-index:3;border-radius:28px;}
     .home-hit:focus-visible{outline:3px solid #fff;outline-offset:3px;}
     .home-hit.vmp{left:6%;top:40.5%;width:41%;height:10.5%;}
