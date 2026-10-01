@@ -1063,12 +1063,61 @@
 
     <section id="manual" class="panel">
       <div id="manualVmp">
-        <div class="guide-section"><h3>📘 Manual d’ús · VMP LEGAL</h3><ul><li><strong>Consulta:</strong> toca una infracció per veure descripció, article i import.</li><li><strong>Verificador:</strong> marca només les incidències detectades. El que no marques es considera correcte.</li><li><strong>Mode ràpid:</strong> útil per a controls de carrer; genera la fitxa sense completar preguntes innecessàries.</li><li><strong>Fitxa de control:</strong> pots imprimir/PDF, copiar el resum, afegir observacions i fotografies.</li><li><strong>Historial:</strong> les fitxes i evidències es guarden localment en aquest dispositiu.</li><li><strong>Municipi:</strong> quan una qüestió depèn de l’ordenança, el verificador ho indica.</li></ul></div>
-        <div class="guide-section"><h3>🟢 🟠 🔴 Resultats</h3><ul><li>🟢 Vehicle conforme: no s’han marcat incidències.</li><li>🟠 Revisar: hi ha una qüestió documental/transitòria que requereix contrast.</li><li>🔴 Vehicle no conforme: s’ha marcat com a mínim una incidència.</li></ul></div>
+        <div class="guide-section"><h3>📘 Manual d’ús · VMP LEGAL</h3>
+          <ul>
+            <li><strong>Pantalla d’inici:</strong> tria <strong>VMP LEGAL</strong> per entrar a les funcions de VMP. Els botons de la portada són accessos directes reals.</li>
+            <li><strong>Consulta:</strong> toca una infracció per veure la descripció, l’article i l’import de referència.</li>
+            <li><strong>Verificador:</strong> utilitza el control ràpid per marcar incidències habituals o obre el control complet per revisar més dades.</li>
+            <li><strong>Resultat:</strong> quan generes un control, el resultat s’obre en una <strong>pantalla completa independent</strong>. Prem <strong>← Tornar</strong> per tornar al formulari.</li>
+            <li><strong>Fitxa de control:</strong> pots imprimir o generar PDF, copiar el resum, afegir observacions i, quan correspongui, fotografies/evidències.</li>
+            <li><strong>Historial:</strong> les fitxes i evidències es guarden <strong>només en aquest dispositiu</strong>. No s’envien a cap servidor.</li>
+            <li><strong>Nomenclàtor:</strong> escriu el terme que vols buscar i prem <strong>Cercar</strong>. Els resultats s’obren també en una pantalla completa; prem <strong>← Tornar</strong> per continuar.</li>
+          </ul>
+        </div>
+        <div class="guide-section"><h3>🟢 🟠 🔴 Resultats</h3>
+          <ul>
+            <li>🟢 <strong>Vehicle conforme:</strong> no s’han marcat incidències.</li>
+            <li>🟠 <strong>Revisar:</strong> hi ha una qüestió documental o transitòria que requereix contrast.</li>
+            <li>🔴 <strong>Vehicle no conforme:</strong> s’ha marcat com a mínim una incidència.</li>
+            <li>Els resultats són una <strong>fitxa orientativa de control</strong>; abans de formalitzar una denúncia cal comprovar el fet, la norma i l’àmbit aplicable.</li>
+          </ul>
+        </div>
       </div>
+
       <div id="manualVtc" style="display:none">
-        <div class="guide-section"><h3>📘 Manual d’ús · VTC LEGAL</h3><ul><li><strong>Comprovar VTC:</strong> introdueix la matrícula i obre la consulta oficial del REAT per verificar la situació actual.</li><li><strong>Control VTC:</strong> marca només les incidències que detectis.</li><li>En generar la fitxa, cada incidència mostra <strong>l’article/base jurídica i la franja sancionadora</strong> disponible per a Catalunya.</li><li><strong>Àmbit:</strong> indica si el control és general de Catalunya, AMB o un àmbit municipal específic.</li><li><strong>Historial:</strong> les fitxes es guarden localment en el dispositiu.</li></ul></div>
-        <div class="guide-section"><h3>🔄 Actualització de la base VTC</h3><p class="source-note">La PWA utilitza la consulta oficial del REAT com a font viva. El servei de verificació VTC del Ministeri existeix per a organismes públics, però no és una API pública anònima per a una PWA estàtica de GitHub Pages. Per això l’app no simula una sincronització ni mostra una matrícula com a vàlida sense contrast oficial.</p></div>
+        <div class="guide-section"><h3>📘 Manual d’ús · VTC LEGAL</h3>
+          <ul>
+            <li><strong>Pantalla d’inici:</strong> tria <strong>VTC LEGAL</strong> per entrar al control VTC.</li>
+            <li><strong>Control VTC:</strong> introdueix la matrícula i prem <strong>🔎 Comprovar</strong> per accedir a la consulta oficial del REAT.</li>
+            <li><strong>Comprovar AMB:</strong> si disposes de la base mensual de l’AMB, pots consultar-la directament des de l’app.</li>
+            <li><strong>Incidències:</strong> marca només allò que detectis. Les dades avançades (agent, lloc, àmbit i observacions) es poden obrir quan siguin necessàries.</li>
+            <li><strong>Resultat:</strong> en generar la fitxa, el resultat s’obre en una <strong>pantalla completa independent</strong>. Prem <strong>← Tornar</strong> per tornar al control.</li>
+            <li>Cada incidència mostra la <strong>base jurídica i la franja sancionadora</strong> disponible com a guia de qualificació.</li>
+            <li><strong>Historial:</strong> les fitxes es guarden localment en el dispositiu.</li>
+          </ul>
+        </div>
+
+        <div class="guide-section"><h3>🏙️ Base de llicències AMB</h3>
+          <ul>
+            <li>La base AMB es pot importar des d’un fitxer <strong>Excel (.xlsx/.xls) o CSV</strong> facilitat per l’AMB.</li>
+            <li>El fitxer i les dades importades es guarden <strong>localment al mòbil</strong> mitjançant l’emmagatzematge del navegador.</li>
+            <li>La base local permet buscar una matrícula i consultar les dades disponibles, com titular, vigència, registre, bastidor, marca i model.</li>
+            <li>L’app conserva l’historial de les importacions locals per saber quina base s’ha carregat.</li>
+            <li><strong>Important:</strong> aquesta base local no substitueix la font oficial ni implica que una matrícula estigui autoritzada si les dades no són actuals o no es poden contrastar.</li>
+          </ul>
+        </div>
+
+        <div class="guide-section"><h3>🔄 Consulta oficial i dades locals</h3>
+          <p class="source-note"><strong>REAT:</strong> la consulta oficial serveix per contrastar la situació actual de la matrícula. La base AMB és una còpia local de la informació importada per l’usuari. L’app no envia l’Excel a cap servidor.</p>
+        </div>
+
+        <div class="guide-section"><h3>📱 Navegació al mòbil</h3>
+          <ul>
+            <li>Les pantalles de consulta i resultat estan adaptades a la <strong>pantalla completa del mòbil</strong>.</li>
+            <li>Quan una cerca genera un resultat independent, utilitza <strong>← Tornar</strong> en lloc de fer scroll per trobar el resultat.</li>
+            <li>El botó <strong>⌂ Inici</strong> permet tornar a la portada per canviar entre VMP LEGAL i VTC LEGAL.</li>
+          </ul>
+        </div>
       </div>
     </section>
 
