@@ -1,13 +1,13 @@
 {
-  "name": "VMP · VTC LEGAL",
-  "short_name": "LEGAL",
+  "name": "VMP • VTC",
+  "short_name": "VMP • VTC",
   "id": "./index.html",
   "start_url": "./index.html",
   "scope": "./",
   "display": "standalone",
   "background_color": "#f7f9fb",
   "theme_color": "#0b2742",
-  "description": "Consulta de normativa, denúncies i guia per a VMP i VTC.",
+  "description": "VMP • VTC — eina professional de consulta i control.",
   "icons": [
     {
       "src": "icon-192.png",

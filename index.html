@@ -9,7 +9,7 @@
   <meta name="apple-mobile-web-app-title" content="VMP · VTC LEGAL">
   <link rel="manifest" href="./manifest.json">
   <link rel="icon" href="./icon-192.png">
-  <title>VMP · VTC LEGAL</title>
+  <title>VMP • VTC</title>
   <style>
 
     :root {
@@ -483,10 +483,10 @@
     .install-card .install-later{width:100%;border:1px solid var(--border);border-radius:12px;padding:10px;background:#10223a;color:var(--text);font-weight:700;cursor:pointer;}
     .install-card .install-help{display:none;text-align:left;background:rgba(59,130,246,.08);border:1px solid rgba(59,130,246,.25);border-radius:12px;padding:10px 12px;margin:12px 0 0;color:#c5d9f0;font-size:.76rem;line-height:1.45;}
     .install-card .install-help.show{display:block;}
-    .home-screen{min-height:100dvh;display:flex;align-items:center;justify-content:center;padding:10px 10px 26px;box-sizing:border-box;background:linear-gradient(180deg,#061b32 0%,#0b2742 100%);}
+    .home-screen{min-height:100dvh;display:flex;align-items:flex-start;justify-content:center;padding:0 0 26px;box-sizing:border-box;overflow-y:auto;background:linear-gradient(180deg,#061b32 0%,#0b2742 100%);}
     .home-wrap{width:min(760px,100%);text-align:center;position:relative;}
-    .home-art{position:relative;width:100%;aspect-ratio:1/1;border-radius:28px;overflow:hidden;box-shadow:0 22px 60px rgba(0,0,0,.38);border:1px solid rgba(240,193,75,.28);background:#0b2742;}
-    .home-art img{display:block;width:100%;height:100%;object-fit:cover;}
+    .home-art{position:relative;width:100%;aspect-ratio:auto;border-radius:28px;overflow:hidden;box-shadow:0 22px 60px rgba(0,0,0,.38);border:1px solid rgba(240,193,75,.28);background:#0b2742;}
+    .home-art img{display:block;width:100%;height:auto;object-fit:contain;}
     .home-hit{position:absolute;border:0;background:transparent;cursor:pointer;z-index:3;border-radius:28px;}
     .home-hit:focus-visible{outline:3px solid #fff;outline-offset:3px;}
     .home-hit.vmp{left:5%;bottom:13.5%;width:43%;height:17%;}
@@ -628,7 +628,7 @@
 
   <div class="install-modal" id="installModal" role="dialog" aria-modal="true" aria-labelledby="installModalTitle">
     <div class="install-card">
-      <img class="install-logo" src="icon-192.png" alt="VMP · VTC LEGAL">
+      <img class="install-logo" src="icon-192.png" alt="VMP • VTC">
       <h2 id="installModalTitle">Instal·la VMP · VTC LEGAL</h2>
       <p id="installModalText">Per treballar més ràpid al carrer, afegeix l’aplicació a la pantalla d’inici.</p>
       <button class="install-main" id="installModalBtn" type="button">📲 Instal·lar aplicació</button>
@@ -645,7 +645,7 @@
         <button class="home-hit vtc" id="openVtc" type="button" aria-label="Obrir VTC LEGAL"></button>
         <button class="home-hit home" id="homeSplashBtn" type="button" aria-label="Tornar a l’inici"></button>
       </div>
-      <p class="home-note">Selecciona VMP LEGAL o VTC LEGAL. Els botons de la imatge són interactius.</p>
+      <p class="home-note">Selecciona VMP LEGAL o VTC LEGAL. Toca el botó corresponent.</p>
     </div>
   </section>
 
@@ -1097,6 +1097,8 @@
     checkerReset.addEventListener('click',()=>{checkerForm.reset();currentEvidence=[];if(evidencePreview)evidencePreview.innerHTML='';document.querySelectorAll('[data-quick]').forEach(q=>q.checked=false);quickPanel.style.display='block';checkerResult.className='checker-result';checkerResult.innerHTML='';setCheckerPage(1);});
     setCheckerPage(1);
 
+    const vtcOfficialLookup=document.getElementById('vtcOfficialLookup'), vtcPlate=document.getElementById('vtcPlate'), vtcLookupStatus=document.getElementById('vtcLookupStatus');
+    const vtcForm=document.getElementById('vtcCheckerForm'), vtcResult=document.getElementById('vtcResult'), vtcReset=document.getElementById('vtcReset');
     const VTC_LIVE_URL='https://apps.fomento.gob.es/crgt/servlet/ServletController?accion=inicio&estilo=default&lang=es&modulo=datosconsulta';
     const VTC_LEGAL_MAP={
       precontractacio:{article:'Decret llei 9/2022 · art. 11.k + art. 14.1.c',amount:'1.001–2.000 €',detail:'Realitzar el servei sense respectar l’antelació mínima preceptiva entre la contractació i la prestació.'},
@@ -1150,8 +1152,6 @@
     const guideVmp=document.getElementById('guideVmp'), guideVtc=document.getElementById('guideVtc');
     const manualVmp=document.getElementById('manualVmp'), manualVtc=document.getElementById('manualVtc');
     const vtcVerifierTab=document.getElementById('vtcVerifierTab');
-    const vtcOfficialLookup=document.getElementById('vtcOfficialLookup'), vtcPlate=document.getElementById('vtcPlate'), vtcLookupStatus=document.getElementById('vtcLookupStatus');
-    const vtcForm=document.getElementById('vtcCheckerForm'), vtcResult=document.getElementById('vtcResult'), vtcReset=document.getElementById('vtcReset');
 
     const installBannerTitle=document.getElementById('installBannerTitle'), installFixedTitle=document.getElementById('installFixedTitle');
     const normSearch=document.getElementById('normSearch'), normList=document.getElementById('normList');
