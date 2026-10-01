@@ -1,4 +1,4 @@
-const CACHE = 'legal-v18';
+const CACHE = 'legal-v19';
 const ASSETS = [
   './', './index.html', './manifest.json', './logo.jpg', './icon-192.png', './icon-512.png',
   './home-splash.jpg',
