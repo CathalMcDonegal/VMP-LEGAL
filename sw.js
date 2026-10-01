@@ -1,7 +1,8 @@
-const CACHE = 'legal-v13';
+const CACHE = 'legal-v14';
 const ASSETS = [
   './', './index.html', './manifest.json', './logo.jpg', './icon-192.png', './icon-512.png',
-  './home-splash.jpg'
+  './home-splash.jpg',
+  'https://cdn.sheetjs.com/xlsx-0.20.3/package/dist/xlsx.full.min.js'
 ];
 
 self.addEventListener('install', event => {
