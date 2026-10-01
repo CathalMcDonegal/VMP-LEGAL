@@ -16,3 +16,7 @@ Fonts de referència: Generalitat de Catalunya (informació VTC i règim sancion
 
 ### Verificador VMP
 La branca VMP incorpora un verificador interactiu que comprova les característiques bàsiques del vehicle, registre, assegurança i diverses condicions del conductor i de circulació, i mostra les possibles infraccions associades segons les dades de la branca VMP.
+
+## Versió 5
+- Pantalla inicial VMP/VTC amb gràfica blava i escut superior.
+- Verificador VMP ràpid: només cal marcar les incidències; les opcions no marcades es consideren correctes.

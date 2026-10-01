@@ -1,6 +1,7 @@
 const CACHE = 'legal-v5';
 const ASSETS = [
-  './', './index.html', './manifest.json', './logo.jpg', './icon-192.png', './icon-512.png'
+  './', './index.html', './manifest.json', './logo.jpg', './icon-192.png', './icon-512.png',
+    './home-splash.png'
 ];
 
 self.addEventListener('install', e => {
