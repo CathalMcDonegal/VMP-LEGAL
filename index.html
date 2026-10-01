@@ -500,17 +500,17 @@
     .install-card .install-later{width:100%;border:1px solid var(--border);border-radius:12px;padding:10px;background:#10223a;color:var(--text);font-weight:700;cursor:pointer;}
     .install-card .install-help{display:none;text-align:left;background:rgba(59,130,246,.08);border:1px solid rgba(59,130,246,.25);border-radius:12px;padding:10px 12px;margin:12px 0 0;color:#c5d9f0;font-size:.76rem;line-height:1.45;}
     .install-card .install-help.show{display:block;}
-    .home-screen{min-height:100dvh;height:100dvh;display:flex;align-items:flex-start;justify-content:center;padding:0;box-sizing:border-box;overflow:hidden;background:#0b2742;}
-    .home-wrap{width:100%;height:100%;text-align:center;position:relative;overflow:hidden;}
-    .home-art{position:relative;width:100%;height:100%;border-radius:0;overflow:hidden;box-shadow:none;border:0;background:#0b2742;}
-    .home-art img{display:block;width:auto;height:125%;max-width:none;object-fit:contain;object-position:center top;}
+    .home-screen{min-height:100dvh;display:flex;align-items:flex-start;justify-content:center;padding:0 0 26px;box-sizing:border-box;overflow-y:auto;background:linear-gradient(180deg,#061b32 0%,#0b2742 100%);}
+    .home-wrap{width:min(760px,100%);text-align:center;position:relative;}
+    .home-art{position:relative;width:100%;aspect-ratio:auto;border-radius:28px;overflow:hidden;box-shadow:0 22px 60px rgba(0,0,0,.38);border:1px solid rgba(240,193,75,.28);background:#0b2742;}
+    .home-art img{display:block;width:100%;height:auto;object-fit:contain;}
     .home-hit{position:absolute;border:0;background:transparent;cursor:pointer;z-index:3;border-radius:28px;}
     .home-hit:focus-visible{outline:3px solid #fff;outline-offset:3px;}
     .home-hit.vmp{left:6%;top:40.5%;width:41%;height:10.5%;}
     .home-hit.vtc{right:6%;top:40.5%;width:41%;height:10.5%;}
     .home-hit.home{display:none;}
     .home-hint{position:absolute;left:12px;right:12px;bottom:4px;color:rgba(255,255,255,.65);font-size:10px;pointer-events:none;z-index:2;}
-    .home-note{display:none;}
+    .home-note{margin-top:10px;font-size:11px;color:rgba(232,238,247,.62);}
     .home-screen .install-fixed{display:none;}
     body.home-mode header, body.home-mode nav.tabs, body.home-mode main.content{display:none;}
     body.home-mode .home-screen{display:flex;}
