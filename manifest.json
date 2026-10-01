@@ -1,6 +1,7 @@
 {
   "name": "VMP · VTC LEGAL",
   "short_name": "LEGAL",
+  "id": "./index.html",
   "start_url": "./index.html",
   "scope": "./",
   "display": "standalone",

@@ -473,6 +473,16 @@
 
   
     /* ===== INICI / SELECTOR ===== */
+    .install-modal{position:fixed;inset:0;z-index:10000;display:none;align-items:center;justify-content:center;padding:20px;background:rgba(2,12,24,.72);backdrop-filter:blur(5px);}
+    .install-modal.show{display:flex;animation:fadeIn .22s ease;}
+    .install-card{width:min(420px,100%);background:linear-gradient(180deg,#122b49,#0b1f36);border:1px solid rgba(240,193,75,.42);border-radius:22px;box-shadow:0 24px 70px rgba(0,0,0,.5);padding:22px;color:var(--text);text-align:center;}
+    .install-card .install-logo{width:70px;height:70px;object-fit:cover;border-radius:18px;margin:0 auto 12px;border:2px solid rgba(240,193,75,.55);}
+    .install-card h2{font-size:1.15rem;color:var(--accent);margin-bottom:7px;}
+    .install-card p{font-size:.82rem;line-height:1.45;color:var(--muted);margin-bottom:14px;}
+    .install-card .install-main{width:100%;border:0;border-radius:12px;padding:12px;background:var(--accent);color:#08182b;font-weight:800;font-size:.88rem;cursor:pointer;margin-bottom:8px;}
+    .install-card .install-later{width:100%;border:1px solid var(--border);border-radius:12px;padding:10px;background:#10223a;color:var(--text);font-weight:700;cursor:pointer;}
+    .install-card .install-help{display:none;text-align:left;background:rgba(59,130,246,.08);border:1px solid rgba(59,130,246,.25);border-radius:12px;padding:10px 12px;margin:12px 0 0;color:#c5d9f0;font-size:.76rem;line-height:1.45;}
+    .install-card .install-help.show{display:block;}
     .home-screen{min-height:100dvh;display:flex;align-items:center;justify-content:center;padding:10px 10px 26px;box-sizing:border-box;background:linear-gradient(180deg,#061b32 0%,#0b2742 100%);}
     .home-wrap{width:min(760px,100%);text-align:center;position:relative;}
     .home-art{position:relative;width:100%;aspect-ratio:1/1;border-radius:28px;overflow:hidden;box-shadow:0 22px 60px rgba(0,0,0,.38);border:1px solid rgba(240,193,75,.28);background:#0b2742;}
@@ -585,6 +595,17 @@
 <body class="home-mode">
   <div class="watermark" aria-hidden="true"><span class="wm-bottom">TIP 18675 CME · TIP 1235 PL</span></div>
 
+  <div class="install-modal" id="installModal" role="dialog" aria-modal="true" aria-labelledby="installModalTitle">
+    <div class="install-card">
+      <img class="install-logo" src="icon-192.png" alt="VMP · VTC LEGAL">
+      <h2 id="installModalTitle">Instal·la VMP · VTC LEGAL</h2>
+      <p id="installModalText">Per treballar més ràpid al carrer, afegeix l’aplicació a la pantalla d’inici.</p>
+      <button class="install-main" id="installModalBtn" type="button">📲 Instal·lar aplicació</button>
+      <button class="install-later" id="installModalLater" type="button">Ara no</button>
+      <div class="install-help" id="installModalHelp"></div>
+    </div>
+  </div>
+
   <section class="home-screen" id="homeScreen">
     <div class="home-wrap">
       <div class="home-art">
@@ -680,7 +701,7 @@
         <div class="checker-section checker-page" data-page="3" style="display:none">
           <div class="section-kicker">Conductor i situació</div><h3>3. Control de circulació</h3>
           <div class="checker-grid">
-            <div class="checker-field full"><label>Àmbit municipal de la comprovació</label><select name="area" id="checkArea"><option value="barcelona">Barcelona</option><option value="other">Altres municipis</option></select></div>
+            <div class="checker-field full"><label for="checkArea">Municipi de la comprovació</label><select name="area" id="checkArea"><option value="barcelona">Barcelona</option><option value="lapalma">La Palma de Cervelló</option><option value="other">Altres municipis</option></select><div class="checker-mini" id="areaNote">A Barcelona s’apliquen les condicions municipals específiques. Per a altres municipis, el resultat indicarà quan cal contrastar l’ordenança local.</div></div>
             <div class="checker-field"><label for="checkAge">Edat del conductor (opcional)</label><input id="checkAge" name="ageNumber" type="text" inputmode="numeric" placeholder="Anys"></div>
             <div class="checker-field"><label>Incidències de circulació</label><div class="check-options check-single">
               <label class="check-option issue"><input type="checkbox" name="underAge"><span>⚠️ Conductor per sota de l’edat mínima aplicable</span></label>
@@ -886,12 +907,15 @@
       const ageRaw=(checkerForm.querySelector('[name="ageNumber"]').value||'').trim();
       const age=ageRaw ? parseInt(ageRaw,10) : NaN;
       const area=checkerForm.querySelector('[name="area"]').value;
+      const areaLabel={barcelona:'Barcelona',lapalma:'La Palma de Cervelló',other:'Altres municipis'}[area]||'No indicat';
       const vehicleStatus=findings.length?'bad':(cert.status==='unknown'?'unknown':'ok');
       const circulationStatus=circulationFindings.length?'bad':'ok';
       const brand=(checkerForm.querySelector('[name="brand"]').value||'').trim();
       const model=(checkerForm.querySelector('[name="model"]').value||'').trim();
       let html=`<div class="result-head ${vehicleStatus}"><div class="result-status">${vehicleStatus==='ok'?'🟢 VEHICLE CONFORME':vehicleStatus==='unknown'?'🟠 REVISAR VEHICLE':'🔴 VEHICLE NO CONFORME'}</div><div class="result-sub">${brand||model?`${brand} ${model}`.trim()+' · ':''}Resultat segons les incidències marcades.</div></div>`;
       html+=`<div class="result-grid"><div class="result-box ${vehicleStatus}"><div class="rb-label">Vehicle</div><div class="rb-value">${vehicleStatus==='ok'?'CONFORME':vehicleStatus==='unknown'?'REVISAR':'NO CONFORME'}</div></div><div class="result-box ${circulationStatus}"><div class="rb-label">Circulació</div><div class="rb-value">${circulationStatus==='ok'?'SENSE INCIDÈNCIES':'AMB INCIDÈNCIES'}</div></div></div>`;
+      html+=`<div class="result-box info" style="margin-bottom:10px"><div class="rb-label">Municipi</div><div class="rb-value">${areaLabel}</div></div>`;
+      if(area!=='barcelona') html+=`<div class="result-item warn"><strong>ℹ️ Contrast municipal</strong><span>Per ${areaLabel}, aquest resultat no substitueix la consulta de l’ordenança municipal específica. Les incidències marcades que depenguin del municipi s’han de contrastar localment.</span></div>`;
       html+=`<div class="result-section-title">📋 Documentació i transició</div>`;
       html+=`<div class="result-item info"><strong>${cert.status==='ok'?'✓':'ℹ️'} ${cert.text}</strong><span>Les dades no marcades es consideren conformes. Quan la data de comercialització és anterior al 22/01/2024, cal comprovar el règim transitori aplicable.</span></div>`;
       if(findings.length){ html+=`<div class="result-section-title">🚨 Deficiències del vehicle</div>`; html+=findings.map(r=>{const inf=r.infId?getInfra(r.infId):null;return `<div class="result-item"><strong>⚠️ ${r.label}</strong><span>${inf?`Possible referència sancionadora: ${inf.import}. ${inf.article}`:'Cal revisar la conformitat tècnica o documental específica.'}</span></div>`}).join(''); }
@@ -964,24 +988,47 @@
     normSearch.addEventListener('input',e=>renderNorm(e.target.value));
     document.querySelectorAll('.tab').forEach(tab=>tab.addEventListener('click',()=>{document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));document.querySelectorAll('.panel').forEach(p=>p.classList.remove('active'));tab.classList.add('active');document.getElementById(tab.dataset.tab).classList.add('active');if(tab.dataset.tab==='consulta'){detailView.classList.remove('active');listView.classList.add('active');}window.scrollTo(0,0);}));
 
-    let deferredPrompt=null; const installFixed=document.getElementById('installFixed'), installFixedBtn=document.getElementById('installFixedBtn'), installFixedClose=document.getElementById('installFixedClose'), installBanner=document.getElementById('installBanner'), iosHint=document.getElementById('iosHint');
+    let deferredPrompt=null;
+    const installFixed=document.getElementById('installFixed'), installFixedBtn=document.getElementById('installFixedBtn'), installFixedClose=document.getElementById('installFixedClose'), installBanner=document.getElementById('installBanner'), iosHint=document.getElementById('iosHint');
+    const installModal=document.getElementById('installModal'), installModalBtn=document.getElementById('installModalBtn'), installModalLater=document.getElementById('installModalLater'), installModalHelp=document.getElementById('installModalHelp'), installModalText=document.getElementById('installModalText');
     function isStandalone(){return window.matchMedia('(display-mode: standalone)').matches||window.navigator.standalone===true;}
     function isIos(){return /iphone|ipad|ipod/i.test(navigator.userAgent);}
-    function showBar(){if(document.body.classList.contains('home-mode')||isStandalone()){hideBar();return;}if(sessionStorage.getItem('legal-hide-install')==='1'){hideBar();return;}installFixed.classList.add('show');document.body.classList.add('has-install-bar');if(installBanner)installBanner.classList.remove('show');if(isIos()&&iosHint)iosHint.classList.add('show');}
+    function isAndroid(){return /android/i.test(navigator.userAgent);}
+    function showBar(){if(isStandalone()||sessionStorage.getItem('legal-hide-install')==='1'){hideBar();return;}installFixed.classList.add('show');document.body.classList.add('has-install-bar');if(installBanner)installBanner.classList.remove('show');if(isIos()&&iosHint)iosHint.classList.add('show');}
     function hideBar(){installFixed.classList.remove('show');document.body.classList.remove('has-install-bar');if(installBanner)installBanner.classList.remove('show');if(iosHint)iosHint.classList.remove('show');}
-    window.addEventListener('beforeinstallprompt',e=>{e.preventDefault();deferredPrompt=e;showBar();});
-    async function doInstall(){if(deferredPrompt){deferredPrompt.prompt();const choice=await deferredPrompt.userChoice;deferredPrompt=null;if(choice.outcome==='accepted')hideBar();return;}if(isIos()){alert(`Per instal·lar a l'iPhone:
-
-1. Toca el botó Compartir
-2. Tria «Afegeix a la pantalla d'inici»
-3. Confirma amb «Afegeix»`);return;}alert(`Per instal·lar l'app:
-
-1. Obre el menú de Chrome
-2. Tria «Instal·lar aplicació» o «Afegeix a la pantalla d'inici»`);} 
-
-    installFixedBtn.addEventListener('click',doInstall); document.getElementById('installBtn').addEventListener('click',doInstall);
-    installFixedClose.addEventListener('click',()=>{hideBar();sessionStorage.setItem('legal-hide-install','1');}); document.getElementById('installClose').addEventListener('click',()=>{hideBar();sessionStorage.setItem('legal-hide-install','1');});
-    window.addEventListener('appinstalled',()=>{hideBar();deferredPrompt=null;});
+    function closeInstallModal(){installModal.classList.remove('show');sessionStorage.setItem('legal-install-modal-seen','1');}
+    function showInstallModal(){
+      if(isStandalone()||sessionStorage.getItem('legal-install-modal-seen')==='1') return;
+      installModal.classList.add('show');
+      if(deferredPrompt){installModalText.textContent='L’aplicació està preparada per instal·lar-se. Amb un toc quedarà disponible com una app al dispositiu.';installModalHelp.classList.remove('show');return;}
+      if(isIos()){
+        installModalText.textContent='A l’iPhone/iPad l’instal·lació es fa des del menú Compartir del navegador.';
+        installModalHelp.innerHTML='<strong>Com instal·lar:</strong><br>1. Toca <strong>Compartir</strong>.<br>2. Tria <strong>«Afegeix a la pantalla d’inici»</strong>.<br>3. Confirma amb <strong>«Afegeix»</strong>.';
+        installModalHelp.classList.add('show');
+      }else{
+        installModalText.textContent='Per treballar més ràpid al carrer, afegeix l’aplicació a la pantalla d’inici.';
+        installModalHelp.innerHTML=isAndroid()?'<strong>Si no apareix el diàleg:</strong> obre el menú del navegador i busca <strong>«Instal·lar aplicació»</strong> o <strong>«Afegeix a la pantalla d’inici»</strong>.':'<strong>Si no apareix el diàleg:</strong> obre el menú del navegador i busca <strong>«Instal·lar aplicació»</strong>.';
+        installModalHelp.classList.add('show');
+      }
+    }
+    window.addEventListener('beforeinstallprompt',e=>{e.preventDefault();deferredPrompt=e;showBar();if(installModal.classList.contains('show'))showInstallModal();});
+    async function doInstall(){
+      if(deferredPrompt){const promptEvent=deferredPrompt;deferredPrompt=null;const choice=await promptEvent.prompt();if(choice&&choice.outcome==='accepted')closeInstallModal();hideBar();return;}
+      if(isIos()||!('BeforeInstallPromptEvent' in window)){installModalHelp.classList.add('show');showInstallModal();return;}
+      installModalHelp.classList.add('show');showInstallModal();
+    }
+    installFixedBtn.addEventListener('click',doInstall); document.getElementById('installBtn').addEventListener('click',doInstall); installModalBtn.addEventListener('click',doInstall);
+    installFixedClose.addEventListener('click',()=>{hideBar();sessionStorage.setItem('legal-hide-install','1');}); document.getElementById('installClose').addEventListener('click',()=>{hideBar();sessionStorage.setItem('legal-hide-install','1');}); installModalLater.addEventListener('click',closeInstallModal);
+    window.addEventListener('appinstalled',()=>{hideBar();deferredPrompt=null;closeInstallModal();});
+    setTimeout(showInstallModal,1200);
+    const areaSelect=document.getElementById('checkArea'), areaNote=document.getElementById('areaNote');
+    function updateAreaNote(){
+      const area=areaSelect.value;
+      if(area==='barcelona') areaNote.textContent='Barcelona: el verificador aplica les condicions municipals específiques disponibles a la base (edat mínima 16 anys, casc, llums, prohibició de vorera i altres restriccions).';
+      else if(area==='lapalma') areaNote.textContent='La Palma de Cervelló: s’apliquen les regles estatals introduïdes a la base i es marca per separat allò que requereixi contrast amb l’ordenança municipal local.';
+      else areaNote.textContent='Altres municipis: s’apliquen les regles estatals introduïdes a la base i es marca per separat allò que requereixi contrast amb l’ordenança municipal local.';
+    }
+    areaSelect.addEventListener('change',updateAreaNote); updateAreaNote();
     renderChips(); renderNorm();
     if('serviceWorker' in navigator) navigator.serviceWorker.register('./sw.js').catch(err=>console.warn("No s'ha pogut registrar el Service Worker:",err));
   </script>
