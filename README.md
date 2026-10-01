@@ -18,3 +18,9 @@ La verificació de VTC disponible per a organismes públics és un servei d’in
 
 ## Publicació
 Puja tots els fitxers a l’arrel del repositori de GitHub Pages i activa Pages des de `main` / root.
+
+
+## V8 — millores de càrrega
+- Portada retallada a la composició útil en mòbil i comprimida en JPEG.
+- Precàrrega en paral·lel dels recursos i nova versió de la memòria cau.
+- Nom de l’aplicació: VMP • VTC.

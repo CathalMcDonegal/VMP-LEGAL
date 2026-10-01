@@ -485,12 +485,12 @@
     .install-card .install-help.show{display:block;}
     .home-screen{min-height:100dvh;display:flex;align-items:flex-start;justify-content:center;padding:0 0 26px;box-sizing:border-box;overflow-y:auto;background:linear-gradient(180deg,#061b32 0%,#0b2742 100%);}
     .home-wrap{width:min(760px,100%);text-align:center;position:relative;}
-    .home-art{position:relative;width:100%;aspect-ratio:auto;border-radius:28px;overflow:hidden;box-shadow:0 22px 60px rgba(0,0,0,.38);border:1px solid rgba(240,193,75,.28);background:#0b2742;}
-    .home-art img{display:block;width:100%;height:auto;object-fit:contain;}
+    .home-art{position:relative;width:100%;aspect-ratio:1/1;border-radius:28px;overflow:hidden;box-shadow:0 22px 60px rgba(0,0,0,.38);border:1px solid rgba(240,193,75,.28);background:#0b2742;}
+    .home-art img{display:block;width:100%;height:100%;object-fit:cover;}
     .home-hit{position:absolute;border:0;background:transparent;cursor:pointer;z-index:3;border-radius:28px;}
     .home-hit:focus-visible{outline:3px solid #fff;outline-offset:3px;}
-    .home-hit.vmp{left:5%;bottom:13.5%;width:43%;height:17%;}
-    .home-hit.vtc{right:5%;bottom:13.5%;width:43%;height:17%;}
+    .home-hit.vmp{left:5%;top:37%;width:43%;height:18%;}
+    .home-hit.vtc{right:5%;top:37%;width:43%;height:18%;}
     .home-hit.home{left:35%;bottom:2%;width:30%;height:9%;}
     .home-hint{position:absolute;left:12px;right:12px;bottom:4px;color:rgba(255,255,255,.65);font-size:10px;pointer-events:none;z-index:2;}
     .home-note{margin-top:10px;font-size:11px;color:rgba(232,238,247,.62);}
@@ -640,12 +640,12 @@
   <section class="home-screen" id="homeScreen">
     <div class="home-wrap">
       <div class="home-art">
-        <img src="home-splash.png" alt="VMP LEGAL i VTC LEGAL — Policia Local La Palma de Cervelló">
+        <img src="home-splash.jpg" alt="VMP • VTC LEGAL PRO">
         <button class="home-hit vmp" id="openVmp" type="button" aria-label="Obrir VMP LEGAL"></button>
         <button class="home-hit vtc" id="openVtc" type="button" aria-label="Obrir VTC LEGAL"></button>
         <button class="home-hit home" id="homeSplashBtn" type="button" aria-label="Tornar a l’inici"></button>
       </div>
-      <p class="home-note">Selecciona VMP LEGAL o VTC LEGAL. Toca el botó corresponent.</p>
+      <p class="home-note">Selecciona VMP • VTC. Toca el botó corresponent.</p>
     </div>
   </section>
 
