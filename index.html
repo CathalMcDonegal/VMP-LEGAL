@@ -619,7 +619,9 @@
     .checker-mini{font-size:.72rem;color:var(--muted);line-height:1.4;margin-top:7px;}
     @media (max-width:640px){.checker-grid,.result-grid{grid-template-columns:1fr}.checker-field.full{grid-column:auto}.checker-topbar{align-items:flex-start;flex-direction:column}.checker-progress{width:100%}}
 
-  </style>
+  
+    .history-toolbar{display:flex;gap:8px;flex-wrap:wrap;margin:12px 0}.history-toolbar input{flex:1;min-width:200px;padding:11px;border-radius:12px;border:1px solid #cfd7e3}.history-list{display:grid;gap:10px}.history-card{background:#fff;border:1px solid #d8e0ea;border-radius:16px;padding:14px;box-shadow:0 4px 12px rgba(0,0,0,.05)}.history-card h3{margin:0 0 6px}.history-meta{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:6px;font-size:.82rem;color:#526174}.history-actions{display:flex;gap:7px;flex-wrap:wrap;margin-top:10px}.history-actions button{border:0;border-radius:10px;padding:8px 10px;cursor:pointer}.evidence-preview{display:flex;gap:8px;flex-wrap:wrap;margin-top:8px}.evidence-preview img{width:76px;height:76px;object-fit:cover;border-radius:10px;border:1px solid #d8e0ea}.evidence-count{font-size:.8rem;color:var(--muted);margin-top:5px}.history-empty{text-align:center;color:var(--muted);padding:28px 10px;background:#fff;border-radius:16px;border:1px dashed #ccd6e2}
+</style>
 </head>
 <body class="home-mode">
   <div class="watermark" aria-hidden="true"><span class="wm-bottom">TIP 18675 CME · TIP 1235 PL</span></div>
@@ -661,8 +663,11 @@
   <nav class="tabs">
     <div class="tab active" data-tab="consulta">Consulta</div>
     <div class="tab vmp-only-tab" id="verificadorTab" data-tab="verificador">Verificador</div>
+    <div class="tab vtc-only-tab" id="vtcVerifierTab" data-tab="vtcverificador">Comprovar VTC</div>
     <div class="tab" data-tab="nomenclator">Nomenclàtor</div>
     <div class="tab" data-tab="guia">Guia</div>
+    <div class="tab" data-tab="manual">Manual d’ús</div>
+    <div class="tab" data-tab="historial">🗂️ Historial</div>
   </nav>
 
   <main class="content">
@@ -769,6 +774,7 @@
           </div>
           <div class="checker-note">Barcelona té una ordenança específica. Si no marques cap incidència, el sistema entendrà que la situació observada és correcta segons les dades introduïdes. En altres municipis, contrasta l’ordenança local aplicable.</div>
           <div class="checker-field full" style="margin-top:10px"><label for="checkObs">Observacions de l’agent (opcional)</label><textarea id="checkObs" name="observations" class="observations" placeholder="Anota aquí qualsevol circumstància rellevant..."></textarea></div>
+          <div class="checker-field full"><label for="checkEvidence">📸 Evidències fotogràfiques</label><input id="checkEvidence" name="evidence" type="file" accept="image/*" capture="environment" multiple><div class="checker-mini">Pots fer una foto directament amb el mòbil. Les imatges es guarden només en aquest dispositiu i queden associades al control.</div><div id="evidencePreview" class="evidence-preview"></div></div>
         </div>
 
         <div class="checker-actions">
@@ -781,9 +787,85 @@
       <div class="checker-result" id="checkerResult" aria-live="polite"></div>
     </section>
 
+    <section id="vtcverificador" class="panel">
+      <div class="checker-intro">
+        <h2>🚕 Comprovar VTC · matrícula i control</h2>
+        <p>Consulta primer la situació del vehicle i després marca <strong>només les incidències detectades</strong>. La fitxa resultant mostra la <strong>base jurídica i l’article</strong> associats a cada incidència.</p>
+        <div class="checker-note">La consulta oficial de matrícula es fa sobre el registre públic del Ministeri de Transports. Aquesta PWA no replica ni emmagatzema el registre oficial: obre la font oficial per obtenir la dada actualitzada.</div>
+      </div>
+
+      <div class="vtc-live-card">
+        <div class="vtc-live-head"><span>🟢</span><div><h3>Consulta oficial de VTC</h3><p>Comprova una matrícula contra el registre públic estatal.</p></div></div>
+        <label for="vtcPlate">Matrícula</label>
+        <div class="vtc-live-row"><input id="vtcPlate" type="text" inputmode="text" autocomplete="off" placeholder="1234 ABC" maxlength="10"><button type="button" id="vtcOfficialLookup">🔎 Consulta oficial</button></div>
+        <div id="vtcLookupStatus" class="vtc-lookup-status">No s’ha fet cap consulta en aquesta sessió.</div>
+        <a class="vtc-official-link" href="https://apps.fomento.gob.es/crgt/servlet/ServletController?accion=inicio&estilo=default&lang=es&modulo=datosconsulta" target="_blank" rel="noopener">Obrir directament el Registre d’Empreses i Activitats de Transport ↗</a>
+        <div class="source-note">Font oficial: Registre d’Empreses i Activitats de Transport (REAT) del Ministeri. El portal permet consultar per matrícula els vehicles inscrits. Si la consulta oficial canvia, l’app no inventa ni conserva una dada antiga com si fos actual.</div>
+      </div>
+
+      <form id="vtcCheckerForm">
+        <div class="checker-mode-note">Marca <strong>només les incidències que detectis</strong>. Tot allò que no marques es considera correcte.</div>
+        <div class="checker-section">
+          <div class="section-kicker">Identificació</div><h3>1. Dades del control</h3>
+          <div class="checker-grid">
+            <div class="checker-field"><label for="vtcBrand">Marca</label><input id="vtcBrand" name="brand" type="text" placeholder="Opcional"></div>
+            <div class="checker-field"><label for="vtcModel">Model</label><input id="vtcModel" name="model" type="text" placeholder="Opcional"></div>
+            <div class="checker-field"><label for="vtcAgent">Agent / TIP</label><input id="vtcAgent" name="agent" type="text" placeholder="Opcional"></div>
+            <div class="checker-field"><label for="vtcPlace">Lloc / adreça</label><input id="vtcPlace" name="place" type="text" placeholder="Opcional"></div>
+            <div class="checker-field full"><label for="vtcArea">Àmbit</label><select id="vtcArea" name="area"><option value="catalunya">Catalunya</option><option value="amb">Àrea Metropolitana de Barcelona</option><option value="municipal">Àmbit municipal específic</option></select></div>
+          </div>
+        </div>
+        <div class="checker-section">
+          <div class="section-kicker">Incidències</div><h3>2. Marca només el que detectes</h3>
+          <div class="check-options check-single">
+            <label class="check-option issue"><input type="checkbox" name="precontractacio"><span>⚠️ Servei sense precontractació o sense respectar l’interval mínim</span></label>
+            <label class="check-option issue"><input type="checkbox" name="captacio"><span>⚠️ Captació / recollida de client sense contractació prèvia</span></label>
+            <label class="check-option issue"><input type="checkbox" name="sense_autoritzacio"><span>⚠️ Sense autorització VTC exigible</span></label>
+            <label class="check-option issue"><input type="checkbox" name="fora_catalunya"><span>⚠️ Àmbit territorial no cobert per l’autorització</span></label>
+            <label class="check-option issue"><input type="checkbox" name="registre_servei"><span>⚠️ Servei sense comunicació electrònica exigible</span></label>
+            <label class="check-option issue"><input type="checkbox" name="documentacio"><span>⚠️ Documentació / full de ruta no acreditada</span></label>
+            <label class="check-option issue"><input type="checkbox" name="distintiu"><span>⚠️ Sense distintiu VTC o distintiu incorrecte</span></label>
+            <label class="check-option issue"><input type="checkbox" name="asseguranca"><span>⚠️ Assegurança insuficient o no acreditada</span></label>
+            <label class="check-option issue"><input type="checkbox" name="conductor"><span>⚠️ Conductor sense requisits aplicables</span></label>
+            <label class="check-option issue"><input type="checkbox" name="vehicle"><span>⚠️ Vehicle no conforme amb els requisits aplicables</span></label>
+            <label class="check-option issue"><input type="checkbox" name="places"><span>⚠️ Més de 9 places inclòs el conductor</span></label>
+            <label class="check-option issue"><input type="checkbox" name="captacio_amb"><span>⚠️ Incidència específica de l’àmbit metropolità en finalitzar el servei</span></label>
+          </div>
+        </div>
+        <div class="checker-section">
+          <div class="checker-field full"><label for="vtcObs">Observacions</label><textarea id="vtcObs" name="observations" class="observations" placeholder="Fets observats, hora de contractació, documentació mostrada, etc."></textarea></div>
+        </div>
+        <div class="checker-actions"><button class="checker-btn primary" type="submit">🔎 Generar fitxa VTC</button><button class="checker-btn secondary" type="button" id="vtcReset">Netejar</button></div>
+      </form>
+      <div class="checker-result" id="vtcResult" aria-live="polite"></div>
+    </section>
+
     <section id="nomenclator" class="panel">
       <input type="search" class="search-input" id="normSearch" placeholder="Cerca normativa...">
       <div id="normList"></div>
+    </section>
+
+    <section id="manual" class="panel">
+      <div id="manualVmp">
+        <div class="guide-section"><h3>📘 Manual d’ús · VMP LEGAL</h3><ul><li><strong>Consulta:</strong> toca una infracció per veure descripció, article i import.</li><li><strong>Verificador:</strong> marca només les incidències detectades. El que no marques es considera correcte.</li><li><strong>Mode ràpid:</strong> útil per a controls de carrer; genera la fitxa sense completar preguntes innecessàries.</li><li><strong>Fitxa de control:</strong> pots imprimir/PDF, copiar el resum, afegir observacions i fotografies.</li><li><strong>Historial:</strong> les fitxes i evidències es guarden localment en aquest dispositiu.</li><li><strong>Municipi:</strong> quan una qüestió depèn de l’ordenança, el verificador ho indica.</li></ul></div>
+        <div class="guide-section"><h3>🟢 🟠 🔴 Resultats</h3><ul><li>🟢 Vehicle conforme: no s’han marcat incidències.</li><li>🟠 Revisar: hi ha una qüestió documental/transitòria que requereix contrast.</li><li>🔴 Vehicle no conforme: s’ha marcat com a mínim una incidència.</li></ul></div>
+      </div>
+      <div id="manualVtc" style="display:none">
+        <div class="guide-section"><h3>📘 Manual d’ús · VTC LEGAL</h3><ul><li><strong>Comprovar VTC:</strong> introdueix la matrícula i obre la consulta oficial del REAT per verificar la situació actual.</li><li><strong>Control VTC:</strong> marca només les incidències que detectis.</li><li>En generar la fitxa, cada incidència mostra <strong>l’article/base jurídica i la franja sancionadora</strong> disponible per a Catalunya.</li><li><strong>Àmbit:</strong> indica si el control és general de Catalunya, AMB o un àmbit municipal específic.</li><li><strong>Historial:</strong> les fitxes es guarden localment en el dispositiu.</li></ul></div>
+        <div class="guide-section"><h3>🔄 Actualització de la base VTC</h3><p class="source-note">La PWA utilitza la consulta oficial del REAT com a font viva. El servei de verificació VTC del Ministeri existeix per a organismes públics, però no és una API pública anònima per a una PWA estàtica de GitHub Pages. Per això l’app no simula una sincronització ni mostra una matrícula com a vàlida sense contrast oficial.</p></div>
+      </div>
+    </section>
+
+    <section id="historial" class="panel">
+      <div class="checker-intro">
+        <h2>🗂️ Historial de controls</h2>
+        <p>Els controls es guarden <strong>només en aquest dispositiu</strong>. No s'envien a cap servidor.</p>
+      </div>
+      <div class="history-toolbar">
+        <input id="historySearch" type="search" placeholder="🔎 Buscar marca, model, municipi...">
+        <button type="button" id="clearHistory" class="quick-secondary">🗑️ Esborrar historial</button>
+      </div>
+      <div id="historyList" class="history-list"></div>
     </section>
 
     <section id="guia" class="panel">
@@ -859,17 +941,17 @@
       { titol:"Ordenances municipals", text:"Els ajuntaments poden regular per quines vies concretes es pot circular (carrils bici, calçades, etc.) i altres aspectes complementaris.", tag:"Autonomia local" }
     ];
     const VTC_INFRACCIONS = [
-  {id:"precontractacio",label:"Sense precontractació",tipus:"muy_grave",import:"Fins a 2.000 €",article:"Normativa VTC de Catalunya · règim sancionador",titol:"Prestar el servei sense respectar la precontractació exigible",desc:"El servei VTC s’ha de prestar d’acord amb les condicions de precontractació aplicables. A Catalunya, la Generalitat informa d’un interval mínim de 15 minuts entre la contractació i la prestació del servei.",nota:"A l’Àrea Metropolitana de Barcelona poden existir condicions metropolitanes específiques. Comprova sempre l’àmbit territorial i la norma vigent."},
-  {id:"captacio",label:"Captació de clients",tipus:"muy_grave",import:"Fins a 4.000 €",article:"Normativa VTC de Catalunya · règim sancionador",titol:"Recollir clients sense contractació prèvia o circular a la recerca de clients",desc:"Els VTC no poden circular per les vies públiques buscant clients ni propiciar la captació de viatgers que no hagin contractat prèviament el servei.",nota:"La Generalitat informa de multes de fins a 4.000 € i immobilització del vehicle en aquests supòsits."},
-  {id:"sense_autoritzacio",label:"Sense autorització VTC",tipus:"muy_grave",import:"Fins a 6.000 €",article:"Normativa VTC de Catalunya · règim sancionador",titol:"Prestar serveis sense l’autorització VTC exigible",desc:"L’activitat d’arrendament de vehicles amb conductor requereix l’autorització administrativa corresponent.",nota:"La Generalitat informa que les multes poden arribar als 6.000 € quan es treballa sense autorització."},
-  {id:"fora_catalunya",label:"Autorització fora de Catalunya",tipus:"muy_grave",import:"Fins a 2.000 €",article:"Normativa VTC de Catalunya · règim sancionador",titol:"Prestar servei amb autorització de fora de Catalunya quan no correspon",desc:"La normativa catalana estableix condicions territorials per a determinades autoritzacions VTC i la prestació del servei.",nota:"La Generalitat informa de multes de fins a 2.000 € i immobilització en els supòsits indicats."},
-  {id:"registre_servei",label:"Sense comunicar el servei",tipus:"muy_grave",import:"1.001–6.000 €",article:"LOTT · art. 140 i règim sancionador",titol:"Iniciar un servei sense la comunicació electrònica exigible",desc:"La LOTT tipifica com a infracció molt greu determinats serveis VTC iniciats sense haver comunicat electrònicament les dades exigides al registre corresponent.",nota:"La quantia concreta depèn de la infracció i de la graduació aplicable segons la LOTT."},
-  {id:"documentacio",label:"Sense documentació",tipus:"grave",import:"Segons infracció",article:"LOTT / ROTT · documentació de control",titol:"No portar o no acreditar la documentació exigible",desc:"El conductor ha de poder acreditar la legalitat del servei i disposar de la documentació exigida per la normativa de transport i per l’autorització.",nota:"La qualificació i l’import depenen del document o obligació concreta incomplerta."},
-  {id:"distintiu",label:"Sense distintiu VTC",tipus:"grave",import:"Segons infracció",article:"Gencat · identificador VTC",titol:"No portar visible el distintiu o identificador VTC exigible",desc:"A Catalunya existeix un distintiu o identificador VTC que acredita l’autorització domiciliada a Catalunya i que s’ha de col·locar de forma visible al parabrisa.",nota:"Pot existir també un distintiu específic relacionat amb els dies de descans a l’àmbit metropolità."},
-  {id:"asseguranca",label:"Assegurança insuficient",tipus:"grave",import:"Segons infracció",article:"Gencat · requisits d’autorització VTC",titol:"No disposar de l’assegurança exigida",desc:"Les VTC de Catalunya han de disposar d’una assegurança que cobreixi fins a 50 milions d’euros de responsabilitat civil pels danys que puguin patir els viatgers.",nota:"La conseqüència sancionadora concreta depèn de la infracció acreditada i de la normativa aplicable."},
-  {id:"conductor",label:"Conductor sense requisits",tipus:"grave",import:"Segons infracció",article:"Gencat · requisits de conductor VTC",titol:"Conduir sense complir els requisits exigibles",desc:"Per a les VTC de Catalunya, els conductors han de disposar com a mínim del permís B o superior i una antiguitat mínima de dos anys. Els ajuntaments poden exigir formació específica.",nota:"Cal comprovar també els requisits municipals o metropolitans que siguin aplicables."},
-  {id:"vehicle",label:"Vehicle no conforme",tipus:"grave",import:"Segons infracció",article:"Gencat · requisits del vehicle VTC",titol:"Vehicle que no compleix les condicions exigides",desc:"La normativa catalana estableix, entre altres requisits, límits de places, antiguitat i característiques del vehicle. Per als vehicles nous s’admeten distintius ambientals 0 i ECO segons la informació de la Generalitat.",nota:"Les característiques concretes poden variar segons el règim d’autorització i l’àmbit territorial."},
-  {id:"places",label:"Més de 9 places",tipus:"grave",import:"Segons infracció",article:"Gencat · requisits de l’autorització VTC",titol:"Vehicle amb capacitat superior a 9 places",desc:"L’autorització VTC es refereix a vehicles de fins a 9 places inclosa la del conductor.",nota:"La capacitat que consta a la fitxa tècnica ha de correspondre amb la del permís de circulació."},
+  {id:"precontractacio",label:"Sense precontractació",tipus:"muy_grave",import:"1.001–2.000 €",article:"Decret llei 9/2022 · art. 11.k + art. 14.1.c",titol:"Prestar el servei sense respectar la precontractació exigible",desc:"El servei VTC s’ha de prestar d’acord amb les condicions de precontractació aplicables. A Catalunya, la Generalitat informa d’un interval mínim de 15 minuts entre la contractació i la prestació del servei.",nota:"A l’Àrea Metropolitana de Barcelona poden existir condicions metropolitanes específiques. Comprova sempre l’àmbit territorial i la norma vigent."},
+  {id:"captacio",label:"Captació de clients",tipus:"muy_grave",import:"1.001–2.000 €",article:"Decret llei 9/2022 · art. 11.j / 11.l + art. 14.1.c",titol:"Recollir clients sense contractació prèvia o circular a la recerca de clients",desc:"Els VTC no poden circular per les vies públiques buscant clients ni propiciar la captació de viatgers que no hagin contractat prèviament el servei.",nota:"La Generalitat informa de multes de fins a 4.000 € i immobilització del vehicle en aquests supòsits."},
+  {id:"sense_autoritzacio",label:"Sense autorització VTC",tipus:"muy_grave",import:"4.001–6.000 €",article:"Decret llei 9/2022 · art. 11.a + art. 14.1.e",titol:"Prestar serveis sense l’autorització VTC exigible",desc:"L’activitat d’arrendament de vehicles amb conductor requereix l’autorització administrativa corresponent.",nota:"La Generalitat informa que les multes poden arribar als 6.000 € quan es treballa sense autorització."},
+  {id:"fora_catalunya",label:"Autorització fora de Catalunya",tipus:"muy_grave",import:"1.001–2.000 €",article:"Decret llei 9/2022 · art. 11.f + art. 14.1.c",titol:"Prestar servei amb autorització de fora de Catalunya quan no correspon",desc:"La normativa catalana estableix condicions territorials per a determinades autoritzacions VTC i la prestació del servei.",nota:"La Generalitat informa de multes de fins a 2.000 € i immobilització en els supòsits indicats."},
+  {id:"registre_servei",label:"Sense comunicar el servei",tipus:"muy_grave",import:"1.001–2.000 €",article:"Decret llei 9/2022 · art. 11.o + art. 14.1.c / LOTT · art. 140.39.2",titol:"Iniciar un servei sense la comunicació electrònica exigible",desc:"La LOTT tipifica com a infracció molt greu determinats serveis VTC iniciats sense haver comunicat electrònicament les dades exigides al registre corresponent.",nota:"La quantia concreta depèn de la infracció i de la graduació aplicable segons la LOTT."},
+  {id:"documentacio",label:"Sense documentació",tipus:"grave",import:"201–300 € o 1.001–2.000 €",article:"Decret llei 9/2022 · art. 13.a / art. 11.p + art. 14.1.a/c",titol:"No portar o no acreditar la documentació exigible",desc:"El conductor ha de poder acreditar la legalitat del servei i disposar de la documentació exigida per la normativa de transport i per l’autorització.",nota:"La qualificació i l’import depenen del document o obligació concreta incomplerta."},
+  {id:"distintiu",label:"Sense distintiu VTC",tipus:"muy_grave",import:"2.001–4.000 €",article:"Decret llei 9/2022 · disp. add. 2 + art. 11.g + art. 14.1.d",titol:"No portar visible el distintiu o identificador VTC exigible",desc:"A Catalunya existeix un distintiu o identificador VTC que acredita l’autorització domiciliada a Catalunya i que s’ha de col·locar de forma visible al parabrisa.",nota:"Pot existir també un distintiu específic relacionat amb els dies de descans a l’àmbit metropolità."},
+  {id:"asseguranca",label:"Assegurança insuficient",tipus:"muy_grave",import:"2.001–4.000 €",article:"Decret llei 9/2022 · art. 4.1.f + art. 11.q + art. 14.1.d",titol:"No disposar de l’assegurança exigida",desc:"Les VTC de Catalunya han de disposar d’una assegurança que cobreixi fins a 50 milions d’euros de responsabilitat civil pels danys que puguin patir els viatgers.",nota:"La conseqüència sancionadora concreta depèn de la infracció acreditada i de la normativa aplicable."},
+  {id:"conductor",label:"Conductor sense requisits",tipus:"muy_grave",import:"1.001–2.000 €",article:"Decret llei 9/2022 · art. 4.1.e + art. 11.s + art. 14.1.c",titol:"Conduir sense complir els requisits exigibles",desc:"Per a les VTC de Catalunya, els conductors han de disposar com a mínim del permís B o superior i una antiguitat mínima de dos anys. Els ajuntaments poden exigir formació específica.",nota:"Cal comprovar també els requisits municipals o metropolitans que siguin aplicables."},
+  {id:"vehicle",label:"Vehicle no conforme",tipus:"muy_grave",import:"1.001–2.000 €",article:"Decret llei 9/2022 · art. 4.1.c-d + art. 11.h/i + art. 14.1.c",titol:"Vehicle que no compleix les condicions exigides",desc:"La normativa catalana estableix, entre altres requisits, límits de places, antiguitat i característiques del vehicle. Per als vehicles nous s’admeten distintius ambientals 0 i ECO segons la informació de la Generalitat.",nota:"Les característiques concretes poden variar segons el règim d’autorització i l’àmbit territorial."},
+  {id:"places",label:"Més de 9 places",tipus:"muy_grave",import:"1.001–2.000 €",article:"Decret llei 9/2022 · art. 3-4 + art. 11.h/i + art. 14.1.c",titol:"Vehicle amb capacitat superior a 9 places",desc:"L’autorització VTC es refereix a vehicles de fins a 9 places inclosa la del conductor.",nota:"La capacitat que consta a la fitxa tècnica ha de correspondre amb la del permís de circulació."},
   {id:"captacio_amb",label:"Sense servei en finalitzar",tipus:"grave",import:"Segons infracció",article:"Reglament VTC de l’AMB",titol:"Circular sense passatgers ni servei contractat quan l’àmbit metropolità ho exigeix",desc:"La regulació metropolitana estableix condicions específiques quan el VTC circula sense passatgers, inclosa la justificació del servei o del desplaçament al lloc d’estacionament.",nota:"Aplicable segons l’àmbit territorial i la vigència efectiva de la regulació metropolitana."}
 ];
     const VTC_NOMENCLATOR = [
@@ -988,6 +1070,8 @@
       if(observations) html+=`<div class="result-section-title">📝 Observacions</div><div class="result-item info"><span>${observations.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/\n/g,'<br>')}</span></div>`;
       html+=`<div class="checker-disclaimer">Fitxa de control orientativa. El sistema parteix del criteri indicat: tot allò que no es marca es considera correcte. La conformitat definitiva depèn de la documentació, les comprovacions físiques i la normativa municipal aplicable.</div>`;
       checkerResult.className='checker-result show'; checkerResult.innerHTML=html; checkerResult.scrollIntoView({behavior:'smooth',block:'start'});
+      const incidentLabels=[...findings,...circulationFindings].map(r=>r.label);
+      saveControl({branch:currentBranch, date:dateLabel, brand, model, agent, place, areaLabel, result:vehicleStatus==='bad'?'🔴 VEHICLE NO CONFORME':vehicleStatus==='unknown'?'🟠 REVISAR VEHICLE':'🟢 VEHICLE CONFORME', incidentCount:incidentLabels.length, incidents:incidentLabels, observations, evidence:currentEvidence.slice()});
       document.getElementById('printChecker').onclick=()=>window.print();
       document.getElementById('copyChecker').onclick=async()=>{const text=checkerResult.innerText;try{await navigator.clipboard.writeText(text);document.getElementById('copyChecker').textContent='✓ Copiat';}catch(e){document.getElementById('copyChecker').textContent='No disponible';}};
     }
@@ -1010,13 +1094,65 @@
     checkerNext.addEventListener('click',()=>{if(validatePage(checkerPage))setCheckerPage(checkerPage+1);});
     checkerPrev.addEventListener('click',()=>setCheckerPage(checkerPage-1));
     checkerForm.addEventListener('submit',e=>{e.preventDefault();showCheckerResult();});
-    checkerReset.addEventListener('click',()=>{checkerForm.reset();document.querySelectorAll('[data-quick]').forEach(q=>q.checked=false);quickPanel.style.display='block';checkerResult.className='checker-result';checkerResult.innerHTML='';setCheckerPage(1);});
+    checkerReset.addEventListener('click',()=>{checkerForm.reset();currentEvidence=[];if(evidencePreview)evidencePreview.innerHTML='';document.querySelectorAll('[data-quick]').forEach(q=>q.checked=false);quickPanel.style.display='block';checkerResult.className='checker-result';checkerResult.innerHTML='';setCheckerPage(1);});
     setCheckerPage(1);
+
+    const VTC_LIVE_URL='https://apps.fomento.gob.es/crgt/servlet/ServletController?accion=inicio&estilo=default&lang=es&modulo=datosconsulta';
+    const VTC_LEGAL_MAP={
+      precontractacio:{article:'Decret llei 9/2022 · art. 11.k + art. 14.1.c',amount:'1.001–2.000 €',detail:'Realitzar el servei sense respectar l’antelació mínima preceptiva entre la contractació i la prestació.'},
+      captacio:{article:'Decret llei 9/2022 · art. 11.j / 11.l / 11.m + art. 14.1.c',amount:'1.001–2.000 €',detail:'Captar/recollir clients sense contractació prèvia o circular per la via pública buscant clients.'},
+      sense_autoritzacio:{article:'Decret llei 9/2022 · art. 11.a + art. 14.1.e',amount:'4.001–6.000 €',detail:'Realitzar serveis VTC sense la preceptiva autorització administrativa habilitant.'},
+      fora_catalunya:{article:'Decret llei 9/2022 · art. 11.f + art. 14.1.c',amount:'1.001–2.000 €',detail:'Prestar el servei en un àmbit territorial que no correspon a l’autorització.'},
+      registre_servei:{article:'Decret llei 9/2022 · art. 11.o + art. 14.1.c',amount:'1.001–2.000 €',detail:'No comunicar electrònicament les dades exigides o comunicar-les de manera incorrecta/incompleta.'},
+      documentacio:{article:'Decret llei 9/2022 · art. 13.a / art. 11.p + art. 14',amount:'201–300 € o 1.001–2.000 €',detail:'La quantia depèn de si es tracta de documentació formal o d’un supòsit molt greu vinculat a la sortida/circulació sense documentació exigible.'},
+      distintiu:{article:'Decret llei 9/2022 · art. 11.g + art. 14.1.d',amount:'2.001–4.000 €',detail:'No portar el distintiu exigible o portar-lo de forma no conforme.'},
+      asseguranca:{article:'Decret llei 9/2022 · art. 11.q + art. 14.1.d',amount:'2.001–4.000 €',detail:'No subscriure l’assegurança preceptiva o tenir una cobertura insuficient.'},
+      conductor:{article:'Decret llei 9/2022 · art. 11.s + art. 14.1.c',amount:'1.001–2.000 €',detail:'Prestar el servei mitjançant persones que no compleixin els requisits exigibles en el supòsit tipificat.'},
+      vehicle:{article:'Decret llei 9/2022 · art. 11.h / 11.i + art. 14.1.c',amount:'1.001–2.000 €',detail:'Incompliment de condicions relatives a característiques tècniques o requisits de l’autorització, segons el fet concret.'},
+      places:{article:'Decret llei 9/2022 · art. 11.h / 11.i + art. 14.1.c',amount:'1.001–2.000 €',detail:'Incompliment de les condicions aplicables al vehicle/autorizació; cal concretar el precepte tècnic infringit.'},
+      captacio_amb:{article:'Normativa local/metropolitana aplicable + Decret llei 9/2022 · art. 7.5–7.6',amount:'Segons infracció i norma aplicable',detail:'Aquesta incidència depèn de la regulació específica de l’àmbit metropolità o municipal.'}
+    };
+    function normalizePlate(v){return (v||'').toUpperCase().replace(/[^A-Z0-9]/g,'').trim();}
+    vtcOfficialLookup.addEventListener('click',()=>{
+      const plate=normalizePlate(vtcPlate.value);
+      const stamp=new Date().toLocaleString('ca-ES',{dateStyle:'short',timeStyle:'short'});
+      if(plate.length<4){vtcLookupStatus.textContent='Introdueix una matrícula vàlida abans d’obrir la consulta oficial.';vtcPlate.focus();return;}
+      localStorage.setItem('vtc-last-lookup',JSON.stringify({plate,stamp}));
+      vtcLookupStatus.innerHTML=`Consulta preparada per a <strong>${plate}</strong> · ${stamp}. El resultat de validesa s’ha de confirmar al registre oficial que s’obre ara.`;
+      window.open(VTC_LIVE_URL,'_blank','noopener');
+    });
+    try{const last=JSON.parse(localStorage.getItem('vtc-last-lookup')||'null');if(last)vtcLookupStatus.innerHTML=`Última consulta preparada: <strong>${last.plate}</strong> · ${last.stamp}.`;}catch(e){}
+    vtcForm.addEventListener('submit',e=>{
+      e.preventDefault();
+      const plate=normalizePlate(vtcPlate.value); const checked=[];
+      Object.keys(VTC_LEGAL_MAP).forEach(id=>{const el=vtcForm.querySelector(`[name="${id}"]`);if(el?.checked)checked.push(id);});
+      const brand=(vtcForm.querySelector('[name="brand"]').value||'').trim(), model=(vtcForm.querySelector('[name="model"]').value||'').trim();
+      const agent=(vtcForm.querySelector('[name="agent"]').value||'').trim(), place=(vtcForm.querySelector('[name="place"]').value||'').trim();
+      const area=vtcForm.querySelector('[name="area"]').value; const areaLabel={catalunya:'Catalunya',amb:'Àrea Metropolitana de Barcelona',municipal:'Àmbit municipal específic'}[area];
+      const obs=(vtcForm.querySelector('[name="observations"]').value||'').trim();
+      const stamp=new Date().toLocaleString('ca-ES',{dateStyle:'short',timeStyle:'short'});
+      let html=`<div class="result-head ${checked.length?'bad':'ok'}"><div class="result-status">${checked.length?'🔴 INCIDÈNCIES DETECTADES':'🟢 SENSE INCIDÈNCIES MARCADES'}</div><div class="result-sub">${plate?`Matrícula ${plate} · `:''}${areaLabel}. Tot allò no marcat es considera correcte.</div></div>`;
+      html+=`<div class="acta-meta"><div><b>Data / hora</b>${stamp}</div><div><b>Agent / TIP</b>${agent||'No indicat'}</div><div><b>Àmbit</b>${areaLabel}</div><div><b>Lloc</b>${place||'No indicat'}</div><div><b>Vehicle</b>${[brand,model].filter(Boolean).join(' ')||'No indicat'}</div><div><b>Matrícula</b>${plate||'No indicada'}</div></div>`;
+      if(checked.length){html+=`<div class="result-section-title">⚖️ Base jurídica de les incidències</div>`;checked.forEach(id=>{const inf=VTC_INFRACCIONS.find(x=>x.id===id);const law=VTC_LEGAL_MAP[id];html+=`<div class="vtc-result-legal"><strong>${inf?.label||id} · ${law.amount}</strong><span><b>Article:</b> ${law.article}<br>${law.detail}</span></div>`;});}
+      else html+=`<div class="result-item ok"><strong>✓ Cap incidència marcada</strong><span>No es genera cap proposta sancionadora automàtica.</span></div>`;
+      if(obs)html+=`<div class="result-section-title">📝 Observacions</div><div class="result-item info"><span>${obs.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/\n/g,'<br>')}</span></div>`;
+      html+=`<div class="checker-disclaimer">La referència legal i la franja sancionadora es mostren com a guia de qualificació. Abans de formalitzar la denúncia cal comprovar l’àmbit competencial, el fet concret i la norma vigent aplicable. La consulta de matrícula és independent i s’ha de confirmar a la font oficial.</div>`;
+      html+=`<div class="result-actions"><button type="button" id="printVtc">🖨️ Imprimir / PDF</button><button type="button" id="copyVtc">📋 Copiar resum</button></div>`;
+      vtcResult.className='checker-result show';vtcResult.innerHTML=html;vtcResult.scrollIntoView({behavior:'smooth',block:'start'});
+      document.getElementById('printVtc').onclick=()=>window.print();document.getElementById('copyVtc').onclick=async()=>{try{await navigator.clipboard.writeText(vtcResult.innerText);document.getElementById('copyVtc').textContent='✓ Copiat';}catch(e){document.getElementById('copyVtc').textContent='No disponible';}};
+      saveControl({branch:'vtc',date:stamp,brand,model,agent,place,areaLabel,result:checked.length?'🔴 INCIDÈNCIES VTC':'🟢 VTC SENSE INCIDÈNCIES',incidentCount:checked.length,incidents:checked.map(id=>VTC_INFRACCIONS.find(x=>x.id===id)?.label||id),observations:obs,evidence:[]});
+    });
+    vtcReset.addEventListener('click',()=>{vtcForm.reset();vtcResult.className='checker-result';vtcResult.innerHTML='';});
 
     let currentBranch = 'vmp';
     const homeBtn=document.getElementById('homeBtn'), openVmp=document.getElementById('openVmp'), openVtc=document.getElementById('openVtc'), homeSplashBtn=document.getElementById('homeSplashBtn');
     const appTitle=document.getElementById('appTitle'), appSubtitle=document.getElementById('appSubtitle'), footerName=document.getElementById('footerName');
     const guideVmp=document.getElementById('guideVmp'), guideVtc=document.getElementById('guideVtc');
+    const manualVmp=document.getElementById('manualVmp'), manualVtc=document.getElementById('manualVtc');
+    const vtcVerifierTab=document.getElementById('vtcVerifierTab');
+    const vtcOfficialLookup=document.getElementById('vtcOfficialLookup'), vtcPlate=document.getElementById('vtcPlate'), vtcLookupStatus=document.getElementById('vtcLookupStatus');
+    const vtcForm=document.getElementById('vtcCheckerForm'), vtcResult=document.getElementById('vtcResult'), vtcReset=document.getElementById('vtcReset');
+
     const installBannerTitle=document.getElementById('installBannerTitle'), installFixedTitle=document.getElementById('installFixedTitle');
     const normSearch=document.getElementById('normSearch'), normList=document.getElementById('normList');
     const chipsEl=document.getElementById('chips'), listView=document.getElementById('consultaList'), detailView=document.getElementById('consultaDetail'), detailCard=document.getElementById('detailCard'), backBtn=document.getElementById('backBtn');
@@ -1027,13 +1163,15 @@
       document.body.classList.remove('home-mode');
       const vmp=branch==='vmp';
       appTitle.textContent=vmp?'VMP LEGAL':'VTC LEGAL';
-      appSubtitle.textContent=vmp?'Normativa · Denúncies · Verificador · Guia · En vigor 1/10/2026':'Normativa · Denúncies · Guia · Catalunya / AMB';
+      appSubtitle.textContent=vmp?'Normativa · Denúncies · Verificador · Guia · En vigor 1/10/2026':'Normativa · Denúncies · Comprovar VTC · Guia · Catalunya / AMB';
       footerName.textContent=vmp?'VMP LEGAL':'VTC LEGAL';
       installBannerTitle.textContent='Instal·la '+(vmp?'VMP LEGAL':'VTC LEGAL');
       installFixedTitle.textContent='Instal·la '+(vmp?'VMP LEGAL':'VTC LEGAL');
       renderChips(); renderNorm('');
       guideVmp.style.display=vmp?'block':'none'; guideVtc.style.display=vmp?'none':'block';
       checkerTab.style.display=vmp?'block':'none';
+      vtcVerifierTab.style.display=vmp?'none':'block';
+      manualVmp.style.display=vmp?'block':'none'; manualVtc.style.display=vmp?'none':'block';
       document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
       document.querySelector('.tab[data-tab="consulta"]').classList.add('active');
       document.querySelectorAll('.panel').forEach(p=>p.classList.remove('active'));
@@ -1108,6 +1246,26 @@
     }
     areaSelect.addEventListener('change',updateAreaNote); updateAreaNote();
     renderChips(); renderNorm();
+    // Historial local de controls + evidències fotogràfiques
+    const HISTORY_KEY='vmp-vtc-legal-history-v1';
+    const historyList=document.getElementById('historyList'), historySearch=document.getElementById('historySearch'), clearHistoryBtn=document.getElementById('clearHistory');
+    const evidenceInput=document.getElementById('checkEvidence'), evidencePreview=document.getElementById('evidencePreview');
+    let currentEvidence=[];
+    function readHistory(){try{return JSON.parse(localStorage.getItem(HISTORY_KEY)||'[]')}catch(e){return []}}
+    function writeHistory(items){localStorage.setItem(HISTORY_KEY,JSON.stringify(items));}
+    function renderHistory(filter=''){
+      if(!historyList)return; const q=filter.toLowerCase().trim(); const items=readHistory().filter(x=>!q||[x.brand,x.model,x.areaLabel,x.agent,x.place,x.result].join(' ').toLowerCase().includes(q));
+      if(!items.length){historyList.innerHTML='<div class="history-empty">No hi ha controls desats.</div>';return;}
+      historyList.innerHTML=items.map(x=>`<article class="history-card"><h3>${x.result}</h3><div class="history-meta"><div><b>Data:</b> ${x.date}</div><div><b>Àmbit:</b> ${x.areaLabel}</div><div><b>Vehicle:</b> ${[x.brand,x.model].filter(Boolean).join(' ')||'No indicat'}</div><div><b>Agent:</b> ${x.agent||'No indicat'}</div><div><b>Lloc:</b> ${x.place||'No indicat'}</div><div><b>Incidències:</b> ${x.incidentCount}</div></div>${x.evidence?.length?`<div class="evidence-count">📸 ${x.evidence.length} fotografia/es</div>`:''}<div class="history-actions"><button type="button" data-history-view="${x.id}">👁️ Veure</button><button type="button" data-history-delete="${x.id}">🗑️ Eliminar</button></div></article>`).join('');
+      historyList.querySelectorAll('[data-history-delete]').forEach(b=>b.onclick=()=>{writeHistory(readHistory().filter(x=>x.id!==b.dataset.historyDelete));renderHistory(historySearch?.value||'');});
+      historyList.querySelectorAll('[data-history-view]').forEach(b=>b.onclick=()=>{const x=readHistory().find(i=>i.id===b.dataset.historyView);if(!x)return; const win=window.open('','_blank'); if(!win)return; win.document.write(`<html><head><title>Control VMP</title><style>body{font-family:Arial;padding:24px;max-width:800px;margin:auto}img{width:130px;height:130px;object-fit:cover;margin:4px;border-radius:8px}li{margin:8px 0}</style></head><body><h1>VMP · VTC LEGAL — Fitxa de control</h1><p><b>${x.date}</b> · ${x.areaLabel}</p><h2>${x.result}</h2><p>Vehicle: ${[x.brand,x.model].filter(Boolean).join(' ')||'No indicat'}<br>Agent: ${x.agent||'No indicat'}<br>Lloc: ${x.place||'No indicat'}</p><h3>Incidències</h3><ul>${(x.incidents||[]).map(i=>`<li>${i}</li>`).join('')||'<li>Cap incidència marcada</li>'}</ul><h3>Observacions</h3><p>${(x.observations||'').replace(/</g,'&lt;')}</p><h3>Evidències</h3>${(x.evidence||[]).map(src=>`<img src="${src}">`).join('')}</body></html>`);win.document.close();});
+    }
+    function saveControl(data){const items=readHistory();items.unshift({...data,id:crypto.randomUUID?crypto.randomUUID():String(Date.now()),savedAt:Date.now()});writeHistory(items.slice(0,100));renderHistory(historySearch?.value||'');}
+    if(historySearch) historySearch.addEventListener('input',()=>renderHistory(historySearch.value));
+    if(clearHistoryBtn) clearHistoryBtn.addEventListener('click',()=>{if(confirm('Vols esborrar tot l’historial d’aquest dispositiu?')){localStorage.removeItem(HISTORY_KEY);renderHistory();}});
+    if(evidenceInput) evidenceInput.addEventListener('change',()=>{currentEvidence=[];evidencePreview.innerHTML='';[...evidenceInput.files].slice(0,8).forEach(file=>{const reader=new FileReader();reader.onload=e=>{currentEvidence.push(e.target.result);const img=document.createElement('img');img.src=e.target.result;img.alt='Evidència';evidencePreview.appendChild(img);};reader.readAsDataURL(file);});});
+    renderHistory();
+
     if('serviceWorker' in navigator) navigator.serviceWorker.register('./sw.js').catch(err=>console.warn("No s'ha pogut registrar el Service Worker:",err));
   </script>
 </body>

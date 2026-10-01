@@ -1,27 +1,20 @@
-# VMP · VTC LEGAL
+# VMP · VTC LEGAL PRO — V6
 
-Aplicació PWA amb una pantalla inicial per triar entre **VMP LEGAL** i **VTC LEGAL**.
+PWA per a consulta normativa i controls de VMP i VTC.
 
-## Estructura
-- **VMP LEGAL**: manté el sistema de Consulta, Nomenclàtor i Guia de la versió VMP.
-- **VTC LEGAL**: mateix sistema d’interfície, amb contingut inicial orientat a VTC a Catalunya i referències a l’àmbit metropolità de Barcelona.
-- Botó **Inici** per tornar al selector.
-- PWA instal·lable i Service Worker amb caché versionada.
+## Novetats V6
+- Pantalla inicial amb silueta de Catalunya i les 4 barres.
+- Manual d’ús separat per VMP i VTC.
+- VTC: les incidències mostren **article/base jurídica + franja sancionadora**.
+- Nova pestanya **Comprovar VTC**.
+- Consulta de matrícula amb accés directe al **registre públic oficial del Ministeri de Transports (REAT)**.
+- El control VTC marca només les incidències detectades; allò no marcat es considera correcte.
+- Historial local de controls.
 
-## Nota jurídica
-El contingut VTC inclòs és una base inicial informativa. Les obligacions i sancions poden dependre de la normativa estatal, catalana, metropolitana i municipal aplicable al lloc i moment del servei.
+## Important sobre la consulta VTC
+El registre oficial és la font viva. La PWA no inventa ni manté una còpia que pugui quedar desactualitzada. La consulta oficial s’obre directament des de l’app.
 
-Fonts de referència: Generalitat de Catalunya (informació VTC i règim sancionador), LOTT i normativa/ordenances de l’AMB.
+La verificació de VTC disponible per a organismes públics és un servei d’integració administrativa; no és una API pública anònima per a una PWA estàtica de GitHub Pages. Per això la V6 prioritza el contrast amb la font oficial.
 
-
-### Verificador VMP
-La branca VMP incorpora un verificador interactiu que comprova les característiques bàsiques del vehicle, registre, assegurança i diverses condicions del conductor i de circulació, i mostra les possibles infraccions associades segons les dades de la branca VMP.
-
-## Versió 5
-- Pantalla inicial VMP/VTC amb gràfica blava i escut superior.
-- Verificador VMP ràpid: només cal marcar les incidències; les opcions no marcades es consideren correctes.
-
-## Versió 7
-- Mode ràpid per al control VMP.
-- Fitxa de control amb agent/TIP, lloc, data/hora i observacions.
-- Impressió/PDF i còpia del resum.
+## Publicació
+Puja tots els fitxers a l’arrel del repositori de GitHub Pages i activa Pages des de `main` / root.
