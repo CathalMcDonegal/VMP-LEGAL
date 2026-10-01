@@ -1066,6 +1066,7 @@
         <div class="guide-section"><h3>📘 Manual d’ús · VMP LEGAL</h3>
           <ul>
             <li><strong>Pantalla d’inici:</strong> tria <strong>VMP LEGAL</strong> per entrar a les funcions de VMP. Els botons de la portada són accessos directes reals.</li>
+            <li><strong>Instal·lació:</strong> si l’app detecta que encara no està instal·lada, et mostrarà una proposta per afegir-la a la pantalla d’inici. A Android/navegadors compatibles es pot instal·lar directament; a iPhone/iPad trobaràs les passes de <strong>Compartir → Afegeix a la pantalla d’inici</strong>. Pots tancar l’avís i continuar utilitzant l’app al navegador.</li>
             <li><strong>Consulta:</strong> toca una infracció per veure la descripció, l’article i l’import de referència.</li>
             <li><strong>Verificador:</strong> utilitza el control ràpid per marcar incidències habituals o obre el control complet per revisar més dades.</li>
             <li><strong>Resultat:</strong> quan generes un control, el resultat s’obre en una <strong>pantalla completa independent</strong>. Prem <strong>← Tornar</strong> per tornar al formulari.</li>
@@ -1714,6 +1715,8 @@
       installModalHelp.classList.add('show');showInstallModal();
     }
     installFixedBtn.addEventListener('click',doInstall); document.getElementById('installBtn').addEventListener('click',doInstall); installModalBtn.addEventListener('click',doInstall);
+    // Proposa instal·lar automàticament si la PWA encara no està instal·lada.
+    window.addEventListener('load',()=>{setTimeout(()=>{if(!isStandalone()&&sessionStorage.getItem('legal-install-modal-seen')!=='1')showInstallModal();},1200);});
     installFixedClose.addEventListener('click',()=>{hideBar();sessionStorage.setItem('legal-hide-install','1');}); document.getElementById('installClose').addEventListener('click',()=>{hideBar();sessionStorage.setItem('legal-hide-install','1');}); installModalLater.addEventListener('click',closeInstallModal);
     window.addEventListener('appinstalled',()=>{hideBar();deferredPrompt=null;closeInstallModal();});
     // V12: la instal·lació es fa des del menú del navegador; no es mostra cap barra fixa que pugui tapar controls.
