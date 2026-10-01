@@ -122,18 +122,33 @@
       position: sticky;
       top: 72px;
       z-index: 90;
+      overflow-x: auto;
+      overflow-y: hidden;
+      -webkit-overflow-scrolling: touch;
+      scrollbar-width: none;
+      touch-action: pan-x;
     }
+    .tabs::-webkit-scrollbar { display: none; }
     .tab {
-      flex: 1;
+      flex: 0 0 auto;
+      min-width: 92px;
       text-align: center;
-      padding: 12px 4px;
+      padding: 12px 10px;
       font-size: 0.8rem;
       font-weight: 600;
       color: var(--muted);
       cursor: pointer;
+      border: 0;
       border-bottom: 3px solid transparent;
+      background: transparent;
+      font-family: inherit;
+      white-space: nowrap;
       transition: all 0.2s;
+      -webkit-appearance: none;
+      appearance: none;
+      touch-action: manipulation;
     }
+    .tab:active { transform: translateY(1px); }
     .tab.active {
       color: var(--accent);
       border-bottom-color: var(--accent);
@@ -665,14 +680,14 @@
     </div>
   </header>
 
-  <nav class="tabs">
-    <div class="tab active" data-tab="consulta">Consulta</div>
-    <div class="tab vmp-only-tab" id="verificadorTab" data-tab="verificador">Verificador</div>
-    <div class="tab vtc-only-tab" id="vtcVerifierTab" data-tab="vtcverificador">Comprovar VTC</div>
-    <div class="tab" data-tab="nomenclator">Nomenclàtor</div>
-    <div class="tab" data-tab="guia">Guia</div>
-    <div class="tab" data-tab="manual">Manual d’ús</div>
-    <div class="tab" data-tab="historial">🗂️ Historial</div>
+  <nav class="tabs" aria-label="Navegació de l'aplicació">
+    <button type="button" class="tab active" data-tab="consulta">Consulta</button>
+    <button type="button" class="tab vmp-only-tab" id="verificadorTab" data-tab="verificador">Verificador</button>
+    <button type="button" class="tab vtc-only-tab" id="vtcVerifierTab" data-tab="vtcverificador">Comprovar VTC</button>
+    <button type="button" class="tab" data-tab="nomenclator">Nomenclàtor</button>
+    <button type="button" class="tab" data-tab="guia">Guia</button>
+    <button type="button" class="tab" data-tab="manual">Manual d’ús</button>
+    <button type="button" class="tab" data-tab="historial">🗂️ Historial</button>
   </nav>
 
   <main class="content">
@@ -1223,6 +1238,7 @@
 
     function activateTab(tabName,push=true){
       const tab=document.querySelector('.tab[data-tab="'+tabName+'"]');
+      if(tab && tab.scrollIntoView) tab.scrollIntoView({behavior:'smooth',inline:'center',block:'nearest'});
       if(!tab) return;
       document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
       document.querySelectorAll('.panel').forEach(p=>p.classList.remove('active'));
@@ -1263,7 +1279,10 @@
       filtered.forEach(n=>{const item=document.createElement('div');item.className='norm-item';item.innerHTML=`<h4>${n.titol}</h4><p>${n.text}</p><span class="tag">${n.tag}</span>`;normList.appendChild(item);});
     }
     normSearch.addEventListener('input',e=>renderNorm(e.target.value));
-    document.querySelectorAll('.tab').forEach(tab=>tab.addEventListener('click',()=>activateTab(tab.dataset.tab,true)));
+    document.querySelector('.tabs').addEventListener('click',e=>{
+      const tab=e.target.closest('.tab');
+      if(tab) activateTab(tab.dataset.tab,true);
+    });
 
     let deferredPrompt=null;
     const installFixed=document.getElementById('installFixed'), installFixedBtn=document.getElementById('installFixedBtn'), installFixedClose=document.getElementById('installFixedClose'), installBanner=document.getElementById('installBanner'), iosHint=document.getElementById('iosHint');
