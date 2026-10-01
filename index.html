@@ -826,6 +826,18 @@
         <div class="source-note">Font oficial: Registre d’Empreses i Activitats de Transport (REAT) del Ministeri. En obrir-lo, selecciona <strong>Vehicle → Matrícula</strong> i introdueix la matrícula. Si la consulta oficial canvia, l’app no inventa ni conserva una dada antiga com si fos actual.</div>
       </div>
 
+      <div class="vtc-live-card amb-live-card">
+        <div class="vtc-live-head"><span>🏙️</span><div><h3>Comprovar autorització VTC urbana · AMB</h3><p>Comprova si la matrícula té autorització VTC de caràcter urbà gestionada per l’IMET.</p></div></div>
+        <label for="ambPlate">Matrícula</label>
+        <div class="vtc-live-row"><input id="ambPlate" type="text" inputmode="text" autocomplete="off" placeholder="1234 ABC" maxlength="10"><button type="button" id="ambOfficialLookup">🏙️ Consulta AMB</button></div>
+        <div id="ambLookupStatus" class="vtc-lookup-status">No s’ha fet cap consulta AMB en aquesta sessió.</div>
+        <div class="source-note">L’AMB/IMET indica que les consultes sobre l’estat de l’autorització VTC urbana s’han d’adreçar a <strong>infovtc@amb.cat</strong>; no hi ha un cercador públic de matrícula equivalent al registre estatal.</div>
+        <div class="quick-actions">
+          <button type="button" class="quick-primary" id="ambEmailLookup">✉️ Consultar per correu</button>
+          <a class="quick-secondary" href="https://taxi.amb.cat/ca/professionals-del-sector/autoritzacions-vtc/autoritzacio-vtc-caracter-urba" target="_blank" rel="noopener noreferrer">🌐 Obrir informació AMB</a>
+        </div>
+      </div>
+
       <form id="vtcCheckerForm">
         <div class="checker-mode-note">Marca <strong>només les incidències que detectis</strong>. Tot allò que no marques es considera correcte.</div>
         <div class="checker-section">
@@ -1121,6 +1133,7 @@
     setCheckerPage(1);
 
     const vtcOfficialLookup=document.getElementById('vtcOfficialLookup'), vtcPlate=document.getElementById('vtcPlate'), vtcLookupStatus=document.getElementById('vtcLookupStatus');
+    const ambOfficialLookup=document.getElementById('ambOfficialLookup'), ambEmailLookup=document.getElementById('ambEmailLookup'), ambPlate=document.getElementById('ambPlate'), ambLookupStatus=document.getElementById('ambLookupStatus');
     const vtcForm=document.getElementById('vtcCheckerForm'), vtcResult=document.getElementById('vtcResult'), vtcReset=document.getElementById('vtcReset');
     const VTC_LIVE_URL='https://apps.fomento.gob.es/crgt/servlet/ServletController?accion=inicio&estilo=default&lang=es&modulo=datosconsulta';
     const VTC_LEGAL_MAP={
@@ -1138,6 +1151,20 @@
       captacio_amb:{article:'Normativa local/metropolitana aplicable + Decret llei 9/2022 · art. 7.5–7.6',amount:'Segons infracció i norma aplicable',detail:'Aquesta incidència depèn de la regulació específica de l’àmbit metropolità o municipal.'}
     };
     function normalizePlate(v){return (v||'').toUpperCase().replace(/[^A-Z0-9]/g,'').trim();}
+    ambOfficialLookup.addEventListener('click',()=>{
+      const plate=normalizePlate(ambPlate.value);
+      const stamp=new Date().toLocaleString('ca-ES',{dateStyle:'short',timeStyle:'short'});
+      if(plate.length<4){ambLookupStatus.textContent='Introdueix una matrícula vàlida abans de preparar la consulta AMB.';ambPlate.focus();return;}
+      localStorage.setItem('amb-last-lookup',JSON.stringify({plate,stamp}));
+      ambLookupStatus.innerHTML=`Consulta preparada per a <strong>${plate}</strong> · ${stamp}. L’estat de l’autorització s’ha de confirmar amb l’IMET.`;
+      window.location.href='mailto:infovtc@amb.cat?subject='+encodeURIComponent('Consulta autorització VTC urbana · '+plate)+'&body='+encodeURIComponent('Bon dia,\\n\\nSol·licito confirmar si el vehicle amb matrícula '+plate+' disposa d’autorització VTC de caràcter urbà vigent a l’àmbit de l’AMB.\\n\\nGràcies.');
+    });
+    ambEmailLookup.addEventListener('click',()=>{
+      const plate=normalizePlate(ambPlate.value);
+      if(plate.length<4){ambLookupStatus.textContent='Introdueix una matrícula vàlida abans de preparar el correu.';ambPlate.focus();return;}
+      ambOfficialLookup.click();
+    });
+
     vtcOfficialLookup.addEventListener('click',()=>{
       const plate=normalizePlate(vtcPlate.value);
       const stamp=new Date().toLocaleString('ca-ES',{dateStyle:'short',timeStyle:'short'});
@@ -1293,7 +1320,7 @@
     function isStandalone(){return window.matchMedia('(display-mode: standalone)').matches||window.navigator.standalone===true;}
     function isIos(){return /iphone|ipad|ipod/i.test(navigator.userAgent);}
     function isAndroid(){return /android/i.test(navigator.userAgent);}
-    function showBar(){if(isStandalone()||sessionStorage.getItem('legal-hide-install')==='1'){hideBar();return;}installFixed.classList.add('show');document.body.classList.add('has-install-bar');if(installBanner)installBanner.classList.remove('show');if(isIos()&&iosHint)iosHint.classList.add('show');}
+    function showBar(){hideBar();}
     function hideBar(){installFixed.classList.remove('show');document.body.classList.remove('has-install-bar');if(installBanner)installBanner.classList.remove('show');if(iosHint)iosHint.classList.remove('show');}
     function closeInstallModal(){installModal.classList.remove('show');sessionStorage.setItem('legal-install-modal-seen','1');}
     function showInstallModal(){
