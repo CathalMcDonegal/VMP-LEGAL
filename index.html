@@ -1126,7 +1126,7 @@
       if(plate.length<4){vtcLookupStatus.textContent='Introdueix una matrícula vàlida abans d’obrir la consulta oficial.';vtcPlate.focus();return;}
       localStorage.setItem('vtc-last-lookup',JSON.stringify({plate,stamp}));
       vtcLookupStatus.innerHTML=`Consulta preparada per a <strong>${plate}</strong> · ${stamp}. El resultat de validesa s’ha de confirmar al registre oficial que s’obre ara.`;
-      window.location.href=VTC_LIVE_URL;
+      window.open(VTC_LIVE_URL,'_blank','noopener,noreferrer');
     });
     try{const last=JSON.parse(localStorage.getItem('vtc-last-lookup')||'null');if(last)vtcLookupStatus.innerHTML=`Última consulta preparada: <strong>${last.plate}</strong> · ${last.stamp}.`;}catch(e){}
     vtcForm.addEventListener('submit',e=>{
@@ -1163,9 +1163,22 @@
     const chipsEl=document.getElementById('chips'), listView=document.getElementById('consultaList'), detailView=document.getElementById('consultaDetail'), detailCard=document.getElementById('detailCard'), backBtn=document.getElementById('backBtn');
 
     function branchData(){ return currentBranch==='vmp' ? {infra:VMP_INFRACCIONS,nom:VMP_NOMENCLATOR} : {infra:VTC_INFRACCIONS,nom:VTC_NOMENCLATOR}; }
-    function setBranch(branch){
+    const NAV_VERSION=2;
+    let restoringNavigation=false;
+    function navState(screen='home',branch=null,tab='consulta',detail=null){
+      return {v:NAV_VERSION,screen,branch,tab,detail};
+    }
+    function navPush(state){
+      if(restoringNavigation) return;
+      history.pushState(state,'',window.location.href);
+    }
+    function navReplace(state){
+      history.replaceState(state,'',window.location.href);
+    }
+    function setBranch(branch,push=true){
       currentBranch=branch;
       document.body.classList.remove('home-mode');
+      if(push&&!restoringNavigation) navPush(navState('branch',branch,'consulta',null));
       const vmp=branch==='vmp';
       appTitle.textContent=vmp?'VMP LEGAL':'VTC LEGAL';
       appSubtitle.textContent=vmp?'Normativa · Denúncies · Verificador · Guia · En vigor 1/10/2026':'Normativa · Denúncies · Comprovar VTC · Guia · Catalunya / AMB';
@@ -1184,21 +1197,64 @@
       listView.classList.add('active'); detailView.classList.remove('active');
       window.scrollTo(0,0);
     }
-    function goHome(){ document.body.classList.add('home-mode'); window.scrollTo(0,0); }
-    openVmp.addEventListener('click',()=>setBranch('vmp')); openVtc.addEventListener('click',()=>setBranch('vtc')); homeBtn.addEventListener('click',goHome); homeSplashBtn.addEventListener('click',goHome);
+    function goHome(push=true){
+      document.body.classList.add('home-mode');
+      if(push&&!restoringNavigation) navPush(navState('home',null,null,null));
+      window.scrollTo(0,0);
+    }
+    openVmp.addEventListener('click',()=>setBranch('vmp',true));
+    openVtc.addEventListener('click',()=>setBranch('vtc',true));
+    homeBtn.addEventListener('click',()=>goHome(true));
+    homeSplashBtn.addEventListener('click',()=>goHome(true));
 
     function renderChips(){
       chipsEl.innerHTML='';
       branchData().infra.forEach(inf=>{ const chip=document.createElement('div'); chip.className='chip'; chip.textContent=inf.label; chip.addEventListener('click',()=>showDetail(inf)); chipsEl.appendChild(chip); });
     }
-    function showDetail(inf){
+    function showDetail(inf,push=true){
       let badgeClass='grave', tipusLabel='Infracció greu';
+      if(push&&!restoringNavigation) navPush(navState('detail',currentBranch,'consulta',inf.id||inf.titol));
       if(inf.tipus==='leve'){badgeClass='leve';tipusLabel='Infracció lleu';}
       if(inf.tipus==='muy_grave'){badgeClass='muy_grave';tipusLabel='Infracció molt greu';}
       detailCard.innerHTML=`<span class="badge ${badgeClass}">${tipusLabel}</span><h2>${inf.titol}</h2><div class="amount">${inf.import}</div><div class="amount-label">Import / rang de la sanció</div><div class="article">${inf.article}</div><div class="desc">${inf.desc}</div><div class="note">${inf.nota}</div>`;
       listView.classList.remove('active'); detailView.classList.add('active'); window.scrollTo(0,0);
     }
-    backBtn.addEventListener('click',()=>{detailView.classList.remove('active');listView.classList.add('active');});
+    backBtn.addEventListener('click',()=>{ if(history.state&&history.state.v===NAV_VERSION) history.back(); else { detailView.classList.remove('active'); listView.classList.add('active'); } });
+
+    function activateTab(tabName,push=true){
+      const tab=document.querySelector('.tab[data-tab="'+tabName+'"]');
+      if(!tab) return;
+      document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
+      document.querySelectorAll('.panel').forEach(p=>p.classList.remove('active'));
+      tab.classList.add('active');
+      const panel=document.getElementById(tab.dataset.tab);
+      if(panel) panel.classList.add('active');
+      if(tab.dataset.tab==='consulta'){
+        detailView.classList.remove('active');
+        listView.classList.add('active');
+      }
+      if(push&&!restoringNavigation) navPush(navState('tab',currentBranch,tabName,null));
+      window.scrollTo(0,0);
+    }
+
+    function restoreNavigation(state){
+      restoringNavigation=true;
+      try{
+        if(!state||state.v!==NAV_VERSION||state.screen==='home'){
+          goHome(false);
+          return;
+        }
+        setBranch(state.branch||'vmp',false);
+        activateTab(state.tab||'consulta',false);
+        if(state.screen==='detail'&&state.detail){
+          const inf=branchData().infra.find(x=>(x.id||x.titol)===state.detail);
+          if(inf) showDetail(inf,false);
+        }
+      }finally{ restoringNavigation=false; }
+    }
+
+    window.addEventListener('popstate',e=>restoreNavigation(e.state));
+    navReplace(navState('home',null,null,null));
 
     function renderNorm(filter=''){
       normList.innerHTML=''; const q=filter.toLowerCase().trim();
@@ -1207,7 +1263,7 @@
       filtered.forEach(n=>{const item=document.createElement('div');item.className='norm-item';item.innerHTML=`<h4>${n.titol}</h4><p>${n.text}</p><span class="tag">${n.tag}</span>`;normList.appendChild(item);});
     }
     normSearch.addEventListener('input',e=>renderNorm(e.target.value));
-    document.querySelectorAll('.tab').forEach(tab=>tab.addEventListener('click',()=>{document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));document.querySelectorAll('.panel').forEach(p=>p.classList.remove('active'));tab.classList.add('active');document.getElementById(tab.dataset.tab).classList.add('active');if(tab.dataset.tab==='consulta'){detailView.classList.remove('active');listView.classList.add('active');}window.scrollTo(0,0);}));
+    document.querySelectorAll('.tab').forEach(tab=>tab.addEventListener('click',()=>activateTab(tab.dataset.tab,true)));
 
     let deferredPrompt=null;
     const installFixed=document.getElementById('installFixed'), installFixedBtn=document.getElementById('installFixedBtn'), installFixedClose=document.getElementById('installFixedClose'), installBanner=document.getElementById('installBanner'), iosHint=document.getElementById('iosHint');
