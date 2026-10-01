@@ -544,6 +544,35 @@
     .check-option.issue span{display:flex;align-items:center;text-align:left;gap:8px;}
     .check-option.issue input:checked + span{background:rgba(239,68,68,.12);border-color:rgba(239,68,68,.65);color:#ffd4d4;}
     .checker-mode-note{background:rgba(34,197,94,.08);border:1px solid rgba(34,197,94,.25);border-radius:12px;padding:11px 13px;color:#c9f4d5;font-size:.78rem;line-height:1.45;margin-bottom:12px;}
+    .quick-panel{background:linear-gradient(135deg,rgba(59,130,246,.12),rgba(240,193,75,.08));border:1px solid var(--border);border-radius:16px;padding:14px;margin-bottom:12px;}
+    .quick-panel h3{margin:0 0 5px;color:var(--accent);font-size:.95rem;}
+    .quick-panel p{margin:0 0 10px;color:var(--muted);font-size:.76rem;line-height:1.4;}
+    .quick-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:7px;}
+    .quick-actions{display:flex;gap:8px;margin-top:10px;}
+    .quick-actions button{flex:1;border:0;border-radius:11px;padding:11px;font-weight:800;cursor:pointer;}
+    .quick-primary{background:var(--accent);color:#0a1628;}
+    .quick-secondary{background:#1e3a5f;color:var(--text);border:1px solid var(--border)!important;}
+    .acta-meta{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px;background:#0d2036;border:1px solid var(--border);border-radius:12px;padding:10px;margin-bottom:10px;}
+    .acta-meta div{font-size:.76rem;color:var(--muted);line-height:1.4;}
+    .acta-meta b{display:block;color:var(--text);font-size:.8rem;}
+    .observations{width:100%;min-height:76px;resize:vertical;background:#0b1b2e;color:var(--text);border:1px solid var(--border);border-radius:9px;padding:9px 10px;font:inherit;font-size:.82rem;box-sizing:border-box;}
+    .print-only{display:none;}
+    @media print{
+      body{background:#fff!important;color:#111!important;}
+      body.home-mode{display:none!important;}
+      header,nav,.install-fixed,.install-banner,.ios-hint,.checker-intro,.checker-mode-note,.checker-actions,.quick-panel,.checker-section,.checker-note,.checker-disclaimer{display:none!important;}
+      main.content{max-width:none!important;padding:0!important;}
+      .panel,.checker-result{display:block!important;}
+      #consulta,#nomenclator,#guia{display:none!important;}
+      .checker-result{margin:0!important;color:#111!important;}
+      .result-head,.result-box,.result-item,.result-total,.acta-meta{background:#fff!important;color:#111!important;border-color:#bbb!important;}
+      .result-sub,.result-item span,.acta-meta div{color:#333!important;}
+      .print-only{display:block!important;}
+      .result-actions{display:none!important;}
+      .result-item strong,.result-status,.result-section-title,.result-total b{color:#111!important;}
+      *{box-shadow:none!important;}
+    }
+    @media (max-width:640px){.quick-grid,.acta-meta{grid-template-columns:1fr;}}
     .checker-actions { display:flex; gap:8px; margin-top:12px; }
     .checker-btn { flex:1; border:0; border-radius:12px; padding:12px; font-weight:700; cursor:pointer; font-size:.85rem; }
     .checker-btn.primary { background:var(--accent); color:#0a1628; }
@@ -661,11 +690,34 @@
       <form id="vmpCheckerForm" novalidate>
         <div class="checker-mode-note">Marca <strong>només les incidències que detectis</strong>. Tot allò que deixis sense marcar es considerarà correcte/conforme i no caldrà completar totes les preguntes.</div>
 
+        <div class="quick-panel" id="quickPanel">
+          <h3>⚡ Mode ràpid</h3>
+          <p>Per a una comprovació al carrer. Marca només les incidències essencials que detectis i genera la fitxa directament.</p>
+          <div class="quick-grid">
+            <label class="check-option issue"><input type="checkbox" data-quick="noRegistry"><span>⚠️ Sense registre</span></label>
+            <label class="check-option issue"><input type="checkbox" data-quick="noInsurance"><span>⚠️ Sense assegurança</span></label>
+            <label class="check-option issue"><input type="checkbox" data-quick="noCertificate"><span>⚠️ Sense certificat</span></label>
+            <label class="check-option issue"><input type="checkbox" data-quick="modifiedBad"><span>⚠️ Vehicle manipulat</span></label>
+            <label class="check-option issue"><input type="checkbox" data-quick="helmetBad"><span>⚠️ Sense casc</span></label>
+            <label class="check-option issue"><input type="checkbox" data-quick="sidewalkBad"><span>⚠️ Vorera / zona vianants</span></label>
+            <label class="check-option issue"><input type="checkbox" data-quick="roadBad"><span>⚠️ Via prohibida</span></label>
+            <label class="check-option issue"><input type="checkbox" data-quick="passengerBad"><span>⚠️ Passatger</span></label>
+            <label class="check-option issue"><input type="checkbox" data-quick="mobileBad"><span>⚠️ Mòbil</span></label>
+            <label class="check-option issue"><input type="checkbox" data-quick="headphonesBad"><span>⚠️ Auriculars</span></label>
+          </div>
+          <div class="quick-actions">
+            <button type="button" class="quick-primary" id="quickGenerate">⚡ Generar control ràpid</button>
+            <button type="button" class="quick-secondary" id="quickOpenFull">Control complet →</button>
+          </div>
+        </div>
+
         <div class="checker-section checker-page" data-page="1">
           <div class="section-kicker">Identificació i documentació</div><h3>1. Fitxa del vehicle</h3>
           <div class="checker-grid">
             <div class="checker-field"><label for="checkBrand">Marca</label><input id="checkBrand" name="brand" type="text" placeholder="Opcional"></div>
             <div class="checker-field"><label for="checkModel">Model / versió</label><input id="checkModel" name="model" type="text" placeholder="Opcional"></div>
+            <div class="checker-field"><label for="checkAgent">Agent / TIP</label><input id="checkAgent" name="agent" type="text" placeholder="Opcional"></div>
+            <div class="checker-field"><label for="checkPlace">Lloc / adreça</label><input id="checkPlace" name="place" type="text" placeholder="Opcional"></div>
             <div class="checker-field full"><label>Incidències documentals</label><div class="check-options check-single">
               <label class="check-option issue"><input type="checkbox" name="serviceUse" value="yes"><span>⚠️ Ús de mercaderies / serveis (aplicar límits específics)</span></label>
               <label class="check-option issue"><input type="checkbox" name="noCertificate" value="yes"><span>⚠️ No disposa del certificat VMP exigible</span></label>
@@ -716,6 +768,7 @@
             </div></div>
           </div>
           <div class="checker-note">Barcelona té una ordenança específica. Si no marques cap incidència, el sistema entendrà que la situació observada és correcta segons les dades introduïdes. En altres municipis, contrasta l’ordenança local aplicable.</div>
+          <div class="checker-field full" style="margin-top:10px"><label for="checkObs">Observacions de l’agent (opcional)</label><textarea id="checkObs" name="observations" class="observations" placeholder="Anota aquí qualsevol circumstància rellevant..."></textarea></div>
         </div>
 
         <div class="checker-actions">
@@ -895,7 +948,7 @@
       if(market==='after2024') return {status:'bad',text:'Certificat exigible i no consta'};
       return {status:'unknown',text:'Certificat no acreditat · cal comprovar la data de comercialització'};
     }
-    function showCheckerResult(){
+    function showCheckerResult(modeLabel){
       const findings=[], circulationFindings=[];
       const cert=certificateStatus();
       if(cert.status==='bad') findings.push({label:cert.text,kind:'vehicle',infId:null});
@@ -912,7 +965,15 @@
       const circulationStatus=circulationFindings.length?'bad':'ok';
       const brand=(checkerForm.querySelector('[name="brand"]').value||'').trim();
       const model=(checkerForm.querySelector('[name="model"]').value||'').trim();
-      let html=`<div class="result-head ${vehicleStatus}"><div class="result-status">${vehicleStatus==='ok'?'🟢 VEHICLE CONFORME':vehicleStatus==='unknown'?'🟠 REVISAR VEHICLE':'🔴 VEHICLE NO CONFORME'}</div><div class="result-sub">${brand||model?`${brand} ${model}`.trim()+' · ':''}Resultat segons les incidències marcades.</div></div>`;
+      const agent=(checkerForm.querySelector('[name="agent"]')?.value||'').trim();
+      const place=(checkerForm.querySelector('[name="place"]')?.value||'').trim();
+      const observations=(checkerForm.querySelector('[name="observations"]')?.value||'').trim();
+      const now=new Date();
+      const dateLabel=now.toLocaleString('ca-ES',{dateStyle:'short',timeStyle:'short'});
+      const modeText=modeLabel?` · ${modeLabel}`:'';
+      let html=`<div class="print-only"><h1>VMP LEGAL · FITXA DE CONTROL</h1><p>Fitxa generada el ${dateLabel}</p></div>`;
+      html+=`<div class="result-head ${vehicleStatus}"><div class="result-status">${vehicleStatus==='ok'?'🟢 VEHICLE CONFORME':vehicleStatus==='unknown'?'🟠 REVISAR VEHICLE':'🔴 VEHICLE NO CONFORME'}</div><div class="result-sub">${brand||model?`${brand} ${model}`.trim()+' · ':''}Resultat segons les incidències marcades${modeText}.</div></div>`;
+      html+=`<div class="acta-meta"><div><b>Data / hora</b>${dateLabel}</div><div><b>Agent / TIP</b>${agent||'No indicat'}</div><div><b>Municipi</b>${areaLabel}</div><div><b>Lloc</b>${place||'No indicat'}</div><div><b>Vehicle</b>${[brand,model].filter(Boolean).join(' ')||'No indicat'}</div><div><b>Identificació</b>Control VMP</div></div>`;
       html+=`<div class="result-grid"><div class="result-box ${vehicleStatus}"><div class="rb-label">Vehicle</div><div class="rb-value">${vehicleStatus==='ok'?'CONFORME':vehicleStatus==='unknown'?'REVISAR':'NO CONFORME'}</div></div><div class="result-box ${circulationStatus}"><div class="rb-label">Circulació</div><div class="rb-value">${circulationStatus==='ok'?'SENSE INCIDÈNCIES':'AMB INCIDÈNCIES'}</div></div></div>`;
       html+=`<div class="result-box info" style="margin-bottom:10px"><div class="rb-label">Municipi</div><div class="rb-value">${areaLabel}</div></div>`;
       if(area!=='barcelona') html+=`<div class="result-item warn"><strong>ℹ️ Contrast municipal</strong><span>Per ${areaLabel}, aquest resultat no substitueix la consulta de l’ordenança municipal específica. Les incidències marcades que depenguin del municipi s’han de contrastar localment.</span></div>`;
@@ -924,15 +985,32 @@
       if(amounts.length){ const unique=[...new Set(amounts)]; html+=`<div class="result-total"><b>Imports de referència detectats:</b> ${unique.map(v=>v.toLocaleString('ca-ES')+' €').join(' · ')}.<br><span style="color:var(--muted);font-size:.74rem">No es sumen automàticament. La quantia final depèn de l’article, qualificació, ordenança i circumstàncies acreditades.</span></div>`; }
       if(!findings.length&&!circulationFindings.length&&cert.status==='ok'){ html+=`<div class="result-item ok"><strong>✓ No s’han marcat incidències</strong><span>Segons les dades introduïdes, el vehicle i la situació de circulació queden sense incidències detectades.</span></div>`; }
       html+=`<div class="result-actions"><button type="button" id="printChecker">🖨️ Imprimir / PDF</button><button type="button" id="copyChecker">📋 Copiar resum</button></div>`;
+      if(observations) html+=`<div class="result-section-title">📝 Observacions</div><div class="result-item info"><span>${observations.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/\n/g,'<br>')}</span></div>`;
       html+=`<div class="checker-disclaimer">Fitxa de control orientativa. El sistema parteix del criteri indicat: tot allò que no es marca es considera correcte. La conformitat definitiva depèn de la documentació, les comprovacions físiques i la normativa municipal aplicable.</div>`;
       checkerResult.className='checker-result show'; checkerResult.innerHTML=html; checkerResult.scrollIntoView({behavior:'smooth',block:'start'});
       document.getElementById('printChecker').onclick=()=>window.print();
       document.getElementById('copyChecker').onclick=async()=>{const text=checkerResult.innerText;try{await navigator.clipboard.writeText(text);document.getElementById('copyChecker').textContent='✓ Copiat';}catch(e){document.getElementById('copyChecker').textContent='No disponible';}};
     }
+    const quickGenerate=document.getElementById('quickGenerate');
+    const quickOpenFull=document.getElementById('quickOpenFull');
+    const quickPanel=document.getElementById('quickPanel');
+    function clearQuickToFull(){
+      document.querySelectorAll('[data-quick]').forEach(q=>{
+        const name=q.dataset.quick; const full=checkerForm.querySelector(`input[name="${name}"]`);
+        if(full) full.checked=q.checked;
+      });
+    }
+    quickGenerate.addEventListener('click',()=>{
+      clearQuickToFull();
+      quickPanel.style.display='none';
+      // En mode ràpid, els camps no indicats es consideren correctes, tal com en el control complet.
+      showCheckerResult('Mode ràpid');
+    });
+    quickOpenFull.addEventListener('click',()=>{quickPanel.style.display='none';setCheckerPage(1);window.scrollTo({top:0,behavior:'smooth'});});
     checkerNext.addEventListener('click',()=>{if(validatePage(checkerPage))setCheckerPage(checkerPage+1);});
     checkerPrev.addEventListener('click',()=>setCheckerPage(checkerPage-1));
     checkerForm.addEventListener('submit',e=>{e.preventDefault();showCheckerResult();});
-    checkerReset.addEventListener('click',()=>{checkerForm.reset();checkerResult.className='checker-result';checkerResult.innerHTML='';setCheckerPage(1);});
+    checkerReset.addEventListener('click',()=>{checkerForm.reset();document.querySelectorAll('[data-quick]').forEach(q=>q.checked=false);quickPanel.style.display='block';checkerResult.className='checker-result';checkerResult.innerHTML='';setCheckerPage(1);});
     setCheckerPage(1);
 
     let currentBranch = 'vmp';

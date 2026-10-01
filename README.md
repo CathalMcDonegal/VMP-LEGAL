@@ -20,3 +20,8 @@ La branca VMP incorpora un verificador interactiu que comprova les característi
 ## Versió 5
 - Pantalla inicial VMP/VTC amb gràfica blava i escut superior.
 - Verificador VMP ràpid: només cal marcar les incidències; les opcions no marcades es consideren correctes.
+
+## Versió 7
+- Mode ràpid per al control VMP.
+- Fitxa de control amb agent/TIP, lloc, data/hora i observacions.
+- Impressió/PDF i còpia del resum.
