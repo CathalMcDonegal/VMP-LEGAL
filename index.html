@@ -678,6 +678,40 @@
     .amb-history-item{padding:9px 10px;border-top:1px solid rgba(148,163,184,.14);font-size:.73rem;color:var(--muted)}
     @media(max-width:640px){.amb-data-grid{grid-template-columns:1fr}.amb-file-row{display:block}.amb-file-input{display:block;width:100%;margin-bottom:8px}}
 
+
+    /* ===== VTC SIMPLE / CONTROL DE CARRER ===== */
+    .vtc-simple-head{background:linear-gradient(135deg,rgba(59,130,246,.16),rgba(240,193,75,.10));border:1px solid var(--border);border-radius:18px;padding:16px;margin-bottom:12px}
+    .vtc-kicker{font-size:.7rem;font-weight:800;letter-spacing:1px;color:var(--accent);margin-bottom:4px}
+    .vtc-simple-head h2{font-size:1.25rem;margin-bottom:5px}
+    .vtc-simple-head p{color:var(--muted);font-size:.82rem;line-height:1.4}
+    .vtc-plate-card{background:var(--card);border:1px solid var(--border);border-radius:18px;padding:16px;margin-bottom:12px;box-shadow:0 8px 24px rgba(0,0,0,.16)}
+    .vtc-plate-card>label{display:block;font-size:.76rem;font-weight:800;color:var(--muted);text-transform:uppercase;letter-spacing:.7px;margin-bottom:7px}
+    .vtc-plate-row{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:8px}
+    .vtc-plate-row input{width:100%;background:#09192d;border:2px solid var(--border);border-radius:13px;padding:13px 14px;color:var(--text);font-size:1.25rem;font-weight:800;letter-spacing:1px;text-transform:uppercase;outline:none}
+    .vtc-plate-row input:focus{border-color:var(--accent)}
+    .vtc-main-btn{border:0;border-radius:13px;padding:0 17px;background:var(--accent);color:#08182b;font-weight:850;font-size:.88rem;cursor:pointer;white-space:nowrap}
+    .vtc-lookup-status{margin-top:10px;padding:9px 11px;border-radius:10px;background:#0c2038;color:var(--muted);font-size:.76rem;line-height:1.35}
+    .vtc-source-row{display:flex;gap:8px;align-items:center;margin-top:9px}
+    .vtc-source-row .vtc-official-link{flex:1;margin:0;font-size:.78rem}
+    .vtc-source-row .quick-secondary{padding:9px 10px;font-size:.75rem}
+    .vtc-mini-result{margin-top:9px}
+    .vtc-info-strip{background:rgba(34,197,94,.08);border:1px solid rgba(34,197,94,.22);border-radius:12px;padding:10px 12px;color:#c9f4d5;font-size:.78rem;margin-bottom:10px}
+    .vtc-vehicle-card,.vtc-issues-card{background:var(--card);border:1px solid var(--border);border-radius:16px;padding:13px;margin-bottom:10px}
+    .vtc-card-title{display:flex;justify-content:space-between;gap:8px;align-items:center;color:var(--text);font-size:.88rem;font-weight:800;margin-bottom:10px}
+    .vtc-card-title span{font-size:.68rem;font-weight:600;color:var(--muted)}
+    .vtc-vehicle-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+    .vtc-issue-grid{display:grid;grid-template-columns:1fr 1fr;gap:7px}
+    .vtc-issue{display:flex;align-items:center;gap:8px;min-height:44px;padding:9px 10px;border:1px solid var(--border);border-radius:11px;background:#10223a;color:#cbd5e1;font-size:.76rem;cursor:pointer;line-height:1.25}
+    .vtc-issue:has(input:checked){background:rgba(239,68,68,.12);border-color:rgba(239,68,68,.58);color:#ffe0e0}
+    .vtc-issue input{width:18px;height:18px;accent-color:var(--danger);flex:0 0 auto}
+    .vtc-extra{background:#0e2036;border:1px solid var(--border);border-radius:14px;margin-bottom:10px}
+    .vtc-extra summary{cursor:pointer;list-style:none;padding:12px 13px;color:var(--muted);font-size:.8rem;font-weight:700}
+    .vtc-extra summary::-webkit-details-marker{display:none}
+    .vtc-extra-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;padding:0 13px 13px}
+    .vtc-extra-grid .full{grid-column:1/-1}
+    .vtc-bottom-actions{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:8px;margin-top:4px}
+    .vtc-generate{min-height:48px;font-size:.95rem!important}
+    @media(max-width:560px){.vtc-plate-row{grid-template-columns:1fr}.vtc-main-btn{min-height:46px}.vtc-source-row{flex-wrap:wrap}.vtc-source-row .quick-secondary{flex:1}.vtc-issue-grid{grid-template-columns:1fr}.vtc-vehicle-grid,.vtc-extra-grid{grid-template-columns:1fr}.vtc-extra-grid .full{grid-column:auto}}
 </style>
 <script src="https://cdn.sheetjs.com/xlsx-0.20.3/package/dist/xlsx.full.min.js"></script>
 </head>
@@ -846,103 +880,105 @@
     </section>
 
     <section id="vtcverificador" class="panel">
-      <div class="checker-intro">
-        <h2>🚕 Comprovar VTC · matrícula i control</h2>
-        <p>Consulta primer la situació del vehicle i després marca <strong>només les incidències detectades</strong>. La fitxa resultant mostra la <strong>base jurídica i l’article</strong> associats a cada incidència.</p>
-        <div class="checker-note">La consulta oficial de matrícula es fa sobre el registre públic del Ministeri de Transports. Aquesta PWA no replica ni emmagatzema el registre oficial: obre la font oficial per obtenir la dada actualitzada.</div>
+      <div class="vtc-simple-head">
+        <div>
+          <div class="vtc-kicker">🚕 CONTROL VTC</div>
+          <h2>Comprovar vehicle</h2>
+          <p>Introdueix la matrícula i comprova primer la situació del vehicle. Després marca només les incidències que detectis.</p>
+        </div>
       </div>
 
-      <div class="vtc-live-card">
-        <div class="vtc-live-head"><span>🟢</span><div><h3>Consulta oficial de VTC</h3><p>Comprova una matrícula contra el registre públic estatal.</p></div></div>
+      <div class="vtc-plate-card">
         <label for="vtcPlate">Matrícula</label>
-        <div class="vtc-live-row"><input id="vtcPlate" type="text" inputmode="text" autocomplete="off" placeholder="1234 ABC" maxlength="10"><button type="button" id="vtcOfficialLookup">🔎 Consulta oficial</button></div>
-        <div id="vtcLookupStatus" class="vtc-lookup-status">No s’ha fet cap consulta en aquesta sessió.</div>
-        <a class="vtc-official-link" href="https://apps.fomento.gob.es/crgt/servlet/ServletController?accion=inicio&estilo=default&lang=es&modulo=datosconsulta" target="_self">🔗 Obrir la consulta oficial del REAT (mateixa pantalla) ↗</a>
-        <div class="source-note">Font oficial: Registre d’Empreses i Activitats de Transport (REAT) del Ministeri. En obrir-lo, selecciona <strong>Vehicle → Matrícula</strong> i introdueix la matrícula. Si la consulta oficial canvia, l’app no inventa ni conserva una dada antiga com si fos actual.</div>
+        <div class="vtc-plate-row">
+          <input id="vtcPlate" type="text" inputmode="text" autocomplete="off" placeholder="1234 ABC" maxlength="10" aria-label="Matrícula VTC">
+          <button type="button" id="vtcOfficialLookup" class="vtc-main-btn">🔎 Comprovar</button>
+        </div>
+        <div id="vtcLookupStatus" class="vtc-lookup-status">Encara no s’ha comprovat cap matrícula.</div>
+        <div class="vtc-source-row">
+          <a class="vtc-official-link" href="https://apps.fomento.gob.es/crgt/servlet/ServletController?accion=inicio&estilo=default&lang=es&modulo=datosconsulta" target="_self">Obrir REAT oficial ↗</a>
+          <button type="button" class="quick-secondary" id="ambCheckFromVtc">🏙️ Comprovar AMB</button>
+        </div>
+        <div id="ambVtcResult" class="vtc-mini-result" style="display:none"></div>
       </div>
 
       <div class="vtc-subtabs" role="tablist" aria-label="Eines VTC">
-        <button type="button" class="vtc-subtab active" data-vtc-subtab="vtc-live">🔎 Comprovar VTC</button>
+        <button type="button" class="vtc-subtab active" data-vtc-subtab="vtc-live">🚕 Control VTC</button>
         <button type="button" class="vtc-subtab" data-vtc-subtab="amb-local">🏙️ Llicències AMB</button>
       </div>
 
       <div id="amb-local" class="vtc-subpanel">
         <div class="amb-db-card">
-          <h3>🏙️ Base local de llicències VTC urbanes · AMB</h3>
-          <p>Importa l’Excel mensual de l’AMB. El fitxer original i les dades extretes es guarden <strong>només en aquest dispositiu</strong> mitjançant IndexedDB. No s’envia l’Excel a cap servidor.</p>
+          <h3>🏙️ Llicències VTC urbanes · AMB</h3>
+          <p>Importa l’Excel mensual. El fitxer i les dades es guarden <strong>només en aquest dispositiu</strong>.</p>
           <div class="amb-file-row">
             <input id="ambFileInput" class="amb-file-input" type="file" accept=".xlsx,.xls,.csv,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet,application/vnd.ms-excel,text/csv">
-            <button type="button" class="checker-btn primary" id="ambImportBtn" style="flex:0 0 auto">📥 Importar / actualitzar</button>
+            <button type="button" class="checker-btn primary" id="ambImportBtn" style="flex:0 0 auto">📥 Actualitzar</button>
           </div>
-          <div id="ambDbStatus" class="amb-db-status">Comprovant si ja hi ha una actualització AMB guardada en aquest dispositiu…</div>
+          <div id="ambDbStatus" class="amb-db-status">Comprovant l’actualització AMB guardada en aquest dispositiu…</div>
         </div>
-
         <div class="amb-db-card">
-          <h3>🔎 Buscar matrícula</h3>
+          <h3>🔎 Buscar una matrícula</h3>
           <div class="amb-search">
             <input id="ambLocalPlate" type="text" inputmode="text" autocomplete="off" placeholder="Ex.: 4479 MHC" maxlength="10">
-            <button type="button" class="checker-btn primary" id="ambLocalSearch" style="flex:0 0 130px">🔎 Cercar</button>
+            <button type="button" class="checker-btn primary" id="ambLocalSearch" style="flex:0 0 130px">Cercar</button>
           </div>
           <div id="ambLocalResult"></div>
-          <div class="amb-update-note">Exemple de camps reconeguts: DNI Titular, Nom titular, data fi vigència, Registro, Matrícula, Bastidors No., Marca i Model. L’aplicació també tolera petites variacions en el nom de les columnes.</div>
+          <div class="amb-update-note">Consulta local basada en l’últim Excel importat. No s’envia cap dada a cap servidor.</div>
         </div>
-
         <div class="amb-db-card amb-history" id="ambImportHistoryCard" style="display:none">
-          <h3>🗓️ Actualitzacions guardades</h3>
+          <h3>🗓️ Actualitzacions</h3>
           <div id="ambImportHistory"></div>
         </div>
       </div>
 
       <div id="vtc-live" class="vtc-subpanel active">
-        <div class="vtc-live-card">
-          <div class="vtc-live-head"><span>🟢</span><div><h3>Consulta oficial de VTC</h3><p>Comprova una matrícula contra el registre públic estatal.</p></div></div>
-          <label for="vtcPlate">Matrícula</label>
-          <div class="vtc-live-row"><input id="vtcPlate" type="text" inputmode="text" autocomplete="off" placeholder="1234 ABC" maxlength="10"><button type="button" id="vtcOfficialLookup">🔎 Consulta oficial</button></div>
-          <div id="vtcLookupStatus" class="vtc-lookup-status">No s’ha fet cap consulta en aquesta sessió.</div>
-          <a class="vtc-official-link" href="https://apps.fomento.gob.es/crgt/servlet/ServletController?accion=inicio&estilo=default&lang=es&modulo=datosconsulta" target="_self">🔗 Obrir la consulta oficial del REAT (mateixa pantalla) ↗</a>
-          <div class="source-note">Font oficial: Registre d’Empreses i Activitats de Transport (REAT) del Ministeri. En obrir-lo, selecciona <strong>Vehicle → Matrícula</strong> i introdueix la matrícula. Si la consulta oficial canvia, l’app no inventa ni conserva una dada antiga com si fos actual.</div>
-          <div class="quick-actions">
-            <button type="button" class="quick-secondary" id="ambCheckFromVtc">🏙️ Comprovar AMB local</button>
-          </div>
-          <div id="ambVtcResult" style="display:none"></div>
-        </div>
-      </div>
+        <form id="vtcCheckerForm" class="vtc-simple-form">
+          <div class="vtc-info-strip">✓ <strong>Regla ràpida:</strong> només marca el que realment detectes. El que no marques es considera correcte.</div>
 
-      <form id="vtcCheckerForm">
-        <div class="checker-mode-note">Marca <strong>només les incidències que detectis</strong>. Tot allò que no marques es considera correcte.</div>
-        <div class="checker-section">
-          <div class="section-kicker">Identificació</div><h3>1. Dades del control</h3>
-          <div class="checker-grid">
-            <div class="checker-field"><label for="vtcBrand">Marca</label><input id="vtcBrand" name="brand" type="text" placeholder="Opcional"></div>
-            <div class="checker-field"><label for="vtcModel">Model</label><input id="vtcModel" name="model" type="text" placeholder="Opcional"></div>
-            <div class="checker-field"><label for="vtcAgent">Agent / TIP</label><input id="vtcAgent" name="agent" type="text" placeholder="Opcional"></div>
-            <div class="checker-field"><label for="vtcPlace">Lloc / adreça</label><input id="vtcPlace" name="place" type="text" placeholder="Opcional"></div>
-            <div class="checker-field full"><label for="vtcArea">Àmbit</label><select id="vtcArea" name="area"><option value="catalunya">Catalunya</option><option value="amb">Àrea Metropolitana de Barcelona</option><option value="municipal">Àmbit municipal específic</option></select></div>
+          <div class="vtc-vehicle-card">
+            <div class="vtc-card-title">🚗 Dades bàsiques <span>Opcional</span></div>
+            <div class="vtc-vehicle-grid">
+              <div class="checker-field"><label for="vtcBrand">Marca</label><input id="vtcBrand" name="brand" type="text" placeholder="Marca"></div>
+              <div class="checker-field"><label for="vtcModel">Model</label><input id="vtcModel" name="model" type="text" placeholder="Model"></div>
+            </div>
           </div>
-        </div>
-        <div class="checker-section">
-          <div class="section-kicker">Incidències</div><h3>2. Marca només el que detectes</h3>
-          <div class="check-options check-single">
-            <label class="check-option issue"><input type="checkbox" name="precontractacio"><span>⚠️ Servei sense precontractació o sense respectar l’interval mínim</span></label>
-            <label class="check-option issue"><input type="checkbox" name="captacio"><span>⚠️ Captació / recollida de client sense contractació prèvia</span></label>
-            <label class="check-option issue"><input type="checkbox" name="sense_autoritzacio"><span>⚠️ Sense autorització VTC exigible</span></label>
-            <label class="check-option issue"><input type="checkbox" name="fora_catalunya"><span>⚠️ Àmbit territorial no cobert per l’autorització</span></label>
-            <label class="check-option issue"><input type="checkbox" name="registre_servei"><span>⚠️ Servei sense comunicació electrònica exigible</span></label>
-            <label class="check-option issue"><input type="checkbox" name="documentacio"><span>⚠️ Documentació / full de ruta no acreditada</span></label>
-            <label class="check-option issue"><input type="checkbox" name="distintiu"><span>⚠️ Sense distintiu VTC o distintiu incorrecte</span></label>
-            <label class="check-option issue"><input type="checkbox" name="asseguranca"><span>⚠️ Assegurança insuficient o no acreditada</span></label>
-            <label class="check-option issue"><input type="checkbox" name="conductor"><span>⚠️ Conductor sense requisits aplicables</span></label>
-            <label class="check-option issue"><input type="checkbox" name="vehicle"><span>⚠️ Vehicle no conforme amb els requisits aplicables</span></label>
-            <label class="check-option issue"><input type="checkbox" name="places"><span>⚠️ Més de 9 places inclòs el conductor</span></label>
-            <label class="check-option issue"><input type="checkbox" name="captacio_amb"><span>⚠️ Incidència específica de l’àmbit metropolità en finalitzar el servei</span></label>
+
+          <div class="vtc-issues-card">
+            <div class="vtc-card-title">⚠️ Què has detectat? <span>Marca les incidències</span></div>
+            <div class="vtc-issue-grid">
+              <label class="vtc-issue"><input type="checkbox" name="precontractacio"><span>Precontractació / interval</span></label>
+              <label class="vtc-issue"><input type="checkbox" name="captacio"><span>Captació de clients</span></label>
+              <label class="vtc-issue"><input type="checkbox" name="sense_autoritzacio"><span>Sense autorització VTC</span></label>
+              <label class="vtc-issue"><input type="checkbox" name="fora_catalunya"><span>Àmbit territorial</span></label>
+              <label class="vtc-issue"><input type="checkbox" name="registre_servei"><span>Registre del servei</span></label>
+              <label class="vtc-issue"><input type="checkbox" name="documentacio"><span>Documentació / full de ruta</span></label>
+              <label class="vtc-issue"><input type="checkbox" name="distintiu"><span>Distintiu VTC</span></label>
+              <label class="vtc-issue"><input type="checkbox" name="asseguranca"><span>Assegurança</span></label>
+              <label class="vtc-issue"><input type="checkbox" name="conductor"><span>Requisits del conductor</span></label>
+              <label class="vtc-issue"><input type="checkbox" name="vehicle"><span>Requisits del vehicle</span></label>
+              <label class="vtc-issue"><input type="checkbox" name="places"><span>Més de 9 places</span></label>
+              <label class="vtc-issue"><input type="checkbox" name="captacio_amb"><span>Incidència específica AMB</span></label>
+            </div>
           </div>
-        </div>
-        <div class="checker-section">
-          <div class="checker-field full"><label for="vtcObs">Observacions</label><textarea id="vtcObs" name="observations" class="observations" placeholder="Fets observats, hora de contractació, documentació mostrada, etc."></textarea></div>
-        </div>
-        <div class="checker-actions"><button class="checker-btn primary" type="submit">🔎 Generar fitxa VTC</button><button class="checker-btn secondary" type="button" id="vtcReset">Netejar</button></div>
-      </form>
-      <div class="checker-result" id="vtcResult" aria-live="polite"></div>
+
+          <details class="vtc-extra">
+            <summary>⚙️ Més dades del control</summary>
+            <div class="vtc-extra-grid">
+              <div class="checker-field"><label for="vtcAgent">Agent / TIP</label><input id="vtcAgent" name="agent" type="text" placeholder="Opcional"></div>
+              <div class="checker-field"><label for="vtcPlace">Lloc / adreça</label><input id="vtcPlace" name="place" type="text" placeholder="Opcional"></div>
+              <div class="checker-field full"><label for="vtcArea">Àmbit</label><select id="vtcArea" name="area"><option value="catalunya">Catalunya</option><option value="amb">Àrea Metropolitana de Barcelona</option><option value="municipal">Àmbit municipal específic</option></select></div>
+              <div class="checker-field full"><label for="vtcObs">Observacions</label><textarea id="vtcObs" name="observations" class="observations" placeholder="Fets observats, hora de contractació, documentació mostrada, etc."></textarea></div>
+            </div>
+          </details>
+
+          <div class="vtc-bottom-actions">
+            <button class="checker-btn primary vtc-generate" type="submit">✓ Generar resultat</button>
+            <button class="checker-btn secondary" type="button" id="vtcReset">Netejar</button>
+          </div>
+        </form>
+        <div class="checker-result" id="vtcResult" aria-live="polite"></div>
+      </div>
     </section>
 
     <section id="nomenclator" class="panel">
