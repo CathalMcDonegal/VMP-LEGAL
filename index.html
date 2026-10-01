@@ -6,9 +6,11 @@
   <meta name="theme-color" content="#0b2742">
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-  <meta name="apple-mobile-web-app-title" content="VMP · VTC LEGAL">
+  <meta name="apple-mobile-web-app-title" content="VMP • VTC">
   <link rel="manifest" href="./manifest.json">
+  <link rel="preload" as="image" href="./home-splash.jpg" fetchpriority="high">
   <link rel="icon" href="./icon-192.png">
+  <link rel="apple-touch-icon" href="./icon-192.png">
   <title>VMP • VTC</title>
   <style>
 
@@ -485,13 +487,13 @@
     .install-card .install-help.show{display:block;}
     .home-screen{min-height:100dvh;display:flex;align-items:flex-start;justify-content:center;padding:0 0 26px;box-sizing:border-box;overflow-y:auto;background:linear-gradient(180deg,#061b32 0%,#0b2742 100%);}
     .home-wrap{width:min(760px,100%);text-align:center;position:relative;}
-    .home-art{position:relative;width:100%;aspect-ratio:1/1;border-radius:28px;overflow:hidden;box-shadow:0 22px 60px rgba(0,0,0,.38);border:1px solid rgba(240,193,75,.28);background:#0b2742;}
-    .home-art img{display:block;width:100%;height:100%;object-fit:cover;}
+    .home-art{position:relative;width:100%;aspect-ratio:auto;border-radius:28px;overflow:hidden;box-shadow:0 22px 60px rgba(0,0,0,.38);border:1px solid rgba(240,193,75,.28);background:#0b2742;}
+    .home-art img{display:block;width:100%;height:auto;object-fit:contain;}
     .home-hit{position:absolute;border:0;background:transparent;cursor:pointer;z-index:3;border-radius:28px;}
     .home-hit:focus-visible{outline:3px solid #fff;outline-offset:3px;}
-    .home-hit.vmp{left:5%;top:37%;width:43%;height:18%;}
-    .home-hit.vtc{right:5%;top:37%;width:43%;height:18%;}
-    .home-hit.home{left:35%;bottom:2%;width:30%;height:9%;}
+    .home-hit.vmp{left:6%;top:40.5%;width:41%;height:10.5%;}
+    .home-hit.vtc{right:6%;top:40.5%;width:41%;height:10.5%;}
+    .home-hit.home{display:none;}
     .home-hint{position:absolute;left:12px;right:12px;bottom:4px;color:rgba(255,255,255,.65);font-size:10px;pointer-events:none;z-index:2;}
     .home-note{margin-top:10px;font-size:11px;color:rgba(232,238,247,.62);}
     .home-screen .install-fixed{display:none;}
@@ -629,7 +631,7 @@
   <div class="install-modal" id="installModal" role="dialog" aria-modal="true" aria-labelledby="installModalTitle">
     <div class="install-card">
       <img class="install-logo" src="icon-192.png" alt="VMP • VTC">
-      <h2 id="installModalTitle">Instal·la VMP · VTC LEGAL</h2>
+      <h2 id="installModalTitle">Instal·la VMP • VTC LEGAL</h2>
       <p id="installModalText">Per treballar més ràpid al carrer, afegeix l’aplicació a la pantalla d’inici.</p>
       <button class="install-main" id="installModalBtn" type="button">📲 Instal·lar aplicació</button>
       <button class="install-later" id="installModalLater" type="button">Ara no</button>
@@ -640,12 +642,12 @@
   <section class="home-screen" id="homeScreen">
     <div class="home-wrap">
       <div class="home-art">
-        <img src="home-splash.jpg" alt="VMP • VTC LEGAL PRO">
+        <img src="home-splash.jpg" fetchpriority="high" decoding="async" alt="VMP • VTC LEGAL PRO — Policia Local La Palma de Cervelló">
         <button class="home-hit vmp" id="openVmp" type="button" aria-label="Obrir VMP LEGAL"></button>
         <button class="home-hit vtc" id="openVtc" type="button" aria-label="Obrir VTC LEGAL"></button>
         <button class="home-hit home" id="homeSplashBtn" type="button" aria-label="Tornar a l’inici"></button>
       </div>
-      <p class="home-note">Selecciona VMP • VTC. Toca el botó corresponent.</p>
+      <p class="home-note">Selecciona VMP LEGAL o VTC LEGAL. Toca el botó corresponent.</p>
     </div>
   </section>
 
@@ -1236,7 +1238,8 @@
     installFixedBtn.addEventListener('click',doInstall); document.getElementById('installBtn').addEventListener('click',doInstall); installModalBtn.addEventListener('click',doInstall);
     installFixedClose.addEventListener('click',()=>{hideBar();sessionStorage.setItem('legal-hide-install','1');}); document.getElementById('installClose').addEventListener('click',()=>{hideBar();sessionStorage.setItem('legal-hide-install','1');}); installModalLater.addEventListener('click',closeInstallModal);
     window.addEventListener('appinstalled',()=>{hideBar();deferredPrompt=null;closeInstallModal();});
-    setTimeout(showInstallModal,1200);
+    // No mostrar el diàleg d’instal·lació automàticament: no ha d’obstruir la pantalla inicial.
+    // Es pot obrir des dels botons d’instal·lació quan l’usuari ho demani.
     const areaSelect=document.getElementById('checkArea'), areaNote=document.getElementById('areaNote');
     function updateAreaNote(){
       const area=areaSelect.value;
@@ -1258,7 +1261,7 @@
       if(!items.length){historyList.innerHTML='<div class="history-empty">No hi ha controls desats.</div>';return;}
       historyList.innerHTML=items.map(x=>`<article class="history-card"><h3>${x.result}</h3><div class="history-meta"><div><b>Data:</b> ${x.date}</div><div><b>Àmbit:</b> ${x.areaLabel}</div><div><b>Vehicle:</b> ${[x.brand,x.model].filter(Boolean).join(' ')||'No indicat'}</div><div><b>Agent:</b> ${x.agent||'No indicat'}</div><div><b>Lloc:</b> ${x.place||'No indicat'}</div><div><b>Incidències:</b> ${x.incidentCount}</div></div>${x.evidence?.length?`<div class="evidence-count">📸 ${x.evidence.length} fotografia/es</div>`:''}<div class="history-actions"><button type="button" data-history-view="${x.id}">👁️ Veure</button><button type="button" data-history-delete="${x.id}">🗑️ Eliminar</button></div></article>`).join('');
       historyList.querySelectorAll('[data-history-delete]').forEach(b=>b.onclick=()=>{writeHistory(readHistory().filter(x=>x.id!==b.dataset.historyDelete));renderHistory(historySearch?.value||'');});
-      historyList.querySelectorAll('[data-history-view]').forEach(b=>b.onclick=()=>{const x=readHistory().find(i=>i.id===b.dataset.historyView);if(!x)return; const win=window.open('','_blank'); if(!win)return; win.document.write(`<html><head><title>Control VMP</title><style>body{font-family:Arial;padding:24px;max-width:800px;margin:auto}img{width:130px;height:130px;object-fit:cover;margin:4px;border-radius:8px}li{margin:8px 0}</style></head><body><h1>VMP · VTC LEGAL — Fitxa de control</h1><p><b>${x.date}</b> · ${x.areaLabel}</p><h2>${x.result}</h2><p>Vehicle: ${[x.brand,x.model].filter(Boolean).join(' ')||'No indicat'}<br>Agent: ${x.agent||'No indicat'}<br>Lloc: ${x.place||'No indicat'}</p><h3>Incidències</h3><ul>${(x.incidents||[]).map(i=>`<li>${i}</li>`).join('')||'<li>Cap incidència marcada</li>'}</ul><h3>Observacions</h3><p>${(x.observations||'').replace(/</g,'&lt;')}</p><h3>Evidències</h3>${(x.evidence||[]).map(src=>`<img src="${src}">`).join('')}</body></html>`);win.document.close();});
+      historyList.querySelectorAll('[data-history-view]').forEach(b=>b.onclick=()=>{const x=readHistory().find(i=>i.id===b.dataset.historyView);if(!x)return; const win=window.open('','_blank'); if(!win)return; win.document.write(`<html><head><title>Control VMP</title><style>body{font-family:Arial;padding:24px;max-width:800px;margin:auto}img{width:130px;height:130px;object-fit:cover;margin:4px;border-radius:8px}li{margin:8px 0}</style></head><body><h1>VMP • VTC LEGAL — Fitxa de control</h1><p><b>${x.date}</b> · ${x.areaLabel}</p><h2>${x.result}</h2><p>Vehicle: ${[x.brand,x.model].filter(Boolean).join(' ')||'No indicat'}<br>Agent: ${x.agent||'No indicat'}<br>Lloc: ${x.place||'No indicat'}</p><h3>Incidències</h3><ul>${(x.incidents||[]).map(i=>`<li>${i}</li>`).join('')||'<li>Cap incidència marcada</li>'}</ul><h3>Observacions</h3><p>${(x.observations||'').replace(/</g,'&lt;')}</p><h3>Evidències</h3>${(x.evidence||[]).map(src=>`<img src="${src}">`).join('')}</body></html>`);win.document.close();});
     }
     function saveControl(data){const items=readHistory();items.unshift({...data,id:crypto.randomUUID?crypto.randomUUID():String(Date.now()),savedAt:Date.now()});writeHistory(items.slice(0,100));renderHistory(historySearch?.value||'');}
     if(historySearch) historySearch.addEventListener('input',()=>renderHistory(historySearch.value));

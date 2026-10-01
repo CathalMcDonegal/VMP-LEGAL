@@ -1,34 +1,38 @@
-const CACHE = 'vmp-vtc-v10';
+const CACHE = 'legal-v11';
 const ASSETS = [
-  './', './index.html', './manifest.json', './logo.jpg',
-  './icon-192.png', './icon-512.png', './home-splash.jpg'
+  './', './index.html', './manifest.json', './logo.jpg', './icon-192.png', './icon-512.png',
+  './home-splash.jpg'
 ];
 
 self.addEventListener('install', event => {
-  event.waitUntil(
-    caches.open(CACHE)
-      .then(cache => cache.addAll(ASSETS))
-      .then(() => self.skipWaiting())
-  );
+  event.waitUntil((async () => {
+    const cache = await caches.open(CACHE);
+    // Cacheja en paral·lel i continua encara que algun recurs opcional falli.
+    await Promise.allSettled(ASSETS.map(asset => cache.add(asset)));
+    await self.skipWaiting();
+  })());
 });
 
 self.addEventListener('activate', event => {
-  event.waitUntil(
-    caches.keys()
-      .then(keys => Promise.all(keys.filter(key => key !== CACHE).map(key => caches.delete(key))))
-      .then(() => self.clients.claim())
-  );
+  event.waitUntil((async () => {
+    const keys = await caches.keys();
+    await Promise.all(keys.filter(key => key !== CACHE).map(key => caches.delete(key)));
+    await self.clients.claim();
+  })());
 });
 
 self.addEventListener('fetch', event => {
   if (event.request.method !== 'GET') return;
-  event.respondWith(
-    caches.match(event.request).then(cached => {
-      if (cached) return cached;
-      return fetch(event.request).catch(() => {
-        if (event.request.mode === 'navigate') return caches.match('./index.html');
-        throw new Error('Recurs no disponible fora de línia');
-      });
-    })
-  );
+  event.respondWith((async () => {
+    const cached = await caches.match(event.request);
+    if (cached) return cached;
+    try { return await fetch(event.request); }
+    catch (error) {
+      if (event.request.mode === 'navigate') {
+        const fallback = await caches.match('./index.html');
+        if (fallback) return fallback;
+      }
+      throw error;
+    }
+  })());
 });
