@@ -641,6 +641,9 @@
 
   
     .history-toolbar{display:flex;gap:8px;flex-wrap:wrap;margin:12px 0}.history-toolbar input{flex:1;min-width:200px;padding:11px;border-radius:12px;border:1px solid #cfd7e3}.history-list{display:grid;gap:10px}.history-card{background:#fff;border:1px solid #d8e0ea;border-radius:16px;padding:14px;box-shadow:0 4px 12px rgba(0,0,0,.05)}.history-card h3{margin:0 0 6px}.history-meta{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:6px;font-size:.82rem;color:#526174}.history-actions{display:flex;gap:7px;flex-wrap:wrap;margin-top:10px}.history-actions button{border:0;border-radius:10px;padding:8px 10px;cursor:pointer}.evidence-preview{display:flex;gap:8px;flex-wrap:wrap;margin-top:8px}.evidence-preview img{width:76px;height:76px;object-fit:cover;border-radius:10px;border:1px solid #d8e0ea}.evidence-count{font-size:.8rem;color:var(--muted);margin-top:5px}.history-empty{text-align:center;color:var(--muted);padding:28px 10px;background:#fff;border-radius:16px;border:1px dashed #ccd6e2}
+/* V12: eliminar barra fixa d'instal·lació que podia tapar els botons inferiors */
+    .install-fixed{display:none!important;}
+    body.has-install-bar .content{padding-bottom:48px!important;}
 </style>
 </head>
 <body class="home-mode">
@@ -1316,7 +1319,7 @@
     installFixedBtn.addEventListener('click',doInstall); document.getElementById('installBtn').addEventListener('click',doInstall); installModalBtn.addEventListener('click',doInstall);
     installFixedClose.addEventListener('click',()=>{hideBar();sessionStorage.setItem('legal-hide-install','1');}); document.getElementById('installClose').addEventListener('click',()=>{hideBar();sessionStorage.setItem('legal-hide-install','1');}); installModalLater.addEventListener('click',closeInstallModal);
     window.addEventListener('appinstalled',()=>{hideBar();deferredPrompt=null;closeInstallModal();});
-    // No mostrar el diàleg d’instal·lació automàticament: no ha d’obstruir la pantalla inicial.
+    // V12: la instal·lació es fa des del menú del navegador; no es mostra cap barra fixa que pugui tapar controls.
     // Es pot obrir des dels botons d’instal·lació quan l’usuari ho demani.
     const areaSelect=document.getElementById('checkArea'), areaNote=document.getElementById('areaNote');
     function updateAreaNote(){
