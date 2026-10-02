@@ -1,7 +1,7 @@
-const CACHE = 'legal-v30';
+const CACHE = 'legal-v31';
 const ASSETS = [
   './', './index.html', './manifest.json', './logo.jpg', './icon-192.png', './icon-512.png',
-  './home-splash-v2.svg',
+  './home-splash.png',
   'https://cdn.sheetjs.com/xlsx-0.20.3/package/dist/xlsx.full.min.js'
 ];
 
