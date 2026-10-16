@@ -9,9 +9,10 @@ function esc(v){return String(v??'').replace(/[&<>\"]/g,c=>({'&':'&amp;','<':'&l
 function remember(items){const ids=items.map(x=>x.id);history=[...ids,...history.filter(id=>!ids.includes(id))].slice(0,50);save();}
 function show(){sheet.classList.remove('hidden');rootOpen=true;}
 function hide(){sheet.classList.add('hidden');nav=[];rootOpen=false;}
+function enterHistory(){history.pushState({appol:true},'',location.pathname+'#appol');}
 function header(title,back=true,count=''){return '<div class="sheet-head"><div>'+(back?'<button class="back" id="innerBack">← Enrere</button>':'')+'<h2>'+esc(title)+'</h2></div><span>'+esc(count)+'</span></div>';}
 function render(title,html,back=true,count=''){content.innerHTML=header(title,back,count)+html;show();}
-function push(screen){nav.push(screen);return screen;}
+function push(screen){nav.push(screen);enterHistory();return screen;}
 function renderCurrent(){const s=nav[nav.length-1];if(!s){hide();return;}if(s.type==='menu')renderMenu(s);else if(s.type==='list')renderList(s);else if(s.type==='detail')renderDetail(s.item);else if(s.type==='tools')renderTools();}
 function openList(title,items){remember(items);push({type:'list',title,items});renderList(nav[nav.length-1]);}
 function renderList(s){const groups={};s.items.forEach(x=>(groups[x.sub||x.cat]??=[]).push(x));const html=s.items.length?Object.entries(groups).map(([g,list])=>'<div class="group"><h3>'+esc(g)+'</h3>'+list.map(card).join('')+'</div>').join(''):'<p class="empty">No hi ha resultats.</p>';render(s.title,html,true,s.items.length+' fitxes');}
@@ -26,7 +27,7 @@ document.querySelectorAll('[data-module]').forEach(b=>b.addEventListener('click'
 content.addEventListener('click',e=>{const favBtn=e.target.closest('[data-fav]');if(favBtn){e.stopPropagation();const id=favBtn.dataset.fav;fav=fav.includes(id)?fav.filter(x=>x!==id):[...fav,id];save();document.querySelectorAll('[data-fav="'+CSS.escape(id)+'"]').forEach(b=>b.textContent=fav.includes(id)?'★':'☆');return;}const openBtn=e.target.closest('[data-open]');if(openBtn){const x=DATA.find(v=>v.id===openBtn.dataset.open);if(x){push({type:'detail',item:x});renderDetail(x);}return;}const sub=e.target.closest('[data-sub]');if(sub){const s=sub.dataset.sub;const parent=nav[nav.length-1];if(s==='Eines'){push({type:'tools'});renderTools();return;}openList(s,DATA.filter(x=>x.cat===parent.title&&x.sub===s));return;}if(e.target.id==='innerBack')back();});
 $('#go').addEventListener('click',search);$('#q').addEventListener('keydown',e=>{if(e.key==='Enter')search();});
 $('#close').onclick=hide;sheet.addEventListener('click',e=>{if(e.target===sheet)hide();});
-window.addEventListener('popstate',()=>{if(rootOpen)back();});
+window.addEventListener('popstate',e=>{if(rootOpen){back();}});
 let deferred;window.addEventListener('beforeinstallprompt',e=>{e.preventDefault();deferred=e;$('#install').hidden=false});
 $('#install').onclick=async()=>{if(deferred){deferred.prompt();await deferred.userChoice;deferred=null;$('#install').hidden=true;}};
 if('serviceWorker' in navigator)navigator.serviceWorker.register('./sw.js').catch(()=>{});
