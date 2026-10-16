@@ -1,0 +1,29 @@
+<!doctype html>
+<html lang="ca">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+  <meta name="theme-color" content="#07111f">
+  <meta name="description" content="APPOL · Consulta professional de mobilitat i intervenció">
+  <link rel="manifest" href="manifest.json">
+  <link rel="stylesheet" href="styles.css">
+  <title>APPOL</title>
+</head>
+<body>
+  <main class="app">
+    <header class="header">
+      <div class="brand"><div class="logo">A</div><div><b>APPOL</b><small>Consulta · Mobilitat · Intervenció</small></div></div>
+      <button id="searchBtn" class="icon-btn" aria-label="Cercar">⌕</button>
+    </header>
+    <section class="hero"><small>EINA DE CONSULTA PROFESSIONAL</small><h1>Tot el que necessites,<br><span>en una sola app.</span></h1><p>Mobilitat, normativa i intervenció reunides en una consulta ràpida, clara i pensada per al mòbil.</p></section>
+    <section class="modules">
+      <button class="module mobility" data-module="mobilitat"><span class="module-icon">⇄</span><i>→</i><h2>Mobilitat</h2><p>Micromobilitat, transport amb conductor, sancions i comprovacions.</p><small>Eina integrada</small></button>
+      <button class="module intervention" data-module="intervencio"><span class="module-icon">✦</span><i>→</i><h2>Intervenció</h2><p>Normativa penal, procediments, circulació i actuació.</p><small>Consulta legal</small></button>
+    </section>
+    <section class="quick"><small>ACCÉS RÀPID</small><h2>Què vols consultar?</h2><button class="search-card" id="searchCard">⌕ <span><b>Cercador general</b><small>Article, delicte, infracció o concepte</small></span>›</button><div class="twins"><button id="favBtn">★<b>Favorits</b><small>Consultes guardades</small></button><button id="histBtn">◷<b>Historial</b><small>Últimes consultes</small></button></div></section>
+    <footer>APPOL · Consulta ràpida</footer>
+  </main>
+  <div id="modal" class="modal hidden"><div class="sheet"><button id="close" class="close">×</button><div id="sheetContent"></div></div></div>
+  <script src="app.js"></script>
+</body>
+</html>
